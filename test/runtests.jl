@@ -4,6 +4,11 @@ using Base.Test
 # write your own tests here
 @test Healpix.ilog2(convert(Uint32, 1024)) == 10
 
+@test Healpix.nside2npix(4) == 192
+@test Healpix.npix2nside(192) == 4
+@test_throws DomainError Healpix.nside2npix(15)
+@test_throws DomainError Healpix.npix2nside(7)
+
 resol = Healpix.Resolution(256)
 
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 0.0000000000000000) ==  65536

@@ -7,18 +7,25 @@ const NSIDE_MAX = 8192
 
 ########################################################################
 
-nside2npix(nside::Integer) = 12 * nside * nside
+function nside2npix(nside::Integer)
+    nsidelog2 = int(log2(nside))
+    if 2^nsidelog2 != nside
+        throw(DomainError())
+    end
+
+    12 * nside * nside
+end
 
 ########################################################################
 
 function npix2nside(npix::Integer)
     if npix % 12 != 0
-        error("Invalid number of pixels")
+        throw(DomainError())
     end
 
     square_root::Float64 = sqrt(npix / 12)
     if square_root*square_root != npix/12
-        error("Invalid number of pixels")
+        throw(DomainError())
     end
 
     convert(Int, round(square_root))
@@ -258,20 +265,18 @@ immutable Ordering
     Ordering(n :: Integer) = new(n)
 end
 
-const Ordering(:ring) = Ordering(0)
-const Ordering(:nested) = Ordering(1)
+const Ring = Ordering(0)
+const Nested = Ordering(1)
 
 type Map{T}
     pixels :: Array{T}
     resolution :: Resolution
     ordering :: Ordering
-end
 
-function Map{T}(nside :: Int)
-    resolution = Resolution(nside)
-
-    HealpixMap{T}(Array{T, resolution.numOfPixels},
-                  resolution)
+    Map{T}(nside :: Int, ordering :: Ordering) = \
+        Map{T}(Array(T, nside2npix(nside)), 
+               Resolution(nside), 
+               ordering)
 end
 
 end
