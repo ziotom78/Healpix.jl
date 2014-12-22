@@ -274,9 +274,10 @@ type Map{T}
     ordering :: Ordering
 
     Map{T}(nside :: Int, ordering :: Ordering) = \
-        Map{T}(Array(T, nside2npix(nside)), 
-               Resolution(nside), 
-               ordering)
+        new(Array(T, nside2npix(nside)), 
+            Resolution(nside), 
+            ordering)
 end
+
 
 end
