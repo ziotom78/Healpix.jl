@@ -3,6 +3,8 @@ module Healpix
 export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
 export Ordering, Map
 
+import FITSIO
+
 const NSIDE_MAX = 8192
 
 ########################################################################
@@ -268,16 +270,50 @@ end
 const Ring = Ordering(0)
 const Nested = Ordering(1)
 
-type Map{T}
+type Map{T <: Number}
     pixels :: Array{T}
     resolution :: Resolution
     ordering :: Ordering
 
-    Map{T}(nside :: Int, ordering :: Ordering) = \
-        new(Array(T, nside2npix(nside)), 
-            Resolution(nside), 
-            ordering)
+    Map(nside :: Integer, ordering :: Ordering) = new(Array(T, nside2npix(nside)), 
+                                                      Resolution(nside), 
+                                                      ordering)
+
+    function Map(nside :: Integer, ordering :: Ordering, arr :: Array{T})
+        if nside2npix(nside) != length(arr)
+            throw(DomainError())
+        end
+
+        new(arr, Resolution(nside), ordering)
+    end
 end
 
+function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
+    value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
+    const nside = int(value)
+
+    value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
+    const ordering = uppercase(strip(value[2:end-1])) == "RING" ? Ring : Nested
+
+    const repeat, width = FITSIO.fits_get_col_repeat(f, column)
+    const nrows = FITSIO.fits_get_num_rows(f)
+
+    if repeat * nrows != nside2npix(nside)
+        error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
+    end
+
+    result = Map{T}(nside, ordering, Array(T, nside2npix(nside)))
+    FITSIO.fits_read_col(f, T, column, 1, 1, result.pixels)
+
+    result
+end
+
+function Map{T <: Number}(fileName :: ASCIIString, column :: Integer, t :: Type{T})
+    f = FITSIO.fits_open_table(fileName)
+    result = Map(f, column, t)
+    FITSIO.fits_close_file(f)
+
+    result
+end
 
 end

@@ -1,13 +1,16 @@
 using Healpix
 using Base.Test
 
-# write your own tests here
 @test Healpix.ilog2(convert(Uint32, 1024)) == 10
+
+# nside2npix and npix2nside
 
 @test Healpix.nside2npix(4) == 192
 @test Healpix.npix2nside(192) == 4
 @test_throws DomainError Healpix.nside2npix(15)
 @test_throws DomainError Healpix.npix2nside(7)
+
+# ang2pixNest
 
 resol = Healpix.Resolution(256)
 
@@ -52,3 +55,15 @@ resol = Healpix.Resolution(256)
 @test Healpix.ang2pixNest(resol, 3.1415926535897931, 3.7699111843077517) == 655361
 @test Healpix.ang2pixNest(resol, 3.1415926535897931, 5.0265482457436690) == 720897
 @test Healpix.ang2pixNest(resol, 3.1415926535897931, 6.2831853071795862) == 524289
+
+# Map loading
+
+m = Healpix.Map("int_map.fits", 1, Int8)
+@test m.resolution.nside == 1
+@test m.ordering == Healpix.Ring
+@test m.pixels == [int8(x) for x in 0:11]
+
+m = Healpix.Map("float_map.fits", 1, Float32)
+@test m.resolution.nside == 4
+@test m.ordering == Healpix.Ring
+@test m.pixels == [float32(x) for x in 0:(12*4^2 - 1)]
