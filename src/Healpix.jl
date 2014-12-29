@@ -1,7 +1,7 @@
 module Healpix
 
 export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
-export Ordering, Map
+export Ordering, Map, conformables, ringWeightPath, readRingWeights
 
 import FITSIO
 
@@ -314,6 +314,27 @@ function Map{T <: Number}(fileName :: ASCIIString, column :: Integer, t :: Type{
     FITSIO.fits_close_file(f)
 
     result
+end
+
+conformables{T}(map1::Map{T}, map2::Map{T}) = 
+    map1.resolution.nside == map2.resolution.nside
+
+################################################################################
+
+function ringWeightPath(datadir :: UTF8String, nside)
+    @sprintf("%s/weight_ring_n%05d.fits", datadir, nside)
+end
+
+function readWeightRing(fileName :: UTF8String, nside)
+    f = FITSIO.fits_open_table(fileName)
+    try
+        weights = Array(Float64, 2 nside)
+        FITSIO.fits_read_col(f, Float64, 1, 1, weights)
+    finally
+        FITSIO.fits_close_file(f)
+    end
+
+    weights
 end
 
 end
