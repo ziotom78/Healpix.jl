@@ -337,4 +337,36 @@ function readWeightRing(fileName :: UTF8String, nside)
     weights
 end
 
+################################################################################
+
+function pixelWindowPath(datadir :: UTF8String, nside)
+    @sprintf("%s/pixel_window_n%04d.fits", datadir, nside)
+end
+
+function readPixelWindowT(fileName :: UTF8String, nside)
+    f = FITSIO.fits_open_table(fileName)
+    try
+        pixwin = Array(Float64, FITSIO.fits_get_num_rows(f))
+        FITSIO.fits_read_col(f, Float64, 1, 1, 1, pixwin)
+    finally
+        FITSIO.fits_close_file(f)
+    end
+
+    pixwin
+end
+
+function readPixelWindowP(fileName :: UTF8String, nside)
+    f = FITSIO.fits_open_table(fileName)
+    try
+        pixwinT = Array(Float64, FITSIO.fits_get_num_rows(f))
+        pixwinP = Array(Float64, FITSIO.fits_get_num_rows(f))
+        FITSIO.fits_read_col(f, Float64, 1, 1, 1, pixwinT)
+        FITSIO.fits_read_col(f, Float64, 2, 1, 1, pixwinP)
+    finally
+        FITSIO.fits_close_file(f)
+    end
+
+    pixwinT, pixwinP
+end
+
 end
