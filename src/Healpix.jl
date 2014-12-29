@@ -2,6 +2,7 @@ module Healpix
 
 export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
 export Ordering, Map, conformables, ringWeightPath, readRingWeights
+export pixelWindowPath, readPixelWindowT, readPixelWindowP
 
 import FITSIO
 
@@ -329,7 +330,7 @@ function readWeightRing(fileName :: UTF8String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         weights = Array(Float64, 2 nside)
-        FITSIO.fits_read_col(f, Float64, 1, 1, weights)
+        FITSIO.fits_read_col(f, Float64, 1, 1, 1, weights)
     finally
         FITSIO.fits_close_file(f)
     end
