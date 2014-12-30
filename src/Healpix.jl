@@ -378,11 +378,16 @@ type Alm{T <: Real}
     lmax :: Int
     mmax :: Int
 
-    Alm(lmax :: Integer, mmax :: Integer) = new(Array(T, numberOfAlms(lmax, mmax)), 
-                                                lmax, mmax)
+    Alm(lmax, mmax) = new(Array(T, numberOfAlms(lmax, mmax)), 
+                          lmax, mmax)
 end
 
-numberOfAlms(lmax :: Integer, mmax :: Integer) = 
-    ((mmax + 1) * (mmax + 2)) / 2 + (mmax + 1) * (lmax - mmax)
+function numberOfAlms(lmax :: Integer, mmax :: Integer)
+    if mmax < 0 || lmax < 0 || mmax > lmax
+        throw(DomainError())
+    end
+
+    div((mmax + 1) * (mmax + 2), 2) + (mmax + 1) * (lmax - mmax)
+end
 
 end

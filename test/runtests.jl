@@ -67,3 +67,15 @@ m = Healpix.Map("float_map.fits", 1, Float32)
 @test m.resolution.nside == 4
 @test m.ordering == Healpix.Ring
 @test m.pixels == [float32(x) for x in 0:(12*4^2 - 1)]
+
+# Alm creation
+
+@test Healpix.numberOfAlms(10, 5) == 51
+@test Healpix.numberOfAlms(10, 7) == 60
+@test Healpix.numberOfAlms(12, 7) == 76
+@test Healpix.numberOfAlms(12, 12) == 91
+@test_throws DomainError Healpix.numberOfAlms(-1, 1)
+@test_throws DomainError Healpix.numberOfAlms(4, -1)
+@test_throws DomainError Healpix.numberOfAlms(5, 7)
+
+alm = Healpix.Alm{Float64}(10, 10)
