@@ -3,7 +3,7 @@ module Healpix
 export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
 export Ordering, Map, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
-export Alm, numberOfAlms
+export Alm, numberOfAlms, almIndexL0, almIndex
 
 import FITSIO
 
@@ -373,13 +373,22 @@ end
 
 ################################################################################
 
-type Alm{T <: Real}
+type Alm{T <: Number}
     alm :: Array{T}
     lmax :: Int
     mmax :: Int
+    tval :: Int
 
     Alm(lmax, mmax) = new(Array(T, numberOfAlms(lmax, mmax)), 
-                          lmax, mmax)
+                          lmax, mmax, 2 * lmax + 1)
+
+    function Alm(lmax :: Integer, mmax :: Integer, arr :: Array{T})
+        if numberOfAlms(lmax, mmax) != length(arr)
+            throw(DomainError())
+        end
+
+        new(arr, lmax, mmax, 2 * lmax + 1)
+    end
 end
 
 function numberOfAlms(lmax :: Integer, mmax :: Integer)
@@ -391,5 +400,45 @@ function numberOfAlms(lmax :: Integer, mmax :: Integer)
 end
 
 numberOfAlms(lmax :: Integer) = numberOfAlms(lmax, lmax)
+
+shr(x :: Integer, y :: Integer) = x >> y
+shr{T <: Integer}(x :: Array{T}, y :: Integer) = [a >> y for a in x]
+
+almIndexL0{T}(alm :: Alm{T}, m) = shr((m .* (alm.tval .- m)), 1) + 1
+almIndex{T}(alm :: Alm{T}, l, m) = almIndexL0(alm, m) .+ l
+
+function Alm{T <: Complex}(f :: FITSIO.FITSFile, 
+                           t :: Type{T})
+    const numOfRows = FITSIO.fits_get_num_rows(f)
+
+    idx = Array(Int64, numOfRows)
+    almReal = Array(Float64, numOfRows)
+    almImag = Array(Float64, numOfRows)
+
+    FITSIO.fits_read_col(f, Int64, 1, 1, 1, idx)
+    FITSIO.fits_read_col(f, Float64, 2, 1, 1, almReal)
+    FITSIO.fits_read_col(f, Float64, 3, 1, 1, almImag)
+
+    l = int64(floor(sqrt(idx - 1)))
+    m = idx - l.^2 - l - 1
+    if count(x -> x < 0, m) > 0
+        throw(DomainError())
+    end
+
+    result = Alm{T}(maximum(l), maximum(m))
+    i = almIndex(result, l, m)
+    result.alm = complex(almReal[i], almImag[i])
+end
+
+function Alm{T <: Complex}(fileName :: ASCIIString, 
+                           t :: Type{T})
+    f = FITSIO.fits_open_table(fileName)
+    try
+        result = Alm(f, t)
+        return result
+    finally
+        FITSIO.fits_close_file(f)
+    end
+end
 
 end
