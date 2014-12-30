@@ -1,7 +1,12 @@
 using Healpix
 using Base.Test
 
+@test Healpix.ilog2(convert(Uint32, 1)) == 0
+@test Healpix.ilog2(convert(Uint32, 6)) == 2
+@test Healpix.ilog2(convert(Uint32, 1023)) == 9
 @test Healpix.ilog2(convert(Uint32, 1024)) == 10
+@test Healpix.ilog2(convert(Uint32, 8194)) == 13
+@test Healpix.ilog2(convert(Uint32, 131124)) == 17
 
 # nside2npix and npix2nside
 
@@ -9,9 +14,12 @@ using Base.Test
 @test Healpix.npix2nside(192) == 4
 @test_throws DomainError Healpix.nside2npix(15)
 @test_throws DomainError Healpix.npix2nside(7)
+@test_throws DomainError Healpix.npix2nside(12 * 8 * 9)
 
 # ang2pixNest
 
+@test_throws DomainError Healpix.Resolution(-5)
+@test_throws DomainError Healpix.Resolution(100000000)
 resol = Healpix.Resolution(256)
 
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 0.0000000000000000) ==  65536

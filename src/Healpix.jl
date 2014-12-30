@@ -122,8 +122,8 @@ end
 ################################################################################
 
 function Resolution(nside::Uint32)
-    if nside > NSIDE_MAX
-        error("The maximum allowed value for NSIDE is $NSIDE_MAX")
+    if nside > NSIDE_MAX || nside < 1
+        throw(DomainError())
     end
 
     result = Resolution(zero(Uint32),
