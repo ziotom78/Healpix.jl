@@ -390,4 +390,6 @@ function numberOfAlms(lmax :: Integer, mmax :: Integer)
     div((mmax + 1) * (mmax + 2), 2) + (mmax + 1) * (lmax - mmax)
 end
 
+numberOfAlms(lmax :: Integer) = numberOfAlms(lmax, lmax)
+
 end
