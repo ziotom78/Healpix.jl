@@ -330,7 +330,7 @@ end
 function readWeightRing(fileName :: UTF8String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
-        weights = Array(Float64, 2 nside)
+        weights = Array(Float64, 2 * nside)
         FITSIO.fits_read_col(f, Float64, 1, 1, 1, weights)
     finally
         FITSIO.fits_close_file(f)
