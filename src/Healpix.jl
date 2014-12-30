@@ -3,6 +3,7 @@ module Healpix
 export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
 export Ordering, Map, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
+export Alm, numberOfAlms
 
 import FITSIO
 
@@ -369,5 +370,19 @@ function readPixelWindowP(fileName :: UTF8String, nside)
 
     pixwinT, pixwinP
 end
+
+################################################################################
+
+type Alm{T <: Real}
+    alm :: Array{T}
+    lmax :: Int
+    mmax :: Int
+
+    Alm(lmax :: Integer, mmax :: Integer) = new(Array(T, numberOfAlms(lmax, mmax)), 
+                                                lmax, mmax)
+end
+
+numberOfAlms(lmax :: Integer, mmax :: Integer) = 
+    ((mmax + 1) * (mmax + 2)) / 2 + (mmax + 1) * (lmax - mmax)
 
 end
