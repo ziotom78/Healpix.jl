@@ -1,6 +1,7 @@
 # Healpix
 
 [![Build Status](https://travis-ci.org/ziotom78/Healpix.jl.svg?branch=master)](https://travis-ci.org/ziotom78/Healpix.jl)
+[![Coverage Status](https://coveralls.io/repos/ziotom78/Healpix.jl/badge.png?branch=master)](https://coveralls.io/r/ziotom78/Healpix.jl?branch=master)
 
 A set of Julia functions that implement the Healpix spherical
 projection.
