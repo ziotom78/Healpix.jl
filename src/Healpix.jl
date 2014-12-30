@@ -1,6 +1,7 @@
 module Healpix
 
-export Resolution, nside2npix, npix2nside, normalizeAngle, ang2pixNest
+export Resolution, nside2npix, npix2nside, normalizeAngle
+export ang2pixNest, ang2pixRing
 export Ordering, Map, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex
@@ -260,6 +261,78 @@ function ang2pixNest(resol::Resolution,
     # Add 1 to have a 1-based index
     ipf + face_num * nside * nside + 1
 
+end
+
+################################################################################
+
+function calcRingPosForEquator(resol::Resolution, 
+                               z::Float64,
+                               z_abs::Float64,
+                               tt::Float64)
+
+    const jp = ifloor(resol.nside * (0.5 + tt - z * 0.75))
+    const jm = ifloor(resol.nside * (0.5 + tt + z * 0.75))
+
+    const ir = resol.nside + 1 + jp - jm
+    const kshift = (mod(ir, 2) == 0) ? 1 : 0
+
+    const nl4 = resol.nsideTimesFour;
+
+    local ip = div(jp + jm - resol.nside + kshift + 1, 2) + 1
+    if ip > nl4
+	ip = ip - nl4
+    end
+
+    resol.ncap + nl4 * (ir - 1) + ip
+end
+
+################################################################################
+
+function calcRingPosForPole(resol::Resolution,
+                            z::Float64,
+                            z_abs::Float64,
+                            tt::Float64)
+
+    const tp = tt - floor(tt)
+    const tmp = sqrt(3. * (1. - z_abs))
+
+    jp = ifloor(resol.nside * tp * tmp )
+    jm = ifloor(resol.nside * (1. - tp) * tmp)
+
+    ir = jp + jm + 1
+    ip = ifloor(tt * ir) + 1
+    if ip > 4 * ir
+	ip -= 4 * ir
+    end
+
+    if z <= 0.
+	ipix1 = resol.numOfPixels - 2 * ir * (ir + 1) + ip
+    else
+        ipix1 = 2 * ir * (ir - 1) + ip
+    end
+
+    ipix1
+end
+
+################################################################################
+
+function ang2pixRing(resol::Resolution,
+                     theta::Float64,
+                     phi::Float64)
+
+    const z = cos(theta);
+    const z_abs = abs(z);
+    const scaled_phi = normalizeAngle(phi) / (0.5 * π) # in [0,4[
+
+    local ipix1 :: Int
+
+    if z_abs <= 2./3.
+        ipix1 = calcRingPosForEquator(resol, z, z_abs, scaled_phi)
+    else
+        ipix1 = calcRingPosForPole(resol, z, z_abs, scaled_phi)
+    end
+
+    ipix1
 end
 
 ################################################################################
