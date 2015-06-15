@@ -20,7 +20,7 @@ const eps = 1e-10
 
 # ang2pixNest
 
-@test_throws DomainError Healpix.Resolution(-5)
+@test_throws DomainError Healpix.Resolution(0)
 @test_throws DomainError Healpix.Resolution(100000000)
 resol = Healpix.Resolution(256)
 

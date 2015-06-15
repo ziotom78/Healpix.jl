@@ -596,7 +596,7 @@ function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
     value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
     const ordering = uppercase(strip(value[2:end-1])) == "RING" ? Ring : Nested
 
-    const repeat, width = FITSIO.fits_get_col_repeat(f, column)
+    const repeat = (FITSIO.fits_get_coltype(f, column))[2]
     const nrows = FITSIO.fits_get_num_rows(f)
 
     if repeat * nrows != nside2npix(nside)
@@ -604,7 +604,7 @@ function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
     end
 
     result = Map{T}(nside, ordering, Array(T, nside2npix(nside)))
-    FITSIO.fits_read_col(f, T, column, 1, 1, result.pixels)
+    FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
     result
 end
@@ -630,7 +630,7 @@ function readWeightRing(fileName :: UTF8String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         weights = Array(Float64, 2 * nside)
-        FITSIO.fits_read_col(f, Float64, 1, 1, 1, weights)
+        FITSIO.fits_read_col(f, 1, 1, 1, weights)
     finally
         FITSIO.fits_close_file(f)
     end
@@ -648,7 +648,7 @@ function readPixelWindowT(fileName :: UTF8String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         pixwin = Array(Float64, FITSIO.fits_get_num_rows(f))
-        FITSIO.fits_read_col(f, Float64, 1, 1, 1, pixwin)
+        FITSIO.fits_read_col(f, 1, 1, 1, pixwin)
     finally
         FITSIO.fits_close_file(f)
     end
@@ -661,8 +661,8 @@ function readPixelWindowP(fileName :: UTF8String, nside)
     try
         pixwinT = Array(Float64, FITSIO.fits_get_num_rows(f))
         pixwinP = Array(Float64, FITSIO.fits_get_num_rows(f))
-        FITSIO.fits_read_col(f, Float64, 1, 1, 1, pixwinT)
-        FITSIO.fits_read_col(f, Float64, 2, 1, 1, pixwinP)
+        FITSIO.fits_read_col(f, 1, 1, 1, pixwinT)
+        FITSIO.fits_read_col(f, 2, 1, 1, pixwinP)
     finally
         FITSIO.fits_close_file(f)
     end
@@ -714,9 +714,9 @@ function Alm{T <: Complex}(f :: FITSIO.FITSFile,
     almReal = Array(Float64, numOfRows)
     almImag = Array(Float64, numOfRows)
 
-    FITSIO.fits_read_col(f, Int64, 1, 1, 1, idx)
-    FITSIO.fits_read_col(f, Float64, 2, 1, 1, almReal)
-    FITSIO.fits_read_col(f, Float64, 3, 1, 1, almImag)
+    FITSIO.fits_read_col(f, 1, 1, 1, idx)
+    FITSIO.fits_read_col(f, 2, 1, 1, almReal)
+    FITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
     l = int64(floor(sqrt(idx - 1)))
     m = idx - l.^2 - l - 1
