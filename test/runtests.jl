@@ -233,15 +233,23 @@ resol = Healpix.Resolution(256)
 
 # Map loading
 
+m = Healpix.Map("float_map.fits", 1, Float32)
+@test m.resolution.nside == 4
+@test m.ordering == Healpix.Ring
+@test m.pixels == [float32(x) for x in 0:(12*4^2 - 1)]
+
 m = Healpix.Map("int_map.fits", 1, Int8)
 @test m.resolution.nside == 1
 @test m.ordering == Healpix.Ring
 @test m.pixels == [int8(x) for x in 0:11]
 
-m = Healpix.Map("float_map.fits", 1, Float32)
-@test m.resolution.nside == 4
-@test m.ordering == Healpix.Ring
-@test m.pixels == [float32(x) for x in 0:(12*4^2 - 1)]
+# Map saving
+
+const mapFileName = tempname()
+print("Saving $mapFileName\n")
+Healpix.saveToFITS(m, "!$mapFileName", "I")
+m2 = Healpix.Map(mapFileName, 1, Int8)
+@test m.pixels == m2.pixels
 
 # Alm creation
 

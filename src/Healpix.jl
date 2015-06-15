@@ -2,7 +2,7 @@ module Healpix
 
 export Resolution, nside2npix, npix2nside, normalizeAngle
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
-export Ordering, Map, conformables, ringWeightPath, readRingWeights
+export Ordering, Map, saveToFITS, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex
 
@@ -399,7 +399,7 @@ end
 
 ################################################################################
 
-function calcRingPosForEquator(resol::Resolution, 
+function calcRingPosForEquator(resol::Resolution,
                                z::Float64,
                                z_abs::Float64,
                                tt::Float64)
@@ -544,10 +544,10 @@ function pix2angRing(resol::Resolution, pixel::Int)
 	const iphi  = int(mod(ip, resol.nsideTimesFour)) + 1
 
         # 1 if iring + resol.nside is odd, 1/2 otherwise
-	const fodd = 0.5 * (1 + mod(float64(iring + resol.nside), 2)) 
+	const fodd = 0.5 * (1 + mod(float64(iring + resol.nside), 2))
 	return (acos( (resol.nsideTimesTwo - iring) / fact1),
                 (float64(iphi) - fodd) * π / (2resol.nside))
-    else 
+    else
         # South Polar cap -----------------------------------
 
 	const ip = resol.numOfPixels - pixel + 1
@@ -576,11 +576,11 @@ type Map{T <: Number}
     resolution :: Resolution
     ordering :: Ordering
 
-    Map(nside :: Integer, ordering :: Ordering) = new(Array(T, nside2npix(nside)), 
-                                                      Resolution(nside), 
+    Map(nside :: Integer, ordering :: Ordering) = new(Array(T, nside2npix(nside)),
+                                                      Resolution(nside),
                                                       ordering)
 
-    function Map(nside :: Integer, ordering :: Ordering, arr :: Array{T})
+    function Map{T}(nside :: Integer, ordering :: Ordering, arr :: Array{T})
         if nside2npix(nside) != length(arr)
             throw(DomainError())
         end
@@ -609,6 +609,35 @@ function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
     result
 end
 
+function saveToFITS{T <: Number}(map :: Map{T},
+                                 f :: FITSIO.FITSFile,
+                                 column :: Integer)
+
+    FITSIO.fits_update_key(f, "ORDERING",
+                           map.ordering == Ring ? "RING" : "NEST",
+                           "Either RING or NEST")
+    FITSIO.fits_update_key(f, "NSIDE", map.resolution.nside,
+                           "Value of NSIDE")
+    FITSIO.fits_write_col(f, column, 1, 1, map.pixels)
+
+end
+
+function saveToFITS{T <: Number}(map :: Map{T},
+                                 fileName :: ASCIIString,
+                                 typechar="D",
+                                 unit="",
+                                 extname="MAP")
+
+    f = FITSIO.fits_create_file(fileName)
+    try
+        FITSIO.fits_create_binary_tbl(f, 0, [("PIXELS", "1$typechar", unit)], extname)
+        saveToFITS(map, f, 1)
+    finally
+        FITSIO.fits_close_file(f)
+    end
+
+end
+
 function Map{T <: Number}(fileName :: ASCIIString, column :: Integer, t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     result = Map(f, column, t)
@@ -617,7 +646,7 @@ function Map{T <: Number}(fileName :: ASCIIString, column :: Integer, t :: Type{
     result
 end
 
-conformables{T}(map1::Map{T}, map2::Map{T}) = 
+conformables{T}(map1::Map{T}, map2::Map{T}) =
     map1.resolution.nside == map2.resolution.nside
 
 ################################################################################
@@ -678,7 +707,7 @@ type Alm{T <: Number}
     mmax :: Int
     tval :: Int
 
-    Alm(lmax, mmax) = new(Array(T, numberOfAlms(lmax, mmax)), 
+    Alm(lmax, mmax) = new(Array(T, numberOfAlms(lmax, mmax)),
                           lmax, mmax, 2 * lmax + 1)
 
     function Alm(lmax :: Integer, mmax :: Integer, arr :: Array{T})
@@ -706,7 +735,7 @@ shr{T <: Integer}(x :: Array{T}, y :: Integer) = [a >> y for a in x]
 almIndexL0{T}(alm :: Alm{T}, m) = shr((m .* (alm.tval .- m)), 1) + 1
 almIndex{T}(alm :: Alm{T}, l, m) = almIndexL0(alm, m) .+ l
 
-function Alm{T <: Complex}(f :: FITSIO.FITSFile, 
+function Alm{T <: Complex}(f :: FITSIO.FITSFile,
                            t :: Type{T})
     const numOfRows = FITSIO.fits_get_num_rows(f)
 
@@ -729,7 +758,7 @@ function Alm{T <: Complex}(f :: FITSIO.FITSFile,
     result.alm = complex(almReal[i], almImag[i])
 end
 
-function Alm{T <: Complex}(fileName :: ASCIIString, 
+function Alm{T <: Complex}(fileName :: ASCIIString,
                            t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     try
