@@ -240,7 +240,7 @@ end
 
 ################################################################################
 
-type Resolution
+immutable Resolution
     nside          :: Uint32
     nsideTimesTwo  :: Uint32
     nsideTimesFour :: Uint32
