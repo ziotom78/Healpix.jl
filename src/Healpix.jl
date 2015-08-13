@@ -618,7 +618,7 @@ function saveToFITS{T <: Number}(map :: Map{T},
 end
 
 function saveToFITS{T <: Number}(map :: Map{T},
-                                 fileName :: ASCIIString,
+                                 fileName :: String,
                                  typechar="D",
                                  unit="",
                                  extname="MAP")
@@ -753,7 +753,7 @@ function Alm{T <: Complex}(f :: FITSIO.FITSFile,
     result.alm = complex(almReal[i], almImag[i])
 end
 
-function Alm{T <: Complex}(fileName :: ASCIIString,
+function Alm{T <: Complex}(fileName :: String,
                            t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     try
