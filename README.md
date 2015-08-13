@@ -11,7 +11,7 @@ projection.
 From the Julia REPL, run
 
 ````julia
-Pkg.add("https://github.com/ziotom78/Healpix.jl")
+Pkg.clone("https://github.com/ziotom78/Healpix.jl")
 ````
 
 ## Usage examples
