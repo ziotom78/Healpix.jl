@@ -260,30 +260,25 @@ function Resolution(nside::Uint32)
         throw(DomainError())
     end
 
-    result = Resolution(zero(Uint32),
-                        zero(Uint32),
-                        zero(Uint32),
-                        zero(Uint32),
-                        zero(Uint32),
-                        zero(Uint32),
-                        zero(Uint32),
-                        zero(Float64),
-                        zero(Float64))
-
-    result.nside          =   nside
-    result.nsideTimesTwo  = 2 * nside
-    result.nsideTimesFour = 4 * nside
-
     # The expression (nside & (nside - 1)) != 0 is a quick check for
     # detecting if nside is a power of two or not
-    result.order          = ((nside & (nside - 1)) != 0) ? -1 : ilog2(nside)
-    result.pixelsPerFace  = nside * nside
-    result.numOfPixels    = 12 * result.pixelsPerFace
-    result.ncap           = 2 * (result.pixelsPerFace - nside)
-    result.fact2          = 4.0 / result.numOfPixels
-    result.fact1          = 2 * nside * result.fact2
+    order          = ((nside & (nside - 1)) != 0) ? -1 : ilog2(nside)
+    pixelsPerFace  = nside * nside
+    numOfPixels    = 12 * pixelsPerFace
+    ncap           = 2 * (pixelsPerFace - nside)
+    fact2          = 4.0 / numOfPixels
+    fact1          = 2 * nside * fact2
 
-    result
+    result = Resolution(nside,
+                        2 * nside,
+                        4 * nside,
+                        numOfPixels,
+                        order,
+                        pixelsPerFace,
+                        ncap,
+                        fact2,
+                        fact1)
+
 end
 
 ################################################################################
@@ -638,7 +633,7 @@ function saveToFITS{T <: Number}(map :: Map{T},
 
 end
 
-function Map{T <: Number}(fileName :: ASCIIString, column :: Integer, t :: Type{T})
+function Map{T <: Number}(fileName :: String, column :: Integer, t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     result = Map(f, column, t)
     FITSIO.fits_close_file(f)
