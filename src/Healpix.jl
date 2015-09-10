@@ -2,9 +2,10 @@ module Healpix
 
 export Resolution, nside2npix, npix2nside, normalizeAngle
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
-export Ordering, Map, saveToFITS, conformables, ringWeightPath, readRingWeights
+export Order, RingOrder, NestedOrder, Map
+export readMapFromFITS, saveToFITS, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
-export Alm, numberOfAlms, almIndexL0, almIndex
+export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 
 import FITSIO
 
@@ -566,25 +567,27 @@ end
 const Ring = Ordering(0)
 const Nested = Ordering(1)
 
-type Map{T <: Number}
+abstract Order
+type RingOrder <: Order end
+type NestedOrder <: Order end
+
+type Map{T, O <: Order}
     pixels :: Array{T}
     resolution :: Resolution
-    ordering :: Ordering
 
-    Map(nside :: Integer, ordering :: Ordering) = new(Array(T, nside2npix(nside)),
-                                                      Resolution(nside),
-                                                      ordering)
+    Map(nside :: Integer) = new(Array(T, nside2npix(nside)),
+                                Resolution(nside))
 
-    function Map{T}(nside :: Integer, ordering :: Ordering, arr :: Array{T})
+    function Map{T}(nside :: Integer, arr :: Array{T})
         if nside2npix(nside) != length(arr)
             throw(DomainError())
         end
 
-        new(arr, Resolution(nside), ordering)
+        new(arr, Resolution(nside))
     end
 end
 
-function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
+function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
     value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
     const nside = int(value)
 
@@ -598,30 +601,57 @@ function Map{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
         error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
     end
 
-    result = Map{T}(nside, ordering, Array(T, nside2npix(nside)))
+    if ordering == Ring
+        result = Map{T, RingOrder}(nside, Array(T, nside2npix(nside)))
+    else
+        result = Map{T, NestedOrder}(nside, Array(T, nside2npix(nside)))
+    end
     FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
     result
 end
 
-function saveToFITS{T <: Number}(map :: Map{T},
-                                 f :: FITSIO.FITSFile,
-                                 column :: Integer)
+function readMapFromFITS{T <: Number}(fileName :: String, column :: Integer, t :: Type{T})
+    f = FITSIO.fits_open_table(fileName)
+    result = readMapFromFITS(f, column, t)
+    FITSIO.fits_close_file(f)
 
-    FITSIO.fits_update_key(f, "ORDERING",
-                           map.ordering == Ring ? "RING" : "NEST",
-                           "Either RING or NEST")
+    result
+end
+
+function savePixelsToFITS{T <: Number}(map :: Map{T},
+                                       f :: FITSIO.FITSFile,
+                                       column :: Integer)
+
     FITSIO.fits_update_key(f, "NSIDE", map.resolution.nside,
                            "Value of NSIDE")
     FITSIO.fits_write_col(f, column, 1, 1, map.pixels)
 
 end
 
-function saveToFITS{T <: Number}(map :: Map{T},
-                                 fileName :: String,
-                                 typechar="D",
-                                 unit="",
-                                 extname="MAP")
+function saveToFITS{T <: Number}(map :: Map{T, RingOrder},
+                                 f :: FITSIO.FITSFile,
+                                 column :: Integer)
+
+    FITSIO.fits_update_key(f, "ORDERING", "RING")
+    savePixelsToFITS(map, f, column)
+    
+end
+
+function saveToFITS{T <: Number}(map :: Map{T, NestedOrder},
+                                 f :: FITSIO.FITSFile,
+                                 column :: Integer)
+
+    FITSIO.fits_update_key(f, "ORDERING", "NEST")
+    savePixelsToFITS(map, f, column)
+
+end
+
+function saveToFITS{T <: Number, O <: Order}(map :: Map{T, O},
+                                             fileName :: String,
+                                             typechar="D",
+                                             unit="",
+                                             extname="MAP")
 
     f = FITSIO.fits_create_file(fileName)
     try
@@ -633,16 +663,14 @@ function saveToFITS{T <: Number}(map :: Map{T},
 
 end
 
-function Map{T <: Number}(fileName :: String, column :: Integer, t :: Type{T})
-    f = FITSIO.fits_open_table(fileName)
-    result = Map(f, column, t)
-    FITSIO.fits_close_file(f)
-
-    result
-end
-
-conformables{T}(map1::Map{T}, map2::Map{T}) =
+conformables{T, S}(map1::Map{T, RingOrder}, map2::Map{S, RingOrder}) =
     map1.resolution.nside == map2.resolution.nside
+    
+conformables{T, S}(map1::Map{T, NestedOrder}, map2::Map{S, NestedOrder}) =
+    map1.resolution.nside == map2.resolution.nside
+
+conformables{T, S, O1 <: Order, O2 <: Order}(map1::Map{T, O1},
+                                             map2::Map{S, O2}) = false
 
 ################################################################################
 
@@ -730,8 +758,8 @@ shr{T <: Integer}(x :: Array{T}, y :: Integer) = [a >> y for a in x]
 almIndexL0{T}(alm :: Alm{T}, m) = shr((m .* (alm.tval .- m)), 1) + 1
 almIndex{T}(alm :: Alm{T}, l, m) = almIndexL0(alm, m) .+ l
 
-function Alm{T <: Complex}(f :: FITSIO.FITSFile,
-                           t :: Type{T})
+function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
+                                       t :: Type{T})
     const numOfRows = FITSIO.fits_get_num_rows(f)
 
     idx = Array(Int64, numOfRows)
@@ -753,11 +781,11 @@ function Alm{T <: Complex}(f :: FITSIO.FITSFile,
     result.alm = complex(almReal[i], almImag[i])
 end
 
-function Alm{T <: Complex}(fileName :: String,
-                           t :: Type{T})
+function readAlmFromFITS{T <: Complex}(fileName :: String,
+                                       t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     try
-        result = Alm(f, t)
+        result = readAlmFromFITS(f, t)
         return result
     finally
         FITSIO.fits_close_file(f)

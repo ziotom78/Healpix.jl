@@ -231,16 +231,25 @@ resol = Healpix.Resolution(256)
 @test_approx_eq_eps Healpix.pix2angRing(resol, 786432)[1] 3.1384032124686820 eps
 @test_approx_eq_eps Healpix.pix2angRing(resol, 786432)[2] 5.4977871437821380 eps
 
+# Conformability
+
+@test Healpix.conformables(Map{Int16, RingOrder}(4),
+                           Map{Float32, RingOrder}(4))
+@test ! Healpix.conformables(Map{Int16, RingOrder}(8),
+                             Map{Int16, RingOrder}(4)) # nside mismatch
+@test ! Healpix.conformables(Map{Float32, RingOrder}(4),
+                             Map{Float32, NestedOrder}(4)) # order mismatch
+
 # Map loading
 
-m = Healpix.Map("float_map.fits", 1, Float32)
+m = Healpix.readMapFromFITS("float_map.fits", 1, Float32)
+@test typeof(m) == Healpix.Map{Float32, Healpix.RingOrder}
 @test m.resolution.nside == 4
-@test m.ordering == Healpix.Ring
 @test m.pixels == [float32(x) for x in 0:(12*4^2 - 1)]
 
-m = Healpix.Map("int_map.fits", 1, Int8)
+m = Healpix.readMapFromFITS("int_map.fits", 1, Int8)
+@test typeof(m) == Healpix.Map{Int8, Healpix.RingOrder}
 @test m.resolution.nside == 1
-@test m.ordering == Healpix.Ring
 @test m.pixels == [int8(x) for x in 0:11]
 
 # Map saving
@@ -248,7 +257,7 @@ m = Healpix.Map("int_map.fits", 1, Int8)
 const mapFileName = tempname()
 print("Saving $mapFileName\n")
 Healpix.saveToFITS(m, "!$mapFileName", "I")
-m2 = Healpix.Map(mapFileName, 1, Int8)
+m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 @test m.pixels == m2.pixels
 
 # Alm creation
@@ -267,7 +276,7 @@ alm = Healpix.Alm{Complex64}(10, 8)
 @test almIndex(alm, 5, 3) == 33
 @test almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
 
-alm = Healpix.Alm("alm.fits", Complex128)
+alm = Healpix.readAlmFromFITS("alm.fits", Complex128)
 @test_approx_eq_eps alm[1] (5.443205775735e+03 + 0.000000000000e+00im) eps
 @test_approx_eq_eps alm[2] (-3.143659646589e+03 + 0.000000000000e+00im) eps
 @test_approx_eq_eps alm[3] (-8.445976910202e-07 + 0.000000000000e+00im) eps

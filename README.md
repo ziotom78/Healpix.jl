@@ -42,7 +42,7 @@ This snippet loads a map named `planck_70GHz.fits` into an array of
 `````julia
 import Healpix
 
-m = Healpix.map("planck_70GHz.fits", 1, Float64)
+m = Healpix.readMapFromFITS("planck_70GHz.fits", 1, Float64)
 print("average: $(mean(m.pixels))\n")
 `````
 
