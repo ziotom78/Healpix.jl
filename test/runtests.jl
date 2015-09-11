@@ -18,6 +18,100 @@ const eps = 1e-10
 @test_throws DomainError Healpix.npix2nside(7)
 @test_throws DomainError Healpix.npix2nside(12 * 8 * 9)
 
+# ang2vec
+
+x, y, z = Healpix.ang2vec(2.556481306546430, 1.573953117024192)
+@test_approx_eq_eps x -0.001743467757429 eps
+@test_approx_eq_eps y 0.552289458399410 eps
+@test_approx_eq_eps z -0.833650594950345 eps
+
+x, y, z = Healpix.ang2vec(0.140282766372135, 0.233893209450599)
+@test_approx_eq_eps x 0.136015928900898 eps
+@test_approx_eq_eps y 0.032406308842171 eps
+@test_approx_eq_eps z 0.990176498525617 eps
+
+x, y, z = Healpix.ang2vec(0.441131335644146, 3.464317397342697)
+@test_approx_eq_eps x -0.404920724073465 eps
+@test_approx_eq_eps y -0.135412016604473 eps
+@test_approx_eq_eps z 0.904269203818714 eps
+
+x, y, z = Healpix.ang2vec(2.339362129743034, 2.415312683457592)
+@test_approx_eq_eps x -0.537491821098482 eps
+@test_approx_eq_eps y 0.477421955393414 eps
+@test_approx_eq_eps z -0.695104897666939 eps
+
+x, y, z = Healpix.ang2vec(2.012884650691451, 0.429579124174392)
+@test_approx_eq_eps x 0.821736466784090 eps
+@test_approx_eq_eps y 0.376447107630774 eps
+@test_approx_eq_eps z -0.427827949430170 eps
+
+x, y, z = Healpix.ang2vec(0.698567538240779, 2.951569899700352)
+@test_approx_eq_eps x -0.631545193788522 eps
+@test_approx_eq_eps y 0.121473570759142 eps
+@test_approx_eq_eps z 0.765764219462911 eps
+
+x, y, z = Healpix.ang2vec(0.602746245881256, 2.363106505915441)
+@test_approx_eq_eps x -0.403624903017147 eps
+@test_approx_eq_eps y 0.398083394409416 eps
+@test_approx_eq_eps z 0.823781857508331 eps
+
+x, y, z = Healpix.ang2vec(3.106081268871312, 4.592838732778776)
+@test_approx_eq_eps x -0.004234399242699 eps
+@test_approx_eq_eps y -0.035250507901764 eps
+@test_approx_eq_eps z -0.999369537036086 eps
+
+x, y, z = Healpix.ang2vec(1.906789620733219, 4.322731382956660)
+@test_approx_eq_eps x -0.358630521788042 eps
+@test_approx_eq_eps y -0.873314025552965 eps
+@test_approx_eq_eps z -0.329707084568277 eps
+
+x, y, z = Healpix.ang2vec(0.637907993514304, 4.877925523463614)
+@test_approx_eq_eps x 0.098130081527976 eps
+@test_approx_eq_eps y -0.587375491097860 eps
+@test_approx_eq_eps z 0.803343338527719 eps
+
+# vec2ang
+
+theta, phi = Healpix.vec2ang(2.479973695958578, 2.540405094768749, 1.360043653263107)
+@test_approx_eq_eps theta 1.204952691410965 eps
+@test_approx_eq_eps phi 0.797434801040588 eps
+
+theta, phi = Healpix.vec2ang(1.095479074939707, 0.898675220740957, 0.147081790022168)
+@test_approx_eq_eps theta 1.467363643308421 eps
+@test_approx_eq_eps phi 0.687026327338059 eps
+
+theta, phi = Healpix.vec2ang(0.576316747680224, 0.592397935683216, 0.829922061194829)
+@test_approx_eq_eps theta 0.783322736466122 eps
+@test_approx_eq_eps phi 0.799157016147229 eps
+
+theta, phi = Healpix.vec2ang(2.502045018710797, 1.228308248258689, 0.292075568023260)
+@test_approx_eq_eps theta 1.466388897914957 eps
+@test_approx_eq_eps phi 0.456358646456269 eps
+
+theta, phi = Healpix.vec2ang(0.784144561032690, 2.203400212521606, 2.645182960828146)
+@test_approx_eq_eps theta 0.723995999159878 eps
+@test_approx_eq_eps phi 1.228893440982002 eps
+
+theta, phi = Healpix.vec2ang(2.313385295284291, 2.310829312494675, 0.909839585819006)
+@test_approx_eq_eps theta 1.299407206361556 eps
+@test_approx_eq_eps phi 0.784845424663175 eps
+
+theta, phi = Healpix.vec2ang(2.028549527136607, 2.806016077249088, 0.732470589106458)
+@test_approx_eq_eps theta 1.362324539502480 eps
+@test_approx_eq_eps phi 0.944847150958497 eps
+
+theta, phi = Healpix.vec2ang(2.806692561465244, 1.750787884540839, 1.617079425838591)
+@test_approx_eq_eps theta 1.116115824440890 eps
+@test_approx_eq_eps phi 0.557729020009978 eps
+
+theta, phi = Healpix.vec2ang(1.973555660995911, 1.086043406239103, 2.959437359715485)
+@test_approx_eq_eps theta 0.650613947401187 eps
+@test_approx_eq_eps phi 0.503071845787347 eps
+
+theta, phi = Healpix.vec2ang(2.922856075911509, 2.304551510739625, 0.874687489108078)
+@test_approx_eq_eps theta 1.339986032596264 eps
+@test_approx_eq_eps phi 0.667663882320130 eps
+
 # ang2pixNest
 
 @test_throws DomainError Healpix.Resolution(0)

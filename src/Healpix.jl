@@ -3,6 +3,7 @@ module Healpix
 export Resolution, nside2npix, npix2nside, normalizeAngle
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export Order, RingOrder, NestedOrder, Map
+export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, saveToFITS, conformables, ringWeightPath, readRingWeights
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
@@ -389,8 +390,9 @@ end
     ang2pixNest(resol::Resolution, theta::Float64, phi::Float64) -> Integer
 
 Return the index of the pixel which contains the point with
-coordinates (`theta`, `phi`), for a Healpix map with pixels in nested
-order. Note that pixel indexes are 1-based (this is Julia)!"""
+coordinates (`theta`, the colatitude, and `phi`, the longitude), in
+radians, for a Healpix map with pixels in nested order. Note that
+pixel indexes are 1-based (this is Julia)!"""
 
 function ang2pixNest(resol::Resolution,
                      theta::Float64,
@@ -475,11 +477,51 @@ end
 ################################################################################
 
 """
+    ang2vec(theta::Real, phi::Real) -> (Float64, Float64, Float64)
+
+Given a direction in the sky with colatitude `theta` and longitude
+`phi` (in radians), return a tuple containing the `x`, `y`, and `z`
+components of the one-length vector pointing to that direction. """
+    
+function ang2vec(theta::Real, phi::Real)
+    if theta < 0 || theta > π
+        throw(DomainError())
+    end
+
+    sintheta = sin(theta)
+    return (sintheta * cos(phi), sintheta * sin(phi), cos(theta))
+end
+
+################################################################################
+
+"""
+    vec2ang(x::Real, y::Real, z::Real) -> (Float64, Float64)
+
+Given a vector (with any length) whose Cartesian components are `x`,
+`y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude
+`theta` and the longitude `phi` (in radians) of the direction in the
+sky the vector is pointing at. """
+    
+function vec2ang(x::Real, y::Real, z::Real)
+    norm = sqrt(x^2 + y^2 + z^2)
+    theta = acos(z / norm)
+    phi = atan2(y, x)
+    if phi < 0
+        phi += 2π
+    end
+
+    return (theta, phi)
+end
+
+################################################################################
+
+"""
     ang2pixRing(resol::Resolution, theta::Float64, phi::Float64) -> Integer
 
 Return the index of the pixel which contains the point with
-coordinates (`theta`, `phi`), for a Healpix map with pixels in ring
-order. Note that pixel indexes are 1-based (this is Julia)!"""
+coordinates (`theta`, the colatitude, and `phi`, the longitude), in
+radians, for a Healpix map with pixels in ring order. Note that pixel
+indexes are 1-based (this is Julia)!"""
 
 function ang2pixRing(resol::Resolution,
                      theta::Float64,
@@ -507,7 +549,7 @@ end
 
 Given the (1-based) index of a pixel in a Healpix map in nested
 order, return a pair containing the (`colatitude`, `longitude`) angles
-corresponding to its center."""
+corresponding to its center, both expressed in radians."""
 
 function pix2angNest(resol::Resolution, pixel::Int)
 
@@ -565,7 +607,7 @@ end
 
 Given the (1-based) index of a pixel in a Healpix map in ring
 order, return a pair containing the (`colatitude`, `longitude`) angles
-corresponding to its center."""
+corresponding to its center, both expressed in radians."""
 
 function pix2angRing(resol::Resolution, pixel::Int)
     const fact1 = 1.5 * resol.nside
@@ -670,7 +712,7 @@ function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
     const nside = parse(Int, value)
 
     value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
-    const ordering = uppercase(strip(value[2:end-1])) == "RING" ? Ring : Nested
+    const ringOrdering = uppercase(strip(value[2:end-1])) == "RING"
 
     const repeat = (FITSIO.fits_get_coltype(f, column))[2]
     const nrows = FITSIO.fits_get_num_rows(f)
@@ -679,7 +721,7 @@ function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
         error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
     end
 
-    if ordering == Ring
+    if ringOrdering
         result = Map{T, RingOrder}(nside, Array(T, nside2npix(nside)))
     else
         result = Map{T, NestedOrder}(nside, Array(T, nside2npix(nside)))
@@ -825,6 +867,42 @@ function readPixelWindowP(fileName :: UTF8String, nside)
     end
 
     pixwinT, pixwinP
+end
+
+################################################################################
+
+"""
+    ang2pix{T, O <: Order}(map::Map{T, O}, theta::Real, phi::Real)
+
+Convert the direction specified by the colatitude `theta` (∈ [0, π])
+and the longitude `phi` (∈ [0, 2π]) into the index of the pixel in the
+Healpix map `map`.
+"""
+    
+function ang2pix{T}(map::Map{T, RingOrder}, theta::Real, phi::Real)
+    ang2pixRing(map.resolution, Float64(theta), Float64(phi))
+end
+
+function ang2pix{T}(map::Map{T, NestedOrder}, theta::Real, phi::Real)
+    ang2pixNest(map.resolution, Float64(theta), Float64(phi))
+end
+
+################################################################################
+
+"""
+    ang2pix{T, O <: Order}(map::Map{T, O}, ipix::Integer) -> (Float64, Float64)
+
+Return the pair (`theta`, `phi`), where `theta` is the colatitude and
+`phi` the longitude of the direction of the pixel center with index
+`ipix`.
+"""
+
+function pix2ang{T}(map::Map{T, RingOrder}, ipix::Integer)
+    pix2angRing(map.resolution, ipix)
+end
+
+function pix2ang{T}(map::Map{T, NestedOrder}, ipix::Integer)
+    pix2angNest(map.resolution, ipix)
 end
 
 ################################################################################
