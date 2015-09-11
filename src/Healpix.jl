@@ -14,7 +14,7 @@ const NSIDE_MAX = 8192
 ########################################################################
 
 function nside2npix(nside::Integer)
-    nsidelog2 = int(log2(nside))
+    nsidelog2 = round(Int, log2(nside))
     if 2^nsidelog2 != nside
         throw(DomainError())
     end
@@ -306,8 +306,8 @@ end
 ################################################################################
 
 function calcNestPosForEquator(z, z_abs, scaled_phi)
-    local jp::Int = ifloor(NSIDE_MAX * (0.5 + scaled_phi - z*0.75))
-    local jm::Int = ifloor(NSIDE_MAX * (0.5 + scaled_phi + z*0.75))
+    local jp::Int = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi - z*0.75))
+    local jm::Int = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi + z*0.75))
 
     local idfp::Int = div(jp, NSIDE_MAX) # in {0,4}
     local idfm::Int = div(jm, NSIDE_MAX)
@@ -330,16 +330,16 @@ end
 ################################################################################
 
 function calcNestPosForPole(z, z_abs, scaled_phi)
-    local ntt::Int = ifloor(scaled_phi)
+    local ntt::Int = floor(Integer, scaled_phi)
     if ntt >= 4
         ntt = 3
     end
 
     local tp::Float64 = scaled_phi - ntt
-    local tmp::Float64 = sqrt (3. * (1. - z_abs)) # in ]0,1]
+    local tmp::Float64 = sqrt(3. * (1. - z_abs)) # in ]0,1]
 
-    local jp::Int = ifloor(NSIDE_MAX * tp * tmp)
-    local jm::Int = ifloor(NSIDE_MAX * (1. - tp) * tmp)
+    local jp::Int = floor(Integer, NSIDE_MAX * tp * tmp)
+    local jm::Int = floor(Integer, NSIDE_MAX * (1. - tp) * tmp)
 
     # Clip jp and jm
     jp = jp < NSIDE_MAX-1 ? jp : NSIDE_MAX-1
@@ -386,7 +386,7 @@ function ang2pixNest(resol::Resolution,
 
     local ipf = ((x2pix[ix_hi + 1] + y2pix[iy_hi + 1]) * (128 * 128)
                  + (x2pix[ix_low + 1] + y2pix[iy_low + 1]))
-    ipf = ifloor(ipf / ((NSIDE_MAX / nside) ^ 2))
+    ipf = floor(Integer, ipf / ((NSIDE_MAX / nside) ^ 2))
 
     # Add 1 to have a 1-based index
     ipf + face_num * nside * nside + 1
@@ -400,8 +400,8 @@ function calcRingPosForEquator(resol::Resolution,
                                z_abs::Float64,
                                tt::Float64)
 
-    const jp = ifloor(resol.nside * (0.5 + tt - z * 0.75))
-    const jm = ifloor(resol.nside * (0.5 + tt + z * 0.75))
+    const jp = floor(Integer, resol.nside * (0.5 + tt - z * 0.75))
+    const jm = floor(Integer, resol.nside * (0.5 + tt + z * 0.75))
 
     const ir = resol.nside + 1 + jp - jm
     const kshift = (mod(ir, 2) == 0) ? 1 : 0
@@ -426,11 +426,11 @@ function calcRingPosForPole(resol::Resolution,
     const tp = tt - floor(tt)
     const tmp = sqrt(3. * (1. - z_abs))
 
-    jp = ifloor(resol.nside * tp * tmp )
-    jm = ifloor(resol.nside * (1. - tp) * tmp)
+    jp = floor(Integer, resol.nside * tp * tmp )
+    jm = floor(Integer, resol.nside * (1. - tp) * tmp)
 
     ir = jp + jm + 1
-    ip = ifloor(tt * ir) + 1
+    ip = floor(Integer, tt * ir) + 1
     if ip > 4 * ir
 	ip -= 4 * ir
     end
@@ -472,7 +472,7 @@ function pix2angNest(resol::Resolution, pixel::Int)
     const jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
     const jpll = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
 
-    const floatNside = float64(resol.nside)
+    const floatNside = Float64(resol.nside)
     const fact1 = 1. / (3.0 * floatNside^2)
     const fact2 = 2. / (3.0 * floatNside)
 
@@ -492,7 +492,7 @@ function pix2angNest(resol::Resolution, pixel::Int)
     const jr = jrll[faceNum+1] * resol.nside - jrt - 1
     local nr = resol.nside # Equatorial region (the most frequent)
     const z = (2resol.nside - jr) * fact2
-    local kshift = int(mod(jr - resol.nside, 2))
+    local kshift = Int(mod(jr - resol.nside, 2))
     if jr < resol.nside
         # North polar cap
 	nr = jr
@@ -526,31 +526,31 @@ function pix2angRing(resol::Resolution, pixel::Int)
         # North Polar cap
 	const hip   = pixel / 2
 	const fihip = floor(hip)
-	const iring = ifloor(sqrt(hip - sqrt(fihip))) + 1 # counted from North pole
+	const iring = floor(Integer, sqrt(hip - sqrt(fihip))) + 1 # counted from North pole
 	const iphi  = pixel - 2*iring*(iring - 1)
 
 	return (acos(1.0 - iring^2 / fact2),
-                (float64(iphi) - 0.5) * π / (2iring))
+                (Float64(iphi) - 0.5) * π / (2iring))
     elseif pixel <= resol.nsideTimesTwo * (5resol.nside + 1)
         # Equatorial region
 
 	const ip    = pixel - resol.ncap - 1
         # iring counts from the North pole
-	const iring = ifloor(ip / resol.nsideTimesFour) + resol.nside
-	const iphi  = int(mod(ip, resol.nsideTimesFour)) + 1
+	const iring = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
+	const iphi  = Int(mod(ip, resol.nsideTimesFour)) + 1
 
         # 1 if iring + resol.nside is odd, 1/2 otherwise
-	const fodd = 0.5 * (1 + mod(float64(iring + resol.nside), 2))
-	return (acos( (resol.nsideTimesTwo - iring) / fact1),
-                (float64(iphi) - fodd) * π / (2resol.nside))
+	const fodd = 0.5 * (1 + mod(Float64(iring + resol.nside), 2))
+	return (acos((resol.nsideTimesTwo - iring) / fact1),
+                (Float64(iphi) - fodd) * π / (2resol.nside))
     else
         # South Polar cap -----------------------------------
 
 	const ip = resol.numOfPixels - pixel + 1
 	const hip = ip / 2
 	const fihip = floor(hip)
-	const iring = ifloor(sqrt(hip - sqrt(fihip))) + 1 # counted from South pole
-	const iphi = int(4. * iring + 1 - (ip - 2. * iring * (iring - 1)))
+	const iring = floor(Integer, sqrt(hip - sqrt(fihip))) + 1 # counted from South pole
+	const iphi = Int(4. * iring + 1 - (ip - 2. * iring * (iring - 1)))
 
 	return (acos(-1. + iring^2 / fact2),
                 (float(iphi) - 0.5) * π / (2iring))
@@ -589,7 +589,7 @@ end
 
 function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile, column :: Integer, t :: Type{T})
     value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
-    const nside = int(value)
+    const nside = parse(Int, value)
 
     value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
     const ordering = uppercase(strip(value[2:end-1])) == "RING" ? Ring : Nested
@@ -770,7 +770,7 @@ function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
     FITSIO.fits_read_col(f, 2, 1, 1, almReal)
     FITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
-    l = int64(floor(sqrt(idx - 1)))
+    l = floor(Int64, sqrt(idx - 1))
     m = idx - l.^2 - l - 1
     if count(x -> x < 0, m) > 0
         throw(DomainError())
