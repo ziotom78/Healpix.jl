@@ -482,7 +482,7 @@ end
 Given a direction in the sky with colatitude `theta` and longitude
 `phi` (in radians), return a tuple containing the `x`, `y`, and `z`
 components of the one-length vector pointing to that direction. """
-    
+
 function ang2vec(theta::Real, phi::Real)
     if theta < 0 || theta > π
         throw(DomainError())
@@ -501,7 +501,7 @@ Given a vector (with any length) whose Cartesian components are `x`,
 `y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude
 `theta` and the longitude `phi` (in radians) of the direction in the
 sky the vector is pointing at. """
-    
+
 function vec2ang(x::Real, y::Real, z::Real)
     norm = sqrt(x^2 + y^2 + z^2)
     theta = acos(z / norm)
@@ -613,38 +613,55 @@ function pix2angRing(resol::Resolution, pixel::Int)
     const fact1 = 1.5 * resol.nside
     const fact2 = 3.0 * resol.pixelsPerFace
 
+    # Any reference to equations in this routine refers to Gorski et al. (2005)
+
     if pixel <= resol.ncap
         # North Polar cap
-	const hip   = pixel / 2
-	const fihip = floor(hip)
-	const iring = floor(Integer, sqrt(hip - sqrt(fihip))) + 1 # counted from North pole
-	const iphi  = pixel - 2*iring*(iring - 1)
 
-	return (acos(1.0 - iring^2 / fact2),
-                (Float64(iphi) - 0.5) * π / (2iring))
+	const p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
+	const floor_p_h = floor(p_h)
+        # Eq. (2)
+	const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
+        # Eq. (3)
+	const j  = pixel - 2i*(i - 1)
+
+        # Colatitude: Eq. (4); longitude: Eq. (5)
+	return (acos(1.0 - i^2 / fact2),
+                (Float64(j) - 0.5) * π / (2i))
     elseif pixel <= resol.nsideTimesTwo * (5resol.nside + 1)
-        # Equatorial region
+        # Equatorial belt
 
+        # Zero-based index for pixels in the equatorial region
 	const ip    = pixel - resol.ncap - 1
-        # iring counts from the North pole
-	const iring = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
-	const iphi  = Int(mod(ip, resol.nsideTimesFour)) + 1
+        # Eq. (6) - ring counts from the North pole; resol.nside is
+        # the number of pixels in the North Polar ring
+	const i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
+        # Eq. (7) - zero-based index of the pixel within this ring
+	const j  = Int(mod(ip, resol.nsideTimesFour)) + 1
 
-        # 1 if iring + resol.nside is odd, 1/2 otherwise
-	const fodd = 0.5 * (1 + mod(Float64(iring + resol.nside), 2))
-	return (acos((resol.nsideTimesTwo - iring) / fact1),
-                (Float64(iphi) - fodd) * π / (2resol.nside))
+        # Eq. (9) - this equals 1 if i + resol.nside is odd, 1/2
+        # otherwise. It is used to convert j into a longitude (since
+        # pixel centers in odd rings are shifted with respect to
+        # centers in even rings)
+	const s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
+
+        # Colatitude: Eq. (8) in disguise, latitude: Eq. (9)
+	return (acos((resol.nsideTimesTwo - i) / fact1),
+                (Float64(j) - s_half) * π / (2resol.nside))
     else
-        # South Polar cap -----------------------------------
+        # South Polar cap
+
+        # The pixels in this cap are handled like the ones in the
+        # North Polar cap, except that we must flip the value of "ip".
 
 	const ip = resol.numOfPixels - pixel + 1
-	const hip = ip / 2
-	const fihip = floor(hip)
-	const iring = floor(Integer, sqrt(hip - sqrt(fihip))) + 1 # counted from South pole
-	const iphi = Int(4. * iring + 1 - (ip - 2. * iring * (iring - 1)))
+	const p_h = ip / 2
+	const floor_p_h = floor(p_h)
+	const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
+	const j = Int(4. * i + 1 - (ip - 2. * i * (i - 1)))
 
-	return (acos(-1. + iring^2 / fact2),
-                (float(iphi) - 0.5) * π / (2iring))
+	return (acos(-1. + i^2 / fact2),
+                (float(j) - 0.5) * π / (2i))
     end
 end
 
@@ -755,9 +772,9 @@ end
 
 """
     saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
-                                        f::FITSIO.FITSFile, 
+                                        f::FITSIO.FITSFile,
                                         column::Integer)
-    saveToFITS{T <: Number, O <: Order}(map::Map{T, O}, 
+    saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
                                         fileName::String,
                                         typechar="D",
                                         unit="",
@@ -773,7 +790,7 @@ function saveToFITS{T <: Number}(map :: Map{T, RingOrder},
 
     FITSIO.fits_update_key(f, "ORDERING", "RING")
     savePixelsToFITS(map, f, column)
-    
+
 end
 
 function saveToFITS{T <: Number}(map :: Map{T, NestedOrder},
@@ -812,7 +829,7 @@ shape and ordering are the same."""
 
 conformables{T, S}(map1::Map{T, RingOrder}, map2::Map{S, RingOrder}) =
     map1.resolution.nside == map2.resolution.nside
-    
+
 conformables{T, S}(map1::Map{T, NestedOrder}, map2::Map{S, NestedOrder}) =
     map1.resolution.nside == map2.resolution.nside
 
@@ -878,7 +895,7 @@ Convert the direction specified by the colatitude `theta` (∈ [0, π])
 and the longitude `phi` (∈ [0, 2π]) into the index of the pixel in the
 Healpix map `map`.
 """
-    
+
 function ang2pix{T}(map::Map{T, RingOrder}, theta::Real, phi::Real)
     ang2pixRing(map.resolution, Float64(theta), Float64(phi))
 end
