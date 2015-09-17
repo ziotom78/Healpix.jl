@@ -291,7 +291,7 @@ function Resolution(nside::Uint32)
     order          = ((nside & (nside - 1)) != 0) ? -1 : ilog2(nside)
     pixelsPerFace  = nside * nside
     numOfPixels    = 12 * pixelsPerFace
-    ncap           = 2 * (pixelsPerFace - nside)
+    ncap           = 2 * nside * (nside - 1)
     fact2          = 4.0 / numOfPixels
     fact1          = 2 * nside * fact2
 
