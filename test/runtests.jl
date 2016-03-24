@@ -3,12 +3,12 @@ using Base.Test
 
 const eps = 1e-10
 
-@test Healpix.ilog2(convert(Uint32, 1)) == 0
-@test Healpix.ilog2(convert(Uint32, 6)) == 2
-@test Healpix.ilog2(convert(Uint32, 1023)) == 9
-@test Healpix.ilog2(convert(Uint32, 1024)) == 10
-@test Healpix.ilog2(convert(Uint32, 8194)) == 13
-@test Healpix.ilog2(convert(Uint32, 131124)) == 17
+@test Healpix.ilog2(convert(UInt32, 1)) == 0
+@test Healpix.ilog2(convert(UInt32, 6)) == 2
+@test Healpix.ilog2(convert(UInt32, 1023)) == 9
+@test Healpix.ilog2(convert(UInt32, 1024)) == 10
+@test Healpix.ilog2(convert(UInt32, 8194)) == 13
+@test Healpix.ilog2(convert(UInt32, 131124)) == 17
 
 # nside2npix and npix2nside
 

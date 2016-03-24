@@ -222,7 +222,7 @@ const pix2y = [
 
 ################################################################################
 
-function ilog2(argument::Uint32)
+function ilog2(argument::UInt32)
 
     local result = 0
     local shifted_argument = argument
@@ -261,14 +261,14 @@ pixel-related functions, e.g., convert a direction into a pixel number
 and vice versa."""
 
 immutable Resolution
-    nside          :: Uint32
-    nsideTimesTwo  :: Uint32
-    nsideTimesFour :: Uint32
-    numOfPixels    :: Uint32
+    nside          :: UInt32
+    nsideTimesTwo  :: UInt32
+    nsideTimesFour :: UInt32
+    numOfPixels    :: UInt32
 
-    order          :: Uint32
-    pixelsPerFace  :: Uint32
-    ncap           :: Uint32
+    order          :: UInt32
+    pixelsPerFace  :: UInt32
+    ncap           :: UInt32
     fact2          :: Float64
     fact1          :: Float64
 end
@@ -276,12 +276,12 @@ end
 ################################################################################
 
 """
-    Resolution(nside::Uint32) -> Resolution
+    Resolution(nside::UInt32) -> Resolution
     Resolution(nside::Int) -> Resolution
 
 Create a `Resolution` object, given a value for `NSIDE`."""
 
-function Resolution(nside::Uint32)
+function Resolution(nside::UInt32)
     if nside > NSIDE_MAX || nside < 1
         throw(DomainError())
     end
@@ -310,7 +310,7 @@ end
 ################################################################################
 
 function Resolution(nside::Int)
-    Resolution(convert(Uint32, nside))
+    Resolution(convert(UInt32, nside))
 end
 
 ################################################################################
@@ -748,7 +748,7 @@ function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
     result
 end
 
-function readMapFromFITS{T <: Number}(fileName :: String,
+function readMapFromFITS{T <: Number}(fileName :: AbstractString,
                                       column :: Integer,
                                       t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
@@ -803,7 +803,7 @@ function saveToFITS{T <: Number}(map :: Map{T, NestedOrder},
 end
 
 function saveToFITS{T <: Number, O <: Order}(map :: Map{T, O},
-                                             fileName :: String,
+                                             fileName :: AbstractString,
                                              typechar="D",
                                              unit="",
                                              extname="MAP")
@@ -1005,7 +1005,7 @@ function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
     result.alm = complex(almReal[i], almImag[i])
 end
 
-function readAlmFromFITS{T <: Complex}(fileName :: String,
+function readAlmFromFITS{T <: Complex}(fileName :: AbstractString,
                                        t :: Type{T})
     f = FITSIO.fits_open_table(fileName)
     try
