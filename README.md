@@ -17,10 +17,11 @@ trivial, as one has to re-implement the algorithm instead of just
 figuring out how to implement a binding to some C/C++/Fortran
 function.
 
-The mweastwood/LibHealpix.jl library by @mweastwood provides straight
-bindings to the original C++ library. For the reasons stated above, it
-is able to provide a much wider set of functions (e.g., computation of
-spherical harmonics, visualization…).
+The
+[mweastwood/LibHealpix.jl](https://github.com/mweastwood/LibHealpix.jl)
+library provides straight bindings to the original C++ library. For
+the reasons stated above, it is able to provide a much wider set of
+functions (e.g., computation of spherical harmonics, visualization…).
 
 ## Installation
 
