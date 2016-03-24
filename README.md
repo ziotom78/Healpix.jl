@@ -6,6 +6,22 @@
 A set of Julia functions that implement the Healpix spherical
 projection.
 
+The purpose of this package is to implement a Julia-only library,
+instead of providing bindings to the original implementation of the
+[C/C++/Fortran Healpix library](http://healpix.jpl.nasa.gov/). This
+should make the package easier to port to those architecture which are
+not supported by the original implementation (e.g., Windows).
+
+Of course, this mean that implementing new features is generally not
+trivial, as one has to re-implement the algorithm instead of just
+figuring out how to implement a binding to some C/C++/Fortran
+function.
+
+The mweastwood/LibHealpix.jl library by @mweastwood provides straight
+bindings to the original C++ library. For the reasons stated above, it
+is able to provide a much wider set of functions (e.g., computation of
+spherical harmonics, visualization…).
+
 ## Installation
 
 From the Julia REPL, run
@@ -73,4 +89,3 @@ functions in pure Julia.
 > CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 > TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 > SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
