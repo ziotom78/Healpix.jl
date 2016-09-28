@@ -838,11 +838,11 @@ conformables{T, S, O1 <: Order, O2 <: Order}(map1::Map{T, O1},
 
 ################################################################################
 
-function ringWeightPath(datadir :: UTF8String, nside)
+function ringWeightPath(datadir :: String, nside)
     @sprintf("%s/weight_ring_n%05d.fits", datadir, nside)
 end
 
-function readWeightRing(fileName :: UTF8String, nside)
+function readWeightRing(fileName :: String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         weights = Array(Float64, 2 * nside)
@@ -856,11 +856,11 @@ end
 
 ################################################################################
 
-function pixelWindowPath(datadir :: UTF8String, nside)
+function pixelWindowPath(datadir :: String, nside)
     @sprintf("%s/pixel_window_n%04d.fits", datadir, nside)
 end
 
-function readPixelWindowT(fileName :: UTF8String, nside)
+function readPixelWindowT(fileName :: String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         pixwin = Array(Float64, FITSIO.fits_get_num_rows(f))
@@ -872,7 +872,7 @@ function readPixelWindowT(fileName :: UTF8String, nside)
     pixwin
 end
 
-function readPixelWindowP(fileName :: UTF8String, nside)
+function readPixelWindowP(fileName :: String, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         pixwinT = Array(Float64, FITSIO.fits_get_num_rows(f))
