@@ -31,6 +31,13 @@ From the Julia REPL, run
 Pkg.clone("https://github.com/ziotom78/Healpix.jl")
 ````
 
+If you are using Julia 0.5, this is enough. If you use Julia 0.6, you should
+switch to the branch named `julia06`:
+
+`````julia
+Pkg.checkout("Healpix", "julia06")
+`````
+
 ## Usage examples
 
 Here are some code snippets that show how to use `Healpix.jl`. It is
