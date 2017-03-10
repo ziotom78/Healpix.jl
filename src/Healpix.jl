@@ -670,7 +670,7 @@ end
 "Abstract type representing the ordering of pixels in a Healpix map.
 See also `RingOrder` and `NestedOrder`."
 
-abstract Order
+abstract type Order end
 
 """The `RingOrder` type should be used when creating `Map` types in
 order to specify that the pixels in the map are sorted in ring
@@ -696,18 +696,18 @@ type Map{T, O <: Order}
     """
     Map{T, O <: Order}(nside::Integer) -> Map{T, O}
 
-Create an empty map with the specified NSIDE."""
-    Map(nside::Integer) = new(Array(T, nside2npix(nside)),
-                                Resolution(nside))
+    Create an empty map with the specified NSIDE."""
+    Map{T, O}(nside::Integer) where {T, O <: Order} = new(Array{T}(nside2npix(nside)),
+                                                          Resolution(nside))
 
     "Create a map with the specified NSIDE and initialize the value of
     its pixels using the values in arr."
-    function Map{T}(nside :: Integer, arr :: Array{T})
+    function Map{T, O}(nside :: Integer, arr :: Array{T}) where {T, O <: Order}
         if nside2npix(nside) != length(arr)
             throw(DomainError())
         end
 
-        new(arr, Resolution(nside))
+        new{T, O}(arr, Resolution(nside))
     end
 end
 
@@ -739,9 +739,9 @@ function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
     end
 
     if ringOrdering
-        result = Map{T, RingOrder}(nside, Array(T, nside2npix(nside)))
+        result = Map{T, RingOrder}(nside, Array{T}(nside2npix(nside)))
     else
-        result = Map{T, NestedOrder}(nside, Array(T, nside2npix(nside)))
+        result = Map{T, NestedOrder}(nside, Array{T}(nside2npix(nside)))
     end
     FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
@@ -932,10 +932,10 @@ type Alm{T <: Number}
     mmax :: Int
     tval :: Int
 
-    Alm(lmax, mmax) = new(Array(T, numberOfAlms(lmax, mmax)),
-                          lmax, mmax, 2 * lmax + 1)
+    Alm{T}(lmax, mmax) where {T <: Number} = new(Array{T}(numberOfAlms(lmax, mmax)),
+                                                 lmax, mmax, 2 * lmax + 1)
 
-    function Alm(lmax :: Integer, mmax :: Integer, arr :: Array{T})
+    function Alm{T}(lmax :: Integer, mmax :: Integer, arr :: Array{T}) where {T <: Number}
         if numberOfAlms(lmax, mmax) != length(arr)
             throw(DomainError())
         end
@@ -986,15 +986,15 @@ function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
                                        t :: Type{T})
     const numOfRows = FITSIO.fits_get_num_rows(f)
 
-    idx = Array(Int64, numOfRows)
-    almReal = Array(Float64, numOfRows)
-    almImag = Array(Float64, numOfRows)
+    idx = Array{Int64}(numOfRows)
+    almReal = Array{Float64}(numOfRows)
+    almImag = Array{Float64}(numOfRows)
 
     FITSIO.fits_read_col(f, 1, 1, 1, idx)
     FITSIO.fits_read_col(f, 2, 1, 1, almReal)
     FITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
-    l = floor(Int64, sqrt(idx - 1))
+    l = floor.(Int64, sqrt.(idx - 1))
     m = idx - l.^2 - l - 1
     if count(x -> x < 0, m) > 0
         throw(DomainError())
@@ -1002,7 +1002,7 @@ function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
 
     result = Alm{T}(maximum(l), maximum(m))
     i = almIndex(result, l, m)
-    result.alm = complex(almReal[i], almImag[i])
+    result.alm = complex.(almReal[i], almImag[i])
 end
 
 function readAlmFromFITS{T <: Complex}(fileName :: AbstractString,
