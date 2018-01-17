@@ -19,7 +19,8 @@ const NSIDE_MAX = 8192
 
 Return the number of pixels for a Healpix map with the specified
 `NSIDE` value. If `NSIDE` is not an integer power of two, the function
-throws a `DomainError` exception."""
+throws a `DomainError` exception.
+"""
 
 function nside2npix(nside::Integer)
     nsidelog2 = round(Int, log2(nside))
@@ -37,7 +38,8 @@ end
 
 Given the number of pixels in a Healpix map, return the `NSIDE`
 resolution parameter. If the number is invalid, throw a `DomainError`
-exception."""
+exception.
+"""
 
 function npix2nside(npix::Integer)
     if npix % 12 != 0
@@ -258,7 +260,8 @@ end
 
 """`Resolution` objects are needed to perform a number of
 pixel-related functions, e.g., convert a direction into a pixel number
-and vice versa."""
+and vice versa.
+"""
 
 immutable Resolution
     nside          :: UInt32
@@ -279,7 +282,8 @@ end
     Resolution(nside::UInt32) -> Resolution
     Resolution(nside::Int) -> Resolution
 
-Create a `Resolution` object, given a value for `NSIDE`."""
+Create a `Resolution` object, given a value for `NSIDE`.
+"""
 
 function Resolution(nside::UInt32)
     if nside > NSIDE_MAX || nside < 1
@@ -392,7 +396,8 @@ end
 Return the index of the pixel which contains the point with
 coordinates (`theta`, the colatitude, and `phi`, the longitude), in
 radians, for a Healpix map with pixels in nested order. Note that
-pixel indexes are 1-based (this is Julia)!"""
+pixel indexes are 1-based (this is Julia)!
+"""
 
 function ang2pixNest(resol::Resolution,
                      theta::Float64,
@@ -481,7 +486,8 @@ end
 
 Given a direction in the sky with colatitude `theta` and longitude
 `phi` (in radians), return a tuple containing the `x`, `y`, and `z`
-components of the one-length vector pointing to that direction. """
+components of the one-length vector pointing to that direction.
+"""
 
 function ang2vec(theta::Real, phi::Real)
     if theta < 0 || theta > π
@@ -500,7 +506,8 @@ end
 Given a vector (with any length) whose Cartesian components are `x`,
 `y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude
 `theta` and the longitude `phi` (in radians) of the direction in the
-sky the vector is pointing at. """
+sky the vector is pointing at.
+"""
 
 function vec2ang(x::Real, y::Real, z::Real)
     norm = sqrt(x^2 + y^2 + z^2)
@@ -521,7 +528,8 @@ end
 Return the index of the pixel which contains the point with
 coordinates (`theta`, the colatitude, and `phi`, the longitude), in
 radians, for a Healpix map with pixels in ring order. Note that pixel
-indexes are 1-based (this is Julia)!"""
+indexes are 1-based (this is Julia)!
+"""
 
 function ang2pixRing(resol::Resolution,
                      theta::Float64,
@@ -549,7 +557,8 @@ end
 
 Given the (1-based) index of a pixel in a Healpix map in nested
 order, return a pair containing the (`colatitude`, `longitude`) angles
-corresponding to its center, both expressed in radians."""
+corresponding to its center, both expressed in radians.
+"""
 
 function pix2angNest(resol::Resolution, pixel::Int)
 
@@ -607,7 +616,8 @@ end
 
 Given the (1-based) index of a pixel in a Healpix map in ring
 order, return a pair containing the (`colatitude`, `longitude`) angles
-corresponding to its center, both expressed in radians."""
+corresponding to its center, both expressed in radians.
+"""
 
 function pix2angRing(resol::Resolution, pixel::Int)
     const fact1 = 1.5 * resol.nside
@@ -667,27 +677,31 @@ end
 
 ################################################################################
 
-"Abstract type representing the ordering of pixels in a Healpix map.
-See also `RingOrder` and `NestedOrder`."
+"""Abstract type representing the ordering of pixels in a Healpix map.
+See also `RingOrder` and `NestedOrder`.
+"""
 
 abstract type Order end
 
 """The `RingOrder` type should be used when creating `Map` types in
 order to specify that the pixels in the map are sorted in ring
-ordering. (See also `NestedOrder`.)"""
+ordering. (See also `NestedOrder`.)
+"""
 
 type RingOrder <: Order end
 
 """The `NestedOrder` type should be used when creating `Map` types in
 order to specify that the pixels in the map are sorted in ring
-ordering. (See also `RingOrder`.)"""
+ordering. (See also `RingOrder`.)
+"""
 
 type NestedOrder <: Order end
 
 """A Healpix map. The type `T` is used for the value of the pixels in
 a map, and it can be anything (even a string!). The type `O` is used
 to specify the ordering of the pixels, and it can either be
-`RingOrder` or `NestedOrder`."""
+`RingOrder` or `NestedOrder`.
+"""
 
 type Map{T, O <: Order}
     pixels :: Array{T}
@@ -696,12 +710,14 @@ type Map{T, O <: Order}
     """
     Map{T, O <: Order}(nside::Integer) -> Map{T, O}
 
-    Create an empty map with the specified NSIDE."""
+    Create an empty map with the specified NSIDE.
+    """
     Map{T, O}(nside::Integer) where {T, O <: Order} = new(Array{T}(nside2npix(nside)),
                                                           Resolution(nside))
 
-    "Create a map with the specified NSIDE and initialize the value of
-    its pixels using the values in arr."
+    """Create a map with the specified NSIDE and initialize the value of
+    its pixels using the values in arr.
+    """
     function Map{T, O}(nside :: Integer, arr :: Array{T}) where {T, O <: Order}
         if nside2npix(nside) != length(arr)
             throw(DomainError())
@@ -720,7 +736,8 @@ end
 Read a Healpix map from the specified (1-base indexed) column in a
 FITS file. The values will be read as numbers of type T. If the code
 fails, FITSIO will raise an exception. (Refer to the FITSIO library
-for more information.)"""
+for more information.)
+"""
 
 function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
                                       column :: Integer,
@@ -782,7 +799,8 @@ end
 
 Save a Healpix map in the specified (1-based index) column in a FITS
 file. If the code fails, FITSIO will raise an exception. (Refer to the
-FITSIO library for more information.)"""
+FITSIO library for more information.)
+"""
 
 function saveToFITS{T <: Number}(map :: Map{T, RingOrder},
                                  f :: FITSIO.FITSFile,
@@ -825,7 +843,8 @@ end
                                                  map2::Map{S, O2}) -> Bool
 
 Determine if two Healpix maps are "conformables", i.e., if their
-shape and ordering are the same."""
+shape and ordering are the same.
+"""
 
 conformables{T, S}(map1::Map{T, RingOrder}, map2::Map{S, RingOrder}) =
     map1.resolution.nside == map2.resolution.nside
@@ -924,7 +943,7 @@ end
 
 ################################################################################
 
-"""An array of a_ℓm numbers."""
+"An array of a_ℓm numbers."
 
 type Alm{T <: Number}
     alm :: Array{T}
@@ -954,7 +973,8 @@ Return the size of the array of complex numbers needed to store the
 a_lm coefficients in the range of ℓ and m specified by `lmax` and
 `mmax`. If `mmax` is not specified, it is assumed to be equal to
 `lmax`. If `lmax` and `mmax` are inconsistent or negative, a
-`DomainError` exception is thrown."""
+`DomainError` exception is thrown.
+"""
 
 function numberOfAlms(lmax :: Integer, mmax :: Integer)
     if mmax < 0 || lmax < 0 || mmax > lmax
@@ -980,7 +1000,8 @@ almIndex{T}(alm :: Alm{T}, l, m) = almIndexL0(alm, m) .+ l
 
 Read a set of a_ℓm coefficients from a FITS file. If the code fails,
 FITSIO will raise an exception. (Refer to the FITSIO library for more
-information.)"""
+information.)
+"""
 
 function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
                                        t :: Type{T})
