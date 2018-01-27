@@ -15,41 +15,35 @@ const NSIDE_MAX = 8192
 ########################################################################
 
 """
-    nside2npix(nside::Integer) -> Integer
+    nside2npix(nside) -> Integer
 
 Return the number of pixels for a Healpix map with the specified
 `NSIDE` value. If `NSIDE` is not an integer power of two, the function
 throws a `DomainError` exception.
 """
 
-function nside2npix(nside::Integer)
+function nside2npix(nside)
     nsidelog2 = round(Int, log2(nside))
-    if 2^nsidelog2 != nside
-        throw(DomainError())
-    end
+    (2^nsidelog2 == nside) || throw(DomainError())
 
-    12 * nside * nside
+    12(nside^2)
 end
 
 ########################################################################
 
 """
-    npix2nside(nside::Integer) -> Integer
+    npix2nside(nside) -> Integer
 
 Given the number of pixels in a Healpix map, return the `NSIDE`
 resolution parameter. If the number is invalid, throw a `DomainError`
 exception.
 """
 
-function npix2nside(npix::Integer)
-    if npix % 12 != 0
-        throw(DomainError())
-    end
+function npix2nside(npix)
+    (npix % 12 == 0) || throw(DomainError())
 
-    square_root::Float64 = sqrt(npix / 12)
-    if square_root*square_root != npix/12
-        throw(DomainError())
-    end
+    square_root = sqrt(npix / 12)
+    (square_root^2 == npix / 12) || throw(DomainError())
 
     convert(Int, round(square_root))
 end
@@ -224,33 +218,33 @@ const pix2y = [
 
 ################################################################################
 
-function ilog2(argument::UInt32)
+function ilog2(argument)
 
     local result = 0
     local shifted_argument = argument
 
     while shifted_argument > 0x0000FFFF
-	result += 16
-	shifted_argument >>= 16
+        result += 16
+        shifted_argument >>= 16
     end
 
     if shifted_argument > 0x000000FF
-	result |= 8
-	shifted_argument >>= 8
+        result |= 8
+        shifted_argument >>= 8
     end
 
     if shifted_argument > 0x0000000F
-	result |= 4
-	shifted_argument >>= 4
+        result |= 4
+        shifted_argument >>= 4
     end
 
     if shifted_argument > 0x00000003
-	result |= 2
-	shifted_argument>>=2
+        result |= 2
+        shifted_argument>>=2
     end
 
     if shifted_argument > 0x00000001
-	result |= 1
+        result |= 1
     end
 
     result
@@ -258,50 +252,49 @@ end
 
 ################################################################################
 
-"""`Resolution` objects are needed to perform a number of
+"""
+`Resolution` objects are needed to perform a number of
 pixel-related functions, e.g., convert a direction into a pixel number
 and vice versa.
 """
 
-immutable Resolution
-    nside          :: UInt32
-    nsideTimesTwo  :: UInt32
-    nsideTimesFour :: UInt32
-    numOfPixels    :: UInt32
+struct Resolution
+    nside
+    nsideTimesTwo
+    nsideTimesFour
+    numOfPixels
 
-    order          :: UInt32
-    pixelsPerFace  :: UInt32
-    ncap           :: UInt32
-    fact2          :: Float64
-    fact1          :: Float64
+    order
+    pixelsPerFace
+    ncap
+    fact2
+    fact1
 end
 
 ################################################################################
 
 """
-    Resolution(nside::UInt32) -> Resolution
-    Resolution(nside::Int) -> Resolution
+    Resolution(nside) -> Resolution
 
 Create a `Resolution` object, given a value for `NSIDE`.
 """
 
-function Resolution(nside::UInt32)
-    if nside > NSIDE_MAX || nside < 1
-        throw(DomainError())
-    end
-
-    # The expression (nside & (nside - 1)) != 0 is a quick check for
+function Resolution(nside)
+    (1 ≤ nside ≤ NSIDE_MAX) || throw(DomainError())
+    # The expression (nside & (nside - 1)) == 0 is a quick check for
     # detecting if nside is a power of two or not
-    order          = ((nside & (nside - 1)) != 0) ? -1 : ilog2(nside)
-    pixelsPerFace  = nside * nside
-    numOfPixels    = 12 * pixelsPerFace
-    ncap           = 2 * nside * (nside - 1)
-    fact2          = 4.0 / numOfPixels
-    fact1          = 2 * nside * fact2
+    (nside & (nside - 1) == 0) || throw(DomainError())
+    
+    order          = ilog2(nside)
+    pixelsPerFace  = nside^2
+    numOfPixels    = 12pixelsPerFace
+    ncap           = 2nside * (nside - 1)
+    fact2          = 4 / numOfPixels
+    fact1          = 2nside * fact2
 
     result = Resolution(nside,
-                        2 * nside,
-                        4 * nside,
+                        2nside,
+                        4nside,
                         numOfPixels,
                         order,
                         pixelsPerFace,
@@ -313,14 +306,8 @@ end
 
 ################################################################################
 
-function Resolution(nside::Int)
-    Resolution(convert(UInt32, nside))
-end
-
-################################################################################
-
 # Return the same angle as the argument, but in the range [0, 2π)
-function normalizeAngle(x::Float64)
+function normalizeAngle(x)
     while x >= 2π
         x -= 2π
     end
@@ -335,13 +322,13 @@ end
 ################################################################################
 
 function calcNestPosForEquator(z, z_abs, scaled_phi)
-    local jp::Int = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi - z*0.75))
-    local jm::Int = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi + z*0.75))
+    jp = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi - z * 0.75))
+    jm = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi + z * 0.75))
 
-    local idfp::Int = div(jp, NSIDE_MAX) # in {0,4}
-    local idfm::Int = div(jm, NSIDE_MAX)
+    idfp = div(jp, NSIDE_MAX) # in {0,4}
+    idfm = div(jm, NSIDE_MAX)
 
-    local face_num::Int
+    local face_num
     if idfp == idfm
         face_num = (idfp % 4) + 4
     elseif idfp < idfm
@@ -350,8 +337,8 @@ function calcNestPosForEquator(z, z_abs, scaled_phi)
         face_num = (idfm % 4) + 8
     end
 
-    local ix::Int = mod(jm, NSIDE_MAX)
-    local iy::Int = NSIDE_MAX - mod(jp, NSIDE_MAX) - 1
+    ix = mod(jm, NSIDE_MAX)
+    iy = NSIDE_MAX - mod(jp, NSIDE_MAX) - 1
 
     (ix, iy, face_num)
 end
@@ -359,30 +346,30 @@ end
 ################################################################################
 
 function calcNestPosForPole(z, z_abs, scaled_phi)
-    local ntt::Int = floor(Integer, scaled_phi)
+    ntt = floor(Integer, scaled_phi)
     if ntt >= 4
         ntt = 3
     end
 
-    local tp::Float64 = scaled_phi - ntt
-    local tmp::Float64 = sqrt(3. * (1. - z_abs)) # in ]0,1]
+    tp = scaled_phi - ntt
+    tmp = sqrt(3 * (1 - z_abs)) # in ]0,1]
 
-    local jp::Int = floor(Integer, NSIDE_MAX * tp * tmp)
-    local jm::Int = floor(Integer, NSIDE_MAX * (1. - tp) * tmp)
+    jp = floor(Integer, NSIDE_MAX * tp * tmp)
+    jm = floor(Integer, NSIDE_MAX * (1 - tp) * tmp)
 
     # Clip jp and jm
-    jp = jp < NSIDE_MAX-1 ? jp : NSIDE_MAX-1
-    jm = jm < NSIDE_MAX-1 ? jm : NSIDE_MAX-1
+    jp = jp < NSIDE_MAX - 1 ? jp : NSIDE_MAX - 1
+    jm = jm < NSIDE_MAX - 1 ? jm : NSIDE_MAX - 1
 
-    local ix::Int, iy::Int, face_num::Int
+    local ix, iy, face_num
     if z >= 0
-	face_num = ntt # in {0,3}
-	ix = NSIDE_MAX - jm - 1
-	iy = NSIDE_MAX - jp - 1
+        face_num = ntt # in {0,3}
+        ix = NSIDE_MAX - jm - 1
+        iy = NSIDE_MAX - jp - 1
     else
-	face_num = ntt + 8 # in {8,11} */
-	ix =  jp
-	iy =  jm
+        face_num = ntt + 8 # in {8,11} */
+        ix =  jp
+        iy =  jm
     end
 
     (ix, iy, face_num)
@@ -391,7 +378,7 @@ end
 ################################################################################
 
 """
-    ang2pixNest(resol::Resolution, theta::Float64, phi::Float64) -> Integer
+    ang2pixNest(resol::Resolution, theta, phi) -> Integer
 
 Return the index of the pixel which contains the point with
 coordinates (`theta`, the colatitude, and `phi`, the longitude), in
@@ -399,18 +386,16 @@ radians, for a Healpix map with pixels in nested order. Note that
 pixel indexes are 1-based (this is Julia)!
 """
 
-function ang2pixNest(resol::Resolution,
-                     theta::Float64,
-                     phi::Float64)
+function ang2pixNest(resol::Resolution, theta, phi)
 
     const nside = resol.nside
-    local ix::Int, iy::Int, face_num::Int
+    local ix, iy, face_num
 
-    local z::Float64          = cos(theta)
-    local z_abs::Float64      = abs(z)
-    local scaled_phi::Float64 = normalizeAngle(phi) / (0.5 * π) # in [0,4[
+    z          = cos(theta)
+    z_abs      = abs(z)
+    scaled_phi = normalizeAngle(phi) / (0.5 * π) # in [0,4[
 
-    if z_abs <= 2./3.
+    if z_abs ≤ 2//3
         (ix, iy, face_num) = calcNestPosForEquator(z, z_abs, scaled_phi)
     else
         (ix, iy, face_num) = calcNestPosForPole(z, z_abs, scaled_phi)
@@ -419,8 +404,8 @@ function ang2pixNest(resol::Resolution,
     (ix_hi, ix_low) = divrem(ix, 128)
     (iy_hi, iy_low) = divrem(iy, 128)
 
-    local ipf = ((x2pix[ix_hi + 1] + y2pix[iy_hi + 1]) * (128 * 128)
-                 + (x2pix[ix_low + 1] + y2pix[iy_low + 1]))
+    ipf = ((x2pix[ix_hi + 1] + y2pix[iy_hi + 1]) * (128^2)
+           + (x2pix[ix_low + 1] + y2pix[iy_low + 1]))
     ipf = floor(Integer, ipf / ((NSIDE_MAX / nside) ^ 2))
 
     # Add 1 to have a 1-based index
@@ -445,7 +430,7 @@ function calcRingPosForEquator(resol::Resolution,
 
     local ip = div(jp + jm - resol.nside + kshift + 1, 2) + 1
     if ip > nl4
-	ip = ip - nl4
+	    ip = ip - nl4
     end
 
     resol.ncap + nl4 * (ir - 1) + ip
@@ -453,46 +438,39 @@ end
 
 ################################################################################
 
-function calcRingPosForPole(resol::Resolution,
-                            z::Float64,
-                            z_abs::Float64,
-                            tt::Float64)
+function calcRingPosForPole(resol::Resolution, z, z_abs, tt)
 
     const tp = tt - floor(tt)
     const tmp = sqrt(3. * (1. - z_abs))
 
     jp = floor(Integer, resol.nside * tp * tmp )
-    jm = floor(Integer, resol.nside * (1. - tp) * tmp)
+    jm = floor(Integer, resol.nside * (1 - tp) * tmp)
 
     ir = jp + jm + 1
     ip = floor(Integer, tt * ir) + 1
-    if ip > 4 * ir
-	ip -= 4 * ir
+    if ip > 4ir
+	    ip -= 4ir
     end
 
-    if z <= 0.
-	ipix1 = resol.numOfPixels - 2 * ir * (ir + 1) + ip
+    if z ≤ 0
+	    resol.numOfPixels - 2ir * (ir + 1) + ip
     else
-        ipix1 = 2 * ir * (ir - 1) + ip
+        2ir * (ir - 1) + ip
     end
-
-    ipix1
 end
 
 ################################################################################
 
 """
-    ang2vec(theta::Real, phi::Real) -> (Float64, Float64, Float64)
+    ang2vec(theta, phi) -> (Float64, Float64, Float64)
 
 Given a direction in the sky with colatitude `theta` and longitude
 `phi` (in radians), return a tuple containing the `x`, `y`, and `z`
 components of the one-length vector pointing to that direction.
 """
 
-function ang2vec(theta::Real, phi::Real)
-    if theta < 0 || theta > π
-        throw(DomainError())
-    end
+function ang2vec(theta, phi)
+    (0 ≤ theta ≤ π) || throw(DomainError())
 
     sintheta = sin(theta)
     return (sintheta * cos(phi), sintheta * sin(phi), cos(theta))
@@ -501,15 +479,15 @@ end
 ################################################################################
 
 """
-    vec2ang(x::Real, y::Real, z::Real) -> (Float64, Float64)
+    vec2ang(x, y, z) -> (Float64, Float64)
 
-Given a vector (with any length) whose Cartesian components are `x`,
-`y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude
-`theta` and the longitude `phi` (in radians) of the direction in the
-sky the vector is pointing at.
+Given a vector (not necessarily normalized) whose Cartesian components are `x`,
+`y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude `theta`
+and the longitude `phi` (in radians) of the direction in the sky the vector is
+pointing at.
 """
 
-function vec2ang(x::Real, y::Real, z::Real)
+function vec2ang(x, y, z)
     norm = sqrt(x^2 + y^2 + z^2)
     theta = acos(z / norm)
     phi = atan2(y, x)
@@ -523,7 +501,7 @@ end
 ################################################################################
 
 """
-    ang2pixRing(resol::Resolution, theta::Float64, phi::Float64) -> Integer
+    ang2pixRing(resol::Resolution, theta, phi) -> Integer
 
 Return the index of the pixel which contains the point with
 coordinates (`theta`, the colatitude, and `phi`, the longitude), in
@@ -531,36 +509,30 @@ radians, for a Healpix map with pixels in ring order. Note that pixel
 indexes are 1-based (this is Julia)!
 """
 
-function ang2pixRing(resol::Resolution,
-                     theta::Float64,
-                     phi::Float64)
+function ang2pixRing(resol::Resolution, theta, phi)
 
-    const z = cos(theta);
-    const z_abs = abs(z);
-    const scaled_phi = normalizeAngle(phi) / (0.5 * π) # in [0,4[
+    const z = cos(theta)
+    const z_abs = abs(z)
+    const scaled_phi = normalizeAngle(phi) / (π / 2) # in [0,4[
 
-    local ipix1 :: Int
-
-    if z_abs <= 2./3.
-        ipix1 = calcRingPosForEquator(resol, z, z_abs, scaled_phi)
+    if z_abs ≤ 2//3
+        calcRingPosForEquator(resol, z, z_abs, scaled_phi)
     else
-        ipix1 = calcRingPosForPole(resol, z, z_abs, scaled_phi)
+        calcRingPosForPole(resol, z, z_abs, scaled_phi)
     end
-
-    ipix1
 end
 
 ################################################################################
 
 """
-    pix2angNest(resol::Resolution, pixel::Int) -> (Float64, Float64)
+    pix2angNest(resol::Resolution, pixel) -> (Float64, Float64)
 
 Given the (1-based) index of a pixel in a Healpix map in nested
 order, return a pair containing the (`colatitude`, `longitude`) angles
 corresponding to its center, both expressed in radians.
 """
 
-function pix2angNest(resol::Resolution, pixel::Int)
+function pix2angNest(resol::Resolution, pixel)
 
     const jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
     const jpll = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
@@ -612,66 +584,66 @@ end
 ################################################################################
 
 """
-    pix2angRing(resol::Resolution, pixel::Int) -> (Float64, Float64)
+    pix2angRing(resol::Resolution, pixel) -> (Float64, Float64)
 
 Given the (1-based) index of a pixel in a Healpix map in ring
 order, return a pair containing the (`colatitude`, `longitude`) angles
 corresponding to its center, both expressed in radians.
 """
 
-function pix2angRing(resol::Resolution, pixel::Int)
+function pix2angRing(resol::Resolution, pixel)
     const fact1 = 1.5 * resol.nside
     const fact2 = 3.0 * resol.pixelsPerFace
 
     # Any reference to equations in this routine refers to Gorski et al. (2005)
 
-    if pixel <= resol.ncap
+    if pixel ≤ resol.ncap
         # North Polar cap
 
-	const p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
-	const floor_p_h = floor(p_h)
-        # Eq. (2)
-	const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
-        # Eq. (3)
-	const j  = pixel - 2i*(i - 1)
+        const p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
+        const floor_p_h = floor(p_h)
+            # Eq. (2)
+        const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
+            # Eq. (3)
+        const j  = pixel - 2i*(i - 1)
 
-        # Colatitude: Eq. (4); longitude: Eq. (5)
-	return (acos(1.0 - i^2 / fact2),
-                (Float64(j) - 0.5) * π / (2i))
-    elseif pixel <= resol.nsideTimesTwo * (5resol.nside + 1)
+            # Colatitude: Eq. (4); longitude: Eq. (5)
+        return (acos(1 - i^2 / fact2),
+                    (Float64(j) - 0.5) * π / (2i))
+    elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
         # Equatorial belt
 
         # Zero-based index for pixels in the equatorial region
-	const ip    = pixel - resol.ncap - 1
+        const ip    = pixel - resol.ncap - 1
         # Eq. (6) - ring counts from the North pole; resol.nside is
         # the number of pixels in the North Polar ring
-	const i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
+        const i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
         # Eq. (7) - zero-based index of the pixel within this ring
-	const j  = Int(mod(ip, resol.nsideTimesFour)) + 1
+        const j  = Int(mod(ip, resol.nsideTimesFour)) + 1
 
         # Eq. (9) - this equals 1 if i + resol.nside is odd, 1/2
         # otherwise. It is used to convert j into a longitude (since
         # pixel centers in odd rings are shifted with respect to
         # centers in even rings)
-	const s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
+        const s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
 
         # Colatitude: Eq. (8) in disguise, latitude: Eq. (9)
-	return (acos((resol.nsideTimesTwo - i) / fact1),
-                (Float64(j) - s_half) * π / (2resol.nside))
+        return (acos((resol.nsideTimesTwo - i) / fact1),
+                    (Float64(j) - s_half) * π / (2resol.nside))
     else
         # South Polar cap
 
         # The pixels in this cap are handled like the ones in the
         # North Polar cap, except that we must flip the value of "ip".
 
-	const ip = resol.numOfPixels - pixel + 1
-	const p_h = ip / 2
-	const floor_p_h = floor(p_h)
-	const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
-	const j = Int(4. * i + 1 - (ip - 2. * i * (i - 1)))
+        const ip = resol.numOfPixels - pixel + 1
+        const p_h = ip / 2
+        const floor_p_h = floor(p_h)
+        const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
+        const j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
 
-	return (acos(-1. + i^2 / fact2),
-                (float(j) - 0.5) * π / (2i))
+        return (acos(-1 + i^2 / fact2),
+                    (float(j) - 0.5) * π / (2i))
     end
 end
 
@@ -688,14 +660,14 @@ order to specify that the pixels in the map are sorted in ring
 ordering. (See also `NestedOrder`.)
 """
 
-type RingOrder <: Order end
+abstract type RingOrder <: Order end
 
 """The `NestedOrder` type should be used when creating `Map` types in
 order to specify that the pixels in the map are sorted in ring
 ordering. (See also `RingOrder`.)
 """
 
-type NestedOrder <: Order end
+abstract type NestedOrder <: Order end
 
 """A Healpix map. The type `T` is used for the value of the pixels in
 a map, and it can be anything (even a string!). The type `O` is used
@@ -703,35 +675,35 @@ to specify the ordering of the pixels, and it can either be
 `RingOrder` or `NestedOrder`.
 """
 
-type Map{T, O <: Order}
-    pixels :: Array{T}
-    resolution :: Resolution
+mutable struct Map{T, O <: Order}
+    pixels::Array{T}
+    resolution::Resolution
 
     """
-    Map{T, O <: Order}(nside::Integer) -> Map{T, O}
+        Map{T, O <: Order}(nside) -> Map{T, O}
 
     Create an empty map with the specified NSIDE.
     """
-    Map{T, O}(nside::Integer) where {T, O <: Order} = new(Array{T}(nside2npix(nside)),
-                                                          Resolution(nside))
+    Map{T, O}(nside) where {T, O <: Order} = new(zeros(T, nside2npix(nside)),
+                                                 Resolution(nside))
 
-    """Create a map with the specified NSIDE and initialize the value of
+    """
+    Create a map with the specified NSIDE and initialize the value of
     its pixels using the values in arr.
     """
-    function Map{T, O}(nside :: Integer, arr :: Array{T}) where {T, O <: Order}
-        if nside2npix(nside) != length(arr)
-            throw(DomainError())
-        end
-
-        new{T, O}(arr, Resolution(nside))
+    function Map{T, O}(nside, arr::Array{T}) where {T, O <: Order}
+        (nside2npix(nside) == length(arr)) || throw(DomainError())
+    
+        new(arr, Resolution(nside))
     end
 end
+
 
 ################################################################################
 
 """
-    readMapFromFITS{T <: Number}(f::FITSIO.FITSFILE, column::Integer, t::Type{T})
-    readMapFromFITS{T <: Number}(fileName::String, column::Integer, t::Type{T})
+    readMapFromFITS{T <: Number}(f::FITSIO.FITSFILE, column, t::Type{T})
+    readMapFromFITS{T <: Number}(fileName::String, column, t::Type{T})
 
 Read a Healpix map from the specified (1-base indexed) column in a
 FITS file. The values will be read as numbers of type T. If the code
@@ -739,9 +711,9 @@ fails, FITSIO will raise an exception. (Refer to the FITSIO library
 for more information.)
 """
 
-function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
-                                      column :: Integer,
-                                      t :: Type{T})
+function readMapFromFITS(f::FITSIO.FITSFile,
+                         column,
+                         t::Type{T}) where {T <: Number}
     value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
     const nside = parse(Int, value)
 
@@ -765,9 +737,9 @@ function readMapFromFITS{T <: Number}(f :: FITSIO.FITSFile,
     result
 end
 
-function readMapFromFITS{T <: Number}(fileName :: AbstractString,
-                                      column :: Integer,
-                                      t :: Type{T})
+function readMapFromFITS(fileName::AbstractString,
+                         column,
+                         t::Type{T}) where {T <: Number}
     f = FITSIO.fits_open_table(fileName)
     result = readMapFromFITS(f, column, t)
     FITSIO.fits_close_file(f)
@@ -777,9 +749,9 @@ end
 
 ################################################################################
 
-function savePixelsToFITS{T <: Number}(map :: Map{T},
-                                       f :: FITSIO.FITSFile,
-                                       column :: Integer)
+function savePixelsToFITS(map::Map{T},
+                          f::FITSIO.FITSFile,
+                          column) where {T <: Number}
 
     FITSIO.fits_update_key(f, "NSIDE", map.resolution.nside,
                            "Value of NSIDE")
@@ -790,7 +762,7 @@ end
 """
     saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
                                         f::FITSIO.FITSFile,
-                                        column::Integer)
+                                        column)
     saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
                                         fileName::String,
                                         typechar="D",
@@ -802,29 +774,29 @@ file. If the code fails, FITSIO will raise an exception. (Refer to the
 FITSIO library for more information.)
 """
 
-function saveToFITS{T <: Number}(map :: Map{T, RingOrder},
-                                 f :: FITSIO.FITSFile,
-                                 column :: Integer)
+function saveToFITS(map::Map{T, RingOrder},
+                    f::FITSIO.FITSFile,
+                    column) where {T <: Number}
 
     FITSIO.fits_update_key(f, "ORDERING", "RING")
     savePixelsToFITS(map, f, column)
 
 end
 
-function saveToFITS{T <: Number}(map :: Map{T, NestedOrder},
-                                 f :: FITSIO.FITSFile,
-                                 column :: Integer)
+function saveToFITS(map::Map{T, NestedOrder},
+                    f::FITSIO.FITSFile,
+                    column) where {T <: Number}
 
     FITSIO.fits_update_key(f, "ORDERING", "NEST")
     savePixelsToFITS(map, f, column)
 
 end
 
-function saveToFITS{T <: Number, O <: Order}(map :: Map{T, O},
-                                             fileName :: AbstractString,
-                                             typechar="D",
-                                             unit="",
-                                             extname="MAP")
+function saveToFITS(map::Map{T, O},
+                    fileName::AbstractString,
+                    typechar="D",
+                    unit="",
+                    extname="MAP") where {T <: Number, O <: Order}
 
     f = FITSIO.fits_create_file(fileName)
     try
@@ -846,22 +818,22 @@ Determine if two Healpix maps are "conformables", i.e., if their
 shape and ordering are the same.
 """
 
-conformables{T, S}(map1::Map{T, RingOrder}, map2::Map{S, RingOrder}) =
+conformables(map1::Map{T, RingOrder}, map2::Map{S, RingOrder}) where {T, S} =
     map1.resolution.nside == map2.resolution.nside
 
-conformables{T, S}(map1::Map{T, NestedOrder}, map2::Map{S, NestedOrder}) =
+conformables(map1::Map{T, NestedOrder}, map2::Map{S, NestedOrder}) where {T, S} =
     map1.resolution.nside == map2.resolution.nside
 
-conformables{T, S, O1 <: Order, O2 <: Order}(map1::Map{T, O1},
-                                             map2::Map{S, O2}) = false
+conformables(map1::Map{T, O1},
+             map2::Map{S, O2}) where {T, S, O1 <: Order, O2 <: Order} = false
 
 ################################################################################
 
-function ringWeightPath(datadir :: String, nside)
-    @sprintf("%s/weight_ring_n%05d.fits", datadir, nside)
+function ringWeightPath(datadir, nside)
+    joinpath(datadir, @sprintf("weight_ring_n%05d.fits", nside))
 end
 
-function readWeightRing(fileName :: String, nside)
+function readWeightRing(fileName, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         weights = Array(Float64, 2 * nside)
@@ -875,11 +847,11 @@ end
 
 ################################################################################
 
-function pixelWindowPath(datadir :: String, nside)
-    @sprintf("%s/pixel_window_n%04d.fits", datadir, nside)
+function pixelWindowPath(datadir, nside)
+    joinpath(datadir, @sprintf("pixel_window_n%04d.fits", nside))
 end
 
-function readPixelWindowT(fileName :: String, nside)
+function readPixelWindowT(fileName, nside)
     f = FITSIO.fits_open_table(fileName)
     try
         pixwin = Array(Float64, FITSIO.fits_get_num_rows(f))
@@ -891,7 +863,10 @@ function readPixelWindowT(fileName :: String, nside)
     pixwin
 end
 
-function readPixelWindowP(fileName :: String, nside)
+function readPixelWindowP(fileName, nside)
+    local pixwinT
+    local pixwinP
+
     f = FITSIO.fits_open_table(fileName)
     try
         pixwinT = Array(Float64, FITSIO.fits_get_num_rows(f))
@@ -902,7 +877,7 @@ function readPixelWindowP(fileName :: String, nside)
         FITSIO.fits_close_file(f)
     end
 
-    pixwinT, pixwinP
+    (pixwinT, pixwinP)
 end
 
 ################################################################################
@@ -915,29 +890,29 @@ and the longitude `phi` (∈ [0, 2π]) into the index of the pixel in the
 Healpix map `map`.
 """
 
-function ang2pix{T}(map::Map{T, RingOrder}, theta::Real, phi::Real)
+function ang2pix(map::Map{T, RingOrder}, theta, phi) where {T}
     ang2pixRing(map.resolution, Float64(theta), Float64(phi))
 end
 
-function ang2pix{T}(map::Map{T, NestedOrder}, theta::Real, phi::Real)
+function ang2pix(map::Map{T, NestedOrder}, theta, phi) where {T}
     ang2pixNest(map.resolution, Float64(theta), Float64(phi))
 end
 
 ################################################################################
 
 """
-    ang2pix{T, O <: Order}(map::Map{T, O}, ipix::Integer) -> (Float64, Float64)
+    pix2ang{T, O <: Order}(map::Map{T, O}, ipix) -> (Float64, Float64)
 
 Return the pair (`theta`, `phi`), where `theta` is the colatitude and
 `phi` the longitude of the direction of the pixel center with index
 `ipix`.
 """
 
-function pix2ang{T}(map::Map{T, RingOrder}, ipix::Integer)
+function pix2ang(map::Map{T, RingOrder}, ipix) where {T}
     pix2angRing(map.resolution, ipix)
 end
 
-function pix2ang{T}(map::Map{T, NestedOrder}, ipix::Integer)
+function pix2ang(map::Map{T, NestedOrder}, ipix) where {T}
     pix2angNest(map.resolution, ipix)
 end
 
@@ -945,24 +920,24 @@ end
 
 "An array of a_ℓm numbers."
 
-type Alm{T <: Number}
-    alm :: Array{T}
-    lmax :: Int
-    mmax :: Int
-    tval :: Int
+mutable struct Alm{T <: Number}
+    alm::Array{T}
+    lmax
+    mmax
+    tval
 
-    Alm{T}(lmax, mmax) where {T <: Number} = new(Array{T}(numberOfAlms(lmax, mmax)),
-                                                 lmax, mmax, 2 * lmax + 1)
+    Alm{T}(lmax, mmax) where {T <: Number} = new(zeros(T, numberOfAlms(lmax, mmax)),
+                                                 lmax,
+                                                 mmax,
+                                                 2lmax + 1)
 
-    function Alm{T}(lmax :: Integer, mmax :: Integer, arr :: Array{T}) where {T <: Number}
-        if numberOfAlms(lmax, mmax) != length(arr)
-            throw(DomainError())
-        end
+    function Alm{T}(lmax, mmax, arr::Array{T}) where {T <: Number}
+        (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
-        new(arr, lmax, mmax, 2 * lmax + 1)
+        new{T}(arr, lmax, mmax, 2lmax + 1)
     end
 end
-
+                                            
 ################################################################################
 
 """
@@ -976,21 +951,20 @@ a_lm coefficients in the range of ℓ and m specified by `lmax` and
 `DomainError` exception is thrown.
 """
 
-function numberOfAlms(lmax :: Integer, mmax :: Integer)
-    if mmax < 0 || lmax < 0 || mmax > lmax
-        throw(DomainError())
-    end
+function numberOfAlms(lmax, mmax)
+    (lmax >= 0) || throw(DomainError())
+    (0 ≤ mmax ≤ lmax) || throw(DomainError())
 
     div((mmax + 1) * (mmax + 2), 2) + (mmax + 1) * (lmax - mmax)
 end
 
-numberOfAlms(lmax :: Integer) = numberOfAlms(lmax, lmax)
+numberOfAlms(lmax) = numberOfAlms(lmax, lmax)
 
-shr(x :: Integer, y :: Integer) = x >> y
-shr{T <: Integer}(x :: Array{T}, y :: Integer) = [a >> y for a in x]
+shr(x, y) = x >> y
+shr(x::Array{T}, y) where {T} = [a >> y for a in x]
 
-almIndexL0{T}(alm :: Alm{T}, m) = shr((m .* (alm.tval .- m)), 1) + 1
-almIndex{T}(alm :: Alm{T}, l, m) = almIndexL0(alm, m) .+ l
+almIndexL0(alm::Alm{T}, m) where {T} = shr((m .* (alm.tval .- m)), 1) + 1
+almIndex(alm::Alm{T}, l, m) where {T} = almIndexL0(alm, m) .+ l
 
 ################################################################################
 
@@ -1003,8 +977,8 @@ FITSIO will raise an exception. (Refer to the FITSIO library for more
 information.)
 """
 
-function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
-                                       t :: Type{T})
+function readAlmFromFITS(f::FITSIO.FITSFile,
+                         t::Type{T}) where {T <: Complex}
     const numOfRows = FITSIO.fits_get_num_rows(f)
 
     idx = Array{Int64}(numOfRows)
@@ -1026,8 +1000,8 @@ function readAlmFromFITS{T <: Complex}(f :: FITSIO.FITSFile,
     result.alm = complex.(almReal[i], almImag[i])
 end
 
-function readAlmFromFITS{T <: Complex}(fileName :: AbstractString,
-                                       t :: Type{T})
+function readAlmFromFITS(fileName,
+                         t::Type{T}) where {T <: Complex}
     f = FITSIO.fits_open_table(fileName)
     try
         result = readAlmFromFITS(f, t)
