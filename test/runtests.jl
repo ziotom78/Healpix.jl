@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-using Healpix
+import Healpix
 using Base.Test
 
 const eps = 1e-10
@@ -520,11 +520,14 @@ resol = Healpix.Resolution(256)
 
 # Conformability
 
-@test Healpix.conformables(Map{Int16,RingOrder}(4), Map{Float32,RingOrder}(4))
+@test Healpix.conformables(Healpix.Map{Int16,Healpix.RingOrder}(4), 
+                           Healpix.Map{Float32,Healpix.RingOrder}(4))
 # nside mismatch
-@test !Healpix.conformables(Map{Int16,RingOrder}(8), Map{Int16,RingOrder}(4))
+@test !Healpix.conformables(Healpix.Map{Int16,Healpix.RingOrder}(8),
+                            Healpix.Map{Int16,Healpix.RingOrder}(4))
 # order mismatch
-@test !Healpix.conformables(Map{Float32,RingOrder}(4), Map{Float32,NestedOrder}(4))
+@test !Healpix.conformables(Healpix.Map{Float32,Healpix.RingOrder}(4),
+                            Healpix.Map{Float32,Healpix.NestedOrder}(4))
 
 # Map loading
 
@@ -557,10 +560,10 @@ m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 @test_throws DomainError Healpix.numberOfAlms(5, 7)
 
 alm = Healpix.Alm{Complex64}(10, 8)
-@test almIndex(alm, 4, 2) == 24
-@test almIndex(alm, 5, 2) == 25
-@test almIndex(alm, 5, 3) == 33
-@test almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
+@test Healpix.almIndex(alm, 4, 2) == 24
+@test Healpix.almIndex(alm, 5, 2) == 25
+@test Healpix.almIndex(alm, 5, 3) == 33
+@test Healpix.almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
 
 alm = Healpix.readAlmFromFITS("alm.fits", Complex128)
 @test alm[1]  ≈ (5.443205775735e+03 + 0.000000000000e+00im) atol = eps
