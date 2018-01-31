@@ -419,16 +419,14 @@ mutable struct Map{T, O <: Order}
 
     Create an empty map with the specified NSIDE.
     """
-    Map{T, O}(nside) where {T, O <: Order} = new(zeros(T, nside2npix(nside)),
+    Map{T, O}(nside::Number) where {T, O <: Order} = new(zeros(T, nside2npix(nside)),
                                                  Resolution(nside))
 
     """
-    Create a map with the specified NSIDE and initialize the value of
-    its pixels using the values in arr.
+    Create a map with the specified array of pixels.
     """
-    function Map{T, O}(nside, arr::Array{T}) where {T, O <: Order}
-        (nside2npix(nside) == length(arr)) || throw(DomainError())
-    
+    function Map{T, O}(arr::Array{T}) where {T, O <: Order}
+        nside = npix2nside(length(arr))    
         new(arr, Resolution(nside))
     end
 end
@@ -463,9 +461,9 @@ function readMapFromFITS(f::FITSIO.FITSFile,
     end
 
     if ringOrdering
-        result = Map{T, RingOrder}(nside, Array{T}(nside2npix(nside)))
+        result = Map{T, RingOrder}(Array{T}(nside2npix(nside)))
     else
-        result = Map{T, NestedOrder}(nside, Array{T}(nside2npix(nside)))
+        result = Map{T, NestedOrder}(Array{T}(nside2npix(nside)))
     end
     FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
@@ -659,6 +657,7 @@ end
 
 ################################################################################
 
+include("projections.jl")
 include("alm.jl")
 
 end
