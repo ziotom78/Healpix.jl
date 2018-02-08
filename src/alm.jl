@@ -4,9 +4,9 @@
 
 mutable struct Alm{T <: Number}
     alm::Array{T}
-    lmax
-    mmax
-    tval
+    lmax::Int
+    mmax::Int
+    tval::Int
 
     Alm{T}(lmax, mmax) where {T <: Number} = new(zeros(T, numberOfAlms(lmax, mmax)),
                                                  lmax,
