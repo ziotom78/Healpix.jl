@@ -545,7 +545,7 @@ m = Healpix.readMapFromFITS("int_map.fits", 1, Int8)
 
 const mapFileName = tempname()
 print("Saving $mapFileName\n")
-Healpix.saveToFITS(m, "!$mapFileName", "I")
+Healpix.saveToFITS(m, "!$mapFileName", typechar = "I")
 m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 @test m.pixels == m2.pixels
 

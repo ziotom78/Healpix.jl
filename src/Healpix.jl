@@ -532,7 +532,7 @@ function saveToFITS(map::Map{T, NestedOrder},
 end
 
 function saveToFITS(map::Map{T, O},
-                    fileName::AbstractString,
+                    fileName::AbstractString;
                     typechar="D",
                     unit="",
                     extname="MAP") where {T <: Number, O <: Order}
