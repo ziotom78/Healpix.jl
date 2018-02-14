@@ -492,13 +492,15 @@ function savePixelsToFITS(map::Map{T},
                           f::FITSIO.FITSFile,
                           column) where {T <: Number}
 
+    FITSIO.fits_update_key(f, "PIXTYPE", "HEALPIX",
+                           "HEALPIX pixelisation")
     FITSIO.fits_update_key(f, "NSIDE", map.resolution.nside,
                            "Value of NSIDE")
     FITSIO.fits_update_key(f, "FIRSTPIX", 1,
                            "First pixel (1 based)")
     FITSIO.fits_update_key(f, "LASTPIX", map.resolution.numOfPixels,
                            "Last pixel (1 based)")
-    FITSIO.fits_update_key(f, "INDXSCHM", "EXPLICIT",
+    FITSIO.fits_update_key(f, "INDXSCHM", "IMPLICIT",
                            "Indexing: IMPLICIT or EXPLICIT")
     FITSIO.fits_write_col(f, column, 1, 1, map.pixels)
 
