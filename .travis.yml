@@ -3,5 +3,9 @@ julia:
   - 0.6
 notifications:
   email: false
+addons:
+  apt:
+    packages:
+      - libcfitsio3
 after_success:
   - julia -e 'cd(Pkg.dir("Healpix")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
