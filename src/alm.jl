@@ -1,7 +1,6 @@
 # Definition of the composite type Alm
 
 "An array of a_ℓm numbers."
-
 mutable struct Alm{T <: Number}
     alm::Array{T}
     lmax::Int
@@ -32,7 +31,6 @@ a_lm coefficients in the range of ℓ and m specified by `lmax` and
 `lmax`. If `lmax` and `mmax` are inconsistent or negative, a
 `DomainError` exception is thrown.
 """
-
 function numberOfAlms(lmax, mmax)
     (lmax >= 0) || throw(DomainError())
     (0 ≤ mmax ≤ lmax) || throw(DomainError())
@@ -58,7 +56,6 @@ Read a set of a_ℓm coefficients from a FITS file. If the code fails,
 FITSIO will raise an exception. (Refer to the FITSIO library for more
 information.)
 """
-
 function readAlmFromFITS(f::FITSIO.FITSFile,
                          t::Type{T}) where {T <: Complex}
     const numOfRows = FITSIO.fits_get_num_rows(f)

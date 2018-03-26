@@ -1,8 +1,15 @@
 # Map projections
 
+export lat2colat, project, equiprojinv, mollweideprojinv, equirectangular, mollweide
+
 import Plots: heatmap
 
-lat2colat(angle) = π / 2 - angle
+"""
+   lat2colat(x)
+
+Convert latitude into colatitude. Both `x` and the result are expressed in radians.
+"""
+lat2colat(x) = π / 2 - x
 
 """
     project(m::Map{T, O}; kwargs...) where {T, O <: Order}
@@ -26,7 +33,6 @@ The following keywords can be used in the call:
 - `show`: Boolean. If true (the default), the map will be displayed. It has no
   effect if `returnmask` is true.  
 """
-
 function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
 
     args = Dict(kwargs)
@@ -110,5 +116,16 @@ function mollweideprojinv(x, y; kwargs...)
 
 end
 
+"""
+    equirectangular(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
+
+High-level wrapper around `project` for equirectangular projections.
+"""
 equirectangular(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order} = project(equiprojinv, m; kwargs...)
+
+"""
+    mollweide(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
+
+High-level wrapper around `project` for Mollweide projections.
+"""
 mollweide(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order} = project(mollweideprojinv, m; kwargs...)

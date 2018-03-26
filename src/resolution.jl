@@ -5,7 +5,6 @@
 pixel-related functions, e.g., convert a direction into a pixel number
 and vice versa.
 """
-
 struct Resolution
     nside
     nsideTimesTwo
@@ -26,7 +25,6 @@ end
 
 Create a `Resolution` object, given a value for `NSIDE`.
 """
-
 function Resolution(nside)
     (1 ≤ nside ≤ NSIDE_MAX) || throw(DomainError())
     # The expression (nside & (nside - 1)) == 0 is a quick check for
