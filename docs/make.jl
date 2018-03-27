@@ -13,3 +13,7 @@ makedocs(modules = [Healpix],
         "Visualization" => "visualization.md",
         "Miscellanea" => "misc.md"
     ])
+
+deploydocs(
+    repo = "github.com/ziotom78/Healpix.jl.git"
+)
