@@ -15,5 +15,8 @@ makedocs(modules = [Healpix],
     ])
 
 deploydocs(
-    repo = "github.com/ziotom78/Healpix.jl.git"
+    repo = "github.com/ziotom78/Healpix.jl.git",
+    target = "build",
+    deps = nothing,
+    make = nothing
 )
