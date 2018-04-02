@@ -18,6 +18,9 @@ struct Resolution
     fact1
 end
 
+# Customize printing
+Base.show(io::IO, r::Resolution) = @printf(io, "Healpix resolution(NSIDE = %d)", r.nside)
+
 ################################################################################
 
 """
