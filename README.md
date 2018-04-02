@@ -15,8 +15,7 @@ not supported by the original implementation (e.g., Windows).
 
 Of course, this mean that implementing new features is generally not
 trivial, as one has to re-implement the algorithm instead of just
-figuring out how to implement a binding to some C/C++/Fortran
-function.
+figuring out how to bind some C/C++/Fortran function.
 
 The
 [mweastwood/LibHealpix.jl](https://github.com/mweastwood/LibHealpix.jl)

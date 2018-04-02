@@ -4,6 +4,7 @@ Healpix.jl implements the [`project`](@ref) function, which creates a 2D matrix 
 
 ```@example
 using Healpix
+
 nside = 8
 m = Map{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)

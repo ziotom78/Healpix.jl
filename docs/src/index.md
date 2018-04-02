@@ -1,3 +1,9 @@
+```@meta
+DocTestSetup = quote
+    using Healpix
+end
+```
+
 # Healpix.jl: an implementation of the Healpix tessellation scheme in Julia
 
 This is the documentation of the [Healpix.jl](https://github.com/ziotom78/Healpix.jl) package, an implementation of the Healpix spherical tessellation scheme written entirely in Julia.

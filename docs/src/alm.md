@@ -1,3 +1,9 @@
+```@meta
+DocTestSetup = quote
+    using Healpix
+end
+```
+
 # Spherical harmonics
 
 The support for spherical harmonics in Healpix.jl is still woefully inadequate. Only a few functions to load and store harmonic coefficients are available. Everything revolves around the `Alm` type:

@@ -1,3 +1,9 @@
+```@meta
+DocTestSetup = quote
+    using Healpix
+end
+```
+
 # Map functions
 
 Functions like [`pix2angNest`](@ref) and [`ang2pixNest`](@ref) fully define the Healpix tessellation scheme. They are however extremely impractical in a number of situations. It happens often that a large fraction of pixels in a map need to be processed together. Healpix.jl introduces the [`Map{T, O <: Order}`](@ref) type, which acts as a collection of all the pixels on the sphere. A `Map` type holds the value of all the pixels in its `pixels` field, and it keeps track of the ordering (either `RING` or `NESTED`). Here is an example that shows how to create a map and initialize it:
@@ -56,7 +62,6 @@ readMapFromFITS
 It often happens that two Healpix maps need to be combined together: for instance, pixels on a sky map might need to be masked using a sky mask, or one map might need to be subtracted from another one. «Conformability» means that the operation between the two maps can be done directly on the pixels, without oordering or resolution conversions. The function `conformables` checks this.
 
 ```@repl
-using Healpix # hide
 m1 = Map{Float64, RingOrder}(1)
 m2 = Map{Float64, RingOrder}(1)
 m3 = Map{Float64, NestedOrder}(1)
