@@ -29,7 +29,10 @@ end
 
 ```@docs
 Resolution
-Resolution(nside)
-nside2npix(nside)
-npix2nside(npix)
+Resolution(nside::Integer)
+nsideok(nside::Integer)
+nside2npix(nside::Integer)
+npix2nside(npix::Integer)
+nside2pixarea(nside::Integer)
+nside2resol(nside::Integer)
 ```

@@ -12,7 +12,17 @@ const eps = 1e-10
 @test Healpix.ilog2(8194) == 13
 @test Healpix.ilog2(131124) == 17
 
-# nside2npix and npix2nside
+# nsideok, nside2pixarea, nside2resol, nside2npix, npix2nside
+
+@test Healpix.nsideok(16)
+@test Healpix.nsideok(1024)
+@test !Healpix.nsideok(17)
+@test !Healpix.nsideok(-4)
+
+@test Healpix.nside2pixarea(128) ≈ 6.391586616190171e-5
+@test Healpix.nside2resol(128) ≈ 0.007994739905831941
+@test_throws DomainError Healpix.nside2pixarea(-1)
+@test_throws DomainError Healpix.nside2resol(-1)
 
 @test Healpix.nside2npix(4) == 192
 @test Healpix.npix2nside(192) == 4

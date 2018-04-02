@@ -1,5 +1,6 @@
 module Healpix
 
+export nsideok, nside2pixarea, nside2resol
 export Resolution, nside2npix, npix2nside, normalizeAngle
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export Order, RingOrder, NestedOrder, Map
@@ -15,13 +16,22 @@ const NSIDE_MAX = 8192
 ########################################################################
 
 """
-    nside2npix(nside) -> Integer
+    nsideok(nside::Integer) -> Bool
+
+Check whether `nside` is a valid `NSIDE` parameter.
+"""
+nsideok(nside::Integer) = (nside > 0) && ((nside) & (nside - 1) == 0)
+
+########################################################################
+
+"""
+    nside2npix(nside::Integer) -> Integer
 
 Return the number of pixels for a Healpix map with the specified
 `NSIDE` value. If `NSIDE` is not an integer power of two, the function
 throws a `DomainError` exception.
 """
-function nside2npix(nside)
+function nside2npix(nside::Integer)
     nsidelog2 = round(Int, log2(nside))
     (2^nsidelog2 == nside) || throw(DomainError())
 
@@ -31,13 +41,13 @@ end
 ########################################################################
 
 """
-    npix2nside(nside) -> Integer
+    npix2nside(npix::Integer) -> Integer
 
 Given the number of pixels in a Healpix map, return the `NSIDE`
 resolution parameter. If the number is invalid, throw a `DomainError`
 exception.
 """
-function npix2nside(npix)
+function npix2nside(npix::Integer)
     (npix % 12 == 0) || throw(DomainError())
 
     square_root = sqrt(npix / 12)
@@ -45,6 +55,27 @@ function npix2nside(npix)
 
     convert(Int, round(square_root))
 end
+
+################################################################################
+
+"""
+    nside2pixarea(nside::Integer) -> Real
+
+Return the solid angle of a pixel in a map with the specified `NSIDE` parameter.
+The result is expressed in steradians.
+"""
+nside2pixarea(nside::Integer) = 4π / nside2npix(nside)
+
+################################################################################
+
+"""
+    nside2resol(nside::Integer) -> Real
+
+Return the approximate resolution of a map with the specified `NSIDE`. The
+resolution is expressed in radians, and it is the square root of the pixel
+size.
+"""
+nside2resol(nside::Integer) = sqrt(nside2pixarea(nside))
 
 ################################################################################
 
