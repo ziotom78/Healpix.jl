@@ -6,9 +6,6 @@ This library is a work-in-progress: if you want something with more functionalit
 
 This library implements algorithms for converting directions into pixel indices and vice versa. It supports both `RING` and `NESTED` schemes, and it employs Julia's powerful type system to avoid mistaking one scheme in place of the other.
 
-```@contents
-```
-
 ## Documentation
 
 The documentation was built using [Documenter.jl](https://github.com/JuliaDocs).

@@ -1,6 +1,6 @@
 # General-purpose functions
 
-In this section we present a number of functions that do not fall in any of the categories above.
+Healpix.jl implements a few generic functions that can be helpful when doing calculations on the sphere.
 
 ```@docs
 normalizeAngle(x)
