@@ -10,14 +10,15 @@ In this section we document the functions that convert from a direction in the s
 
 First of all, Healpix.jl implements the most basic functions to convert between spherical and Cartesian coordinates. Note that Healpix uses **co-latitude** instead of **latitude**:
 
-```@repl
+```@repl pixelexample1
+using Healpix # hide
 ang2vec(0.0, 0.0)
 vec2ang(0.0, 0.0, 1.0)
 ```
 
 More interesting functions return the index of the pixel on a Healpix-tessellated sphere. For these functions to work, you have to provide a [`Resolution`](@ref) object:
 
-```@repl
+```@repl pixelexample1
 res = Resolution(16)
 ang2pixRing(res, π/2, 0)
 ang2pixNest(res, π/2, 0)
