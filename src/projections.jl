@@ -64,7 +64,7 @@ function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O
         (image, mask)
     else
         if show
-            heatmap(image, aspectratio=1)
+            heatmap(image, aspectratio = 1, xaxis = false, yaxis = false)
         else
             image
         end
