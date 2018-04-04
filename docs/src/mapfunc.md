@@ -62,6 +62,7 @@ readMapFromFITS
 It often happens that two Healpix maps need to be combined together: for instance, pixels on a sky map might need to be masked using a sky mask, or one map might need to be subtracted from another one. «Conformability» means that the operation between the two maps can be done directly on the pixels, without oordering or resolution conversions. The function `conformables` checks this.
 
 ```@repl
+using Healpix # hide
 m1 = Map{Float64, RingOrder}(1)
 m2 = Map{Float64, RingOrder}(1)
 m3 = Map{Float64, NestedOrder}(1)
