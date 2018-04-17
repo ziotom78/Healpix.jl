@@ -111,7 +111,7 @@ function mollweideprojinv(x, y; kwargs...)
     θ = asin(sinθ)
 
     lat = asin((2θ + 2 * sinθ * cosθ) / π)
-    long = 2 * π * x / (2cosθ)
+    long = -2 * π * x / (2cosθ)
     (true, lat, long)
 
 end
