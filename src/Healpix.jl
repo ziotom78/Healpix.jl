@@ -696,5 +696,6 @@ end
 
 include("projections.jl")
 include("alm.jl")
+include("mapmaking.jl")
 
 end

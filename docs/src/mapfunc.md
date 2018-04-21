@@ -75,3 +75,14 @@ conformables(m1, m4)
 ```@docs
 conformables
 ```
+
+## Map-making
+
+Map-making is the process of converting a time series of measurements into a sky map. The most basic form of map-making is the so-called "binning", where samples in the time stream falling within the same sky pixel are averaged. This map-making algorithm is strictly accurate only if the noise in the time stream is white.
+
+Healpix.jl implements two functions to perform binning, [`tod2map`](@ref) and [`combinemaps`](@ref).
+
+```@docs
+tod2map
+combinemaps
+```
