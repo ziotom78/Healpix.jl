@@ -178,10 +178,7 @@ end
 
 ################################################################################
 
-function calcRingPosForEquator(resol::Resolution,
-                               z::Float64,
-                               z_abs::Float64,
-                               tt::Float64)
+function calcRingPosForEquator(resol::Resolution, z, z_abs, tt)
 
     const jp = floor(Integer, resol.nside * (0.5 + tt - z * 0.75))
     const jm = floor(Integer, resol.nside * (0.5 + tt + z * 0.75))
@@ -242,7 +239,7 @@ end
 ################################################################################
 
 """
-    vec2ang(x, y, z) -> (Float64, Float64)
+    vec2ang(x, y, z) -> (Number, Number)
 
 Given a vector (not necessarily normalized) whose Cartesian components are `x`,
 `y`, and `z`, return a pair (`theta`, `phi`) containing the colatitude `theta`
