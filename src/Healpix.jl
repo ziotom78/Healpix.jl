@@ -3,6 +3,7 @@ module Healpix
 export nsideok, nside2pixarea, nside2resol
 export Resolution, nside2npix, npix2nside, normalizeAngle
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
+export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
 export Order, RingOrder, NestedOrder, Map
 export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readRingWeights
@@ -409,6 +410,13 @@ end
 
 ################################################################################
 
+vec2pixNest(res::Resolution, x, y, z) = ang2pixNest(res, vec2ang(x, y, z)...)
+vec2pixRing(res::Resolution, x, y, z) = ang2pixRing(res, vec2ang(x, y, z)...)
+pix2vecNest(res::Resolution, pixel) = ang2vec(pix2angNest(res, pixel)...)
+pix2vecRing(res::Resolution, pixel) = ang2vec(pix2angRing(res, pixel)...)
+
+################################################################################
+
 """Abstract type representing the ordering of pixels in a Healpix map.
 See also `RingOrder` and `NestedOrder`.
 """
@@ -452,6 +460,22 @@ mutable struct Map{T, O <: Order}
     end
 end
 
+import Base: +, -, *, /
+
++(a::Map{T,O}, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a.pixels .+ b.pixels)
+-(a::Map{T,O}, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a.pixels .- b.pixels)
+*(a::Map{T,O}, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a.pixels .* b.pixels)
+/(a::Map{T,O}, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a.pixels ./ b.pixels)
+
++(a::Map{T,O}, b::Number) where {T <: Number, O} = Map{T, O}(a.pixels .+ b)
+-(a::Map{T,O}, b::Number) where {T <: Number, O} = a + (-b)
+*(a::Map{T,O}, b::Number) where {T <: Number, O} = Map{T, O}(a.pixels .* b)
+/(a::Map{T,O}, b::Number) where {T <: Number, O} = Map{T, O}(a.pixels ./ b)
+
++(a::Number, b::Map{T,O}) where {T <: Number, O} = b + a
+-(a::Number, b::Map{T,O}) where {T <: Number, O} = b + (-a)
+*(a::Number, b::Map{T,O}) where {T <: Number, O} = b * a
+/(a::Number, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a ./ b.pixels)
 
 ################################################################################
 
