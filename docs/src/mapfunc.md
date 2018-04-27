@@ -14,6 +14,12 @@ m = Map{Float64, RingOrder}(nside)
 m.pixels[:] = 1.0  # Set all pixels to 1
 ```
 
+Healpix.jl defines the basic operations on maps (sum, subtraction, multiplication, division). These operations can either combine two maps or a map and a scalar value:
+```julia
+mollweide(m * 2.0)
+mollweide(m * m)
+```
+
 ```@docs
 Map
 ```
