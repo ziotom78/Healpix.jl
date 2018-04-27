@@ -12,7 +12,7 @@ Convert latitude into colatitude. Both `x` and the result are expressed in radia
 lat2colat(x) = π / 2 - x
 
 """
-    project(m::Map{T, O}; kwargs...) where {T, O <: Order}
+    project(m::Map{T, O}; kwargs...) where {T <: Number, O <: Order}
 
 Return a 2D bitmap (array) containing a cartographic projection of the map and a
 2D bitmap containing a boolean mask. The size of the bitmap is specified by
@@ -33,7 +33,7 @@ The following keywords can be used in the call:
 - `show`: Boolean. If true (the default), the map will be displayed. It has no
   effect if `returnmask` is true.  
 """
-function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
+function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
 
     args = Dict(kwargs)
     figsize = get(args, :figsize, (400, 800))
@@ -51,9 +51,9 @@ function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O
             (flag, lat, long) = invprojfn(x, y; kwargs...)
             
             if flag
-                image[j, i] = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
+                image[j, i] = convert(Float64, m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)])
             else
-                image[j, i] = convert(T, NaN)
+                image[j, i] = convert(Float64, NaN)
             end
     
             mask[j, i] = flag
@@ -64,7 +64,7 @@ function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O
         (image, mask)
     else
         if show
-            heatmap(image, aspectratio = 1, xaxis = false, yaxis = false)
+            heatmap(image, aspectratio=1, xaxis=false, yaxis=false)
         else
             image
         end
@@ -117,15 +117,15 @@ function mollweideprojinv(x, y; kwargs...)
 end
 
 """
-    equirectangular(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
+    equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
 
 High-level wrapper around `project` for equirectangular projections.
 """
-equirectangular(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order} = project(equiprojinv, m; kwargs...)
+equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(equiprojinv, m; kwargs...)
 
 """
-    mollweide(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order}
+    mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
 
 High-level wrapper around `project` for Mollweide projections.
 """
-mollweide(m::Map{T,O}; kwargs...) where {T <: AbstractFloat, O <: Order} = project(mollweideprojinv, m; kwargs...)
+mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(mollweideprojinv, m; kwargs...)
