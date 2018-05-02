@@ -223,18 +223,19 @@ end
 ################################################################################
 
 """
-    ang2vec(theta, phi) -> (Float64, Float64, Float64)
+    ang2vec(theta, phi) -> Array{Float64}
 
 Given a direction in the sky with colatitude `theta` and longitude
-`phi` (in radians), return a tuple containing the `x`, `y`, and `z`
-components of the one-length vector pointing to that direction.
+`phi` (in radians), return an array of 3 elements containing the
+`x`, `y`, and `z` components of the one-length vector pointing to
+that direction.
 """
 
 function ang2vec(theta, phi)
     (0 ≤ theta ≤ π) || throw(DomainError())
 
     sintheta = sin(theta)
-    return (sintheta * cos(phi), sintheta * sin(phi), cos(theta))
+    return [sintheta * cos(phi), sintheta * sin(phi), cos(theta)]
 end
 
 ################################################################################
