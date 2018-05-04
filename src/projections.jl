@@ -64,7 +64,7 @@ function project(invprojfn, m::Map{T,O}; kwargs...) where {T <: Number, O <: Ord
         (image, mask)
     else
         if show
-            heatmap(image, aspectratio=1, xaxis=false, yaxis=false)
+            Plots.heatmap(image, aspectratio=1, xaxis=false, yaxis=false)
         else
             image
         end

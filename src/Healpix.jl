@@ -6,7 +6,7 @@ export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
 export Order, RingOrder, NestedOrder, Map
 export ang2vec, vec2ang, ang2pix, pix2ang
-export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readRingWeights
+export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 
@@ -638,11 +638,11 @@ function readWeightRing(fileName, nside)
     try
         weights = Array(Float64, 2 * nside)
         FITSIO.fits_read_col(f, 1, 1, 1, weights)
+
+        return weights
     finally
         FITSIO.fits_close_file(f)
     end
-
-    weights
 end
 
 ################################################################################
@@ -656,11 +656,11 @@ function readPixelWindowT(fileName, nside)
     try
         pixwin = Array(Float64, FITSIO.fits_get_num_rows(f))
         FITSIO.fits_read_col(f, 1, 1, 1, pixwin)
+
+        return pixwin
     finally
         FITSIO.fits_close_file(f)
     end
-
-    pixwin
 end
 
 function readPixelWindowP(fileName, nside)
@@ -673,11 +673,11 @@ function readPixelWindowP(fileName, nside)
         pixwinP = Array(Float64, FITSIO.fits_get_num_rows(f))
         FITSIO.fits_read_col(f, 1, 1, 1, pixwinT)
         FITSIO.fits_read_col(f, 2, 1, 1, pixwinP)
+
+        return (pixwinT, pixwinP)
     finally
         FITSIO.fits_close_file(f)
     end
-
-    (pixwinT, pixwinP)
 end
 
 ################################################################################
