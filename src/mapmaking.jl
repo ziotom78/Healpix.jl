@@ -34,10 +34,10 @@ by binning TODs. The parameters `desthitmap` and `otherhitmap` are the
 two hit maps. At the end of the call, `destmap` and `desthitmap` are
 updated.
 """
-function combinemaps(destmap::Map{T,O},
-                     desthitmap::Map{H,O},
-                     othermap::Map{T,O},
-                     otherhitmap::Map{H,O}) where {T,O,H}
+function combinemaps!(destmap::Map{T,O},
+                      desthitmap::Map{H,O},
+                      othermap::Map{T,O},
+                      otherhitmap::Map{H,O}) where {T,O,H}
     (conformables(destmap, othermap) 
      && conformables(desthitmap, otherhitmap) 
      && conformables(destmap, desthitmap)) || throw(DomainError()) 

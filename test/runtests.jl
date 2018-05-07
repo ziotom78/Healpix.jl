@@ -551,7 +551,7 @@ binmap2 = Healpix.Map{Float64,Healpix.RingOrder}(1)
 binmap2.pixels = [1.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 hitmap2 = Healpix.Map{Int,Healpix.RingOrder}(1)
 hitmap2.pixels = [1, 6, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-Healpix.combinemaps(binmap1, hitmap1, binmap2, hitmap2)
+Healpix.combinemaps!(binmap1, hitmap1, binmap2, hitmap2)
 @test binmap1.pixels ≈ [0.5, 0.5, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 @test hitmap1.pixels == [2, 8, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -571,7 +571,7 @@ m = Healpix.readMapFromFITS("int_map.fits", 1, Int8)
 
 const mapFileName = tempname()
 print("Saving $mapFileName\n")
-Healpix.saveToFITS(m, "!$mapFileName", typechar = "I")
+Healpix.saveToFITS(m, "!$mapFileName", typechar="I")
 m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 @test m.pixels == m2.pixels
 
