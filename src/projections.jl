@@ -102,7 +102,7 @@ function mollweideprojinv(x, y; kwargs...)
     #
     # x ∈ [-1, 1], y ∈ [-1, 1]
 
-    if x^2 + y^2 > 1
+    if x^2 + y^2 ≥ 1
         return (false, 0, 0)
     end
 
