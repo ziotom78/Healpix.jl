@@ -10,5 +10,4 @@ Healpix.jl implements a few generic functions that can be helpful when doing cal
 
 ```@docs
 normalizeAngle(x)
-lat2colat(x)
 ```

@@ -1,7 +1,7 @@
 module Healpix
 
 export nsideok, nside2pixarea, nside2resol
-export Resolution, nside2npix, npix2nside, normalizeAngle
+export Resolution, nside2npix, npix2nside
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
 export Order, RingOrder, NestedOrder, Map
@@ -157,7 +157,7 @@ function ang2pixNest(resol::Resolution, theta, phi)
 
     z          = cos(theta)
     z_abs      = abs(z)
-    scaled_phi = normalizeAngle(phi) / (0.5 * π) # in [0,4[
+    scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
     if z_abs ≤ 2//3
         (ix, iy, face_num) = calcNestPosForEquator(z, z_abs, scaled_phi)
@@ -275,7 +275,7 @@ function ang2pixRing(resol::Resolution, theta, phi)
 
     const z = cos(theta)
     const z_abs = abs(z)
-    const scaled_phi = normalizeAngle(phi) / (π / 2) # in [0,4[
+    const scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
     if z_abs ≤ 2//3
         calcRingPosForEquator(resol, z, z_abs, scaled_phi)
