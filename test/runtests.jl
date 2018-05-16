@@ -575,6 +575,14 @@ Healpix.saveToFITS(m, "!$mapFileName", typechar="I")
 m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 @test m.pixels == m2.pixels
 
+# Map projections
+
+m = Healpix.Map{Float64,Healpix.RingOrder}(1)
+m.pixels = 1.0:12.0
+fig1 = Healpix.mollweide(m)
+fig2 = Healpix.equirectangular(m)
+fig3 = Healpix.orthographic(m, 0.0, 0.0)
+
 # Alm creation
 
 @test Healpix.numberOfAlms(10, 5) == 51
