@@ -13,13 +13,13 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
                     cs=ColorSchemes.temperaturemap,
                     minval=Nullable{T}(),
                     maxval=Nullable{T}(),
-                    unseen=Nullable{T}()) where {T, O}
+                    unseen=Nullable{T}()) where {T <: Number, O <: Healpix.Order}
 
     if isnull(minval)
-        minval = convert(Float64, minimum(m.pixels))
+        minval = convert(Float64, minimum(m.pixels[isfinite.(m.pixels)]))
     end
     if isnull(maxval)
-        maxval = convert(Float64, maximum(m.pixels))
+        maxval = convert(Float64, maximum(m.pixels[isfinite.(m.pixels)]))
     end
 
     if maxval ≈ minval
@@ -32,10 +32,11 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
         y = 2 * (j - 1) / (bmpheight - 1) - 1
         for i in 1:bmpwidth
             x = 2 * (i - 1) / (bmpwidth - 1) - 1
-            visible, lat, long = invprojfn(x, y)
+            # Flip the sign of the y coordinate because of Cairo's coordinate convention
+            visible, lat, long = invprojfn(x, -y)
             if visible
                 value = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
-                if isnull(value) || (!isnull(unseen) && unseen == value)
+                if isnull(value) || (!isnull(unseen) && unseen == value) || isnan(value)
                     color = unseen_color
                 else
                     color = get(cs, (value - minval) / (maxval - minval))
