@@ -16,10 +16,10 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
                     unseen=Nullable{T}()) where {T, O}
 
     if isnull(minval)
-        minval = minimum(m.pixels)
+        minval = convert(Float64, minimum(m.pixels))
     end
     if isnull(maxval)
-        maxval = maximum(m.pixels)
+        maxval = convert(Float64, maximum(m.pixels))
     end
 
     if maxval ≈ minval
@@ -34,7 +34,7 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
             x = 2 * (i - 1) / (bmpwidth - 1) - 1
             visible, lat, long = invprojfn(x, y)
             if visible
-                value = Healpix.ang2pix(m, lat2colat(lat), long)
+                value = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
                 if isnull(value) || (!isnull(unseen) && unseen == value)
                     color = unseen_color
                 else
