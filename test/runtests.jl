@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import Healpix
+import Cairo
 using Base.Test
 
 const eps = 1e-10
@@ -579,9 +580,21 @@ m2 = Healpix.readMapFromFITS(mapFileName, 1, Int8)
 
 m = Healpix.Map{Float64,Healpix.RingOrder}(1)
 m.pixels = 1.0:12.0
-fig1 = Healpix.mollweide(m)
-fig2 = Healpix.equirectangular(m)
-fig3 = Healpix.orthographic(m, 0.0, 0.0)
+
+fig = Healpix.mollweide(m)
+figname = tempname()
+Cairo.write_to_png(fig, figname)
+println("Mollweide projection saved in file $figname")
+
+fig = Healpix.equirectangular(m)
+figname = tempname()
+Cairo.write_to_png(fig, figname)
+println("Equirectangular projection saved in file $figname")
+
+fig = Healpix.orthographic(m, 0.0, 0.0)
+figname = tempname()
+Cairo.write_to_png(fig, figname)
+println("Orthographic projection saved in file $figname")
 
 # Alm creation
 
