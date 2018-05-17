@@ -80,7 +80,8 @@ The following keywords can be used in the call:
 - `show`: Boolean. If true (the default), the map will be displayed. It has no
   effect if `returnmask` is true.  
 """
-function project(invprojfn, m::Map{T,O}, bmpwidth, bmpheight; kwargs...) where {T <: Number, O <: Order}
+function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
+                 kwargs...) where {T <: Number, O <: Order}
 
     args = Dict(kwargs)
     figsize = get(args, :figsize, (400, 800))
@@ -113,10 +114,12 @@ function project(invprojfn, m::Map{T,O}, bmpwidth, bmpheight; kwargs...) where {
     
     Cairo.save(cr);
 
-    Cairo.translate(cr, width / 2, 0.0);
-    Cairo.translate(cr, -imgw / 2, 0.0);
+    Cairo.translate(cr, (width - imgw) / 2, 0.0);
     Cairo.set_source_surface(cr, image, 0, 0);
     Cairo.paint(cr);
+
+    Cairo.set_source_rgb(cr, 0.0, 0.0, 0.0)
+    drawborderfn(cr, imgw, imgh)
 
     Cairo.restore(cr);
 
@@ -159,6 +162,11 @@ function project(invprojfn, m::Map{T,O}, bmpwidth, bmpheight; kwargs...) where {
     c
 end
 
+function equiprojborder(cr, w, h)
+    Cairo.rectangle(cr, 0, 0, w, h)
+    Cairo.stroke(cr)
+end
+
 """
     function equiprojinv(x, y)
 
@@ -172,6 +180,19 @@ function equiprojinv(x, y; kwargs...)
     ((-1 ≤ x ≤ 1) && (-1 ≤ y ≤ 1)) || return (false, 0, 0)
      
     (true, π / 2 * y, π * x)
+end
+
+function mollweideborder(cr, w, h)
+    Cairo.save(cr)
+
+    Cairo.translate(cr, w / 2, h / 2)
+    Cairo.scale(cr, 1.0, h / w)
+    Cairo.translate(cr, -w / 2, -h / 2)
+    Cairo.arc(cr, w / 2, h / 2, w / 2, 0, 2π)
+
+    Cairo.restore(cr)
+
+    Cairo.stroke(cr)
 end
 
 """
@@ -204,6 +225,11 @@ function mollweideprojinv(x, y; kwargs...)
 
 end
 
+function orthoborder(cr, w, h)
+    Cairo.arc(cr, w / 2, h / 2, w / 2, 0, 2π)
+    Cairo.stroke(cr)
+end
+
 """
     function orthoinv(x, y, ϕ1, λ0)
 
@@ -218,7 +244,7 @@ function orthoinv(x, y, ϕ1, λ0; kwargs...)
     # the book "Map projections — A working manual" by
     # John P. Snyder (page 145 and ff.)
     
-    R = 1 / √2
+    R = 1
     ρ = √(x^2 + y^2)
     if ρ > R
         return (false, 0, 0)
@@ -251,20 +277,26 @@ end
 
 High-level wrapper around `project` for equirectangular projections.
 """
-equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(equiprojinv, m, 540, 540; kwargs...)
+function equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
+    project(equiprojinv, equiprojborder, m, 540, 540; kwargs...)
+end
 
 """
     mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
 
 High-level wrapper around `project` for Mollweide projections.
 """
-mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(mollweideprojinv, m, 540, 540 ÷ 2; kwargs...)
+function mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
+    project(mollweideprojinv, mollweideborder, m, 540, 540 ÷ 2; kwargs...)
+end
 
 """
     orthographic(m::Map{T,O}, ϕ0, λ0; kwargs...) where {T <: Number, O <: Order}
 
 High-level wrapper around `project` for orthographic projections centered around the point (ϕ0, λ0).
 """
-orthographic(m::Map{T,O}, ϕ0, λ0; kwargs...) where {T <: Number, O <: Order} = project(m, 540, 540; kwargs...) do x, y
-    orthoinv(x, y, ϕ0, λ0)
+function orthographic(m::Map{T,O}, ϕ0, λ0; kwargs...) where {T <: Number, O <: Order}
+    project(orthoborder, m, 540, 540; kwargs...) do x, y
+        orthoinv(x, y, ϕ0, λ0)
+    end
 end
