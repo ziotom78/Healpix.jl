@@ -258,7 +258,7 @@ equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = projec
 
 High-level wrapper around `project` for Mollweide projections.
 """
-mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(mollweideprojinv, m, 540, 540 * 2 ÷ 3; kwargs...)
+mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order} = project(mollweideprojinv, m, 540, 540 ÷ 2; kwargs...)
 
 """
     orthographic(m::Map{T,O}, ϕ0, λ0; kwargs...) where {T <: Number, O <: Order}
