@@ -10,7 +10,7 @@ import ColorSchemes
 function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
                     background_color=Images.RGBA{Images.N0f8}(1.0, 1.0, 1.0, 0.0),
                     unseen_color=Images.RGBA{Images.N0f8}(0.5, 0.5, 0.5, 1.0),
-                    cs=ColorSchemes.temperaturemap,
+                    cs=ColorSchemes.viridis,
                     minval=Nullable{T}(),
                     maxval=Nullable{T}(),
                     unseen=Nullable{T}()) where {T <: Number, O <: Healpix.Order}
