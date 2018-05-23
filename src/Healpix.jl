@@ -230,7 +230,6 @@ Given a direction in the sky with colatitude `theta` and longitude
 `x`, `y`, and `z` components of the one-length vector pointing to
 that direction.
 """
-
 function ang2vec(theta, phi)
     (0 ≤ theta ≤ π) || throw(DomainError())
 
@@ -248,7 +247,6 @@ Given a vector (not necessarily normalized) whose Cartesian components are `x`,
 and the longitude `phi` (in radians) of the direction in the sky the vector is
 pointing at.
 """
-
 function vec2ang(x, y, z)
     norm = sqrt(x^2 + y^2 + z^2)
     theta = acos(z / norm)
@@ -270,7 +268,6 @@ coordinates (`theta`, the colatitude, and `phi`, the longitude), in
 radians, for a Healpix map with pixels in ring order. Note that pixel
 indexes are 1-based (this is Julia)!
 """
-
 function ang2pixRing(resol::Resolution, theta, phi)
 
     const z = cos(theta)
@@ -293,7 +290,6 @@ Given the (1-based) index of a pixel in a Healpix map in nested
 order, return a pair containing the (`colatitude`, `longitude`) angles
 corresponding to its center, both expressed in radians.
 """
-
 function pix2angNest(resol::Resolution, pixel)
 
     const jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
@@ -352,7 +348,6 @@ Given the (1-based) index of a pixel in a Healpix map in ring
 order, return a pair containing the (`colatitude`, `longitude`) angles
 corresponding to its center, both expressed in radians.
 """
-
 function pix2angRing(resol::Resolution, pixel)
     const fact1 = 1.5 * resol.nside
     const fact2 = 3.0 * resol.pixelsPerFace
