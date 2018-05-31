@@ -9,6 +9,7 @@ export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
+export getringinfo, getinterpolRing
 
 import FITSIO
 
@@ -410,6 +411,10 @@ vec2pixNest(res::Resolution, x, y, z) = ang2pixNest(res, vec2ang(x, y, z)...)
 vec2pixRing(res::Resolution, x, y, z) = ang2pixRing(res, vec2ang(x, y, z)...)
 pix2vecNest(res::Resolution, pixel) = ang2vec(pix2angNest(res, pixel)...)
 pix2vecRing(res::Resolution, pixel) = ang2vec(pix2angRing(res, pixel)...)
+
+################################################################################
+
+include("interp.jl")
 
 ################################################################################
 

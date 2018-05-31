@@ -529,6 +529,8 @@ resol = Healpix.Resolution(256)
 @test Healpix.pix2angRing(resol, 786432)[1] ≈ 3.1384032124686820 atol = eps
 @test Healpix.pix2angRing(resol, 786432)[2] ≈ 5.4977871437821380 atol = eps
 
+include("interp.jl")
+
 # Conformability
 
 @test Healpix.conformables(Healpix.Map{Int16,Healpix.RingOrder}(4), 
