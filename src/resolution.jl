@@ -6,16 +6,16 @@ pixel-related functions, e.g., convert a direction into a pixel number
 and vice versa.
 """
 struct Resolution
-    nside
-    nsideTimesTwo
-    nsideTimesFour
-    numOfPixels
+    nside::Int
+    nsideTimesTwo::Int
+    nsideTimesFour::Int
+    numOfPixels::Int
 
-    order
-    pixelsPerFace
-    ncap
-    fact2
-    fact1
+    order::Int
+    pixelsPerFace::Int
+    ncap::Int
+    fact2::Float64
+    fact1::Float64
 end
 
 # Customize printing
