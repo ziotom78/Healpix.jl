@@ -1,6 +1,13 @@
 # Ring information and interpolation functions
 
-struct RingInfo
+doc"""
+    RingInfo
+
+Information about a ring of pixels, i.e., the set of pixels on a Healpix map
+which have the same colatitude. The type is "mutable", so that one object can begin
+reused many times without further memory allocations.    
+"""
+mutable struct RingInfo
     ring::Int
     firstpixidx::Int
     numofpixels::Int
@@ -10,13 +17,7 @@ end
 
 even(x) = (x & 1) == 0
 
-doc"""
-    getringinfo(resol::Resolution, ring) :: RingInfo
-
-Return a RingInfo structure containing information about
-the specified ring.
-"""
-function getringinfo(resol::Resolution, ring)
+function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo)
     # In the body of this code, firstidx is zero-based (we switch to 1-based
     # index just in the last statement)
 
@@ -40,7 +41,23 @@ function getringinfo(resol::Resolution, ring)
         firstpixidx = resol.numOfPixels - firstpixidx - numofpixels
     end
 
-    RingInfo(ring, firstpixidx + 1, numofpixels, θ, shifted)
+    ringinfo.ring = ring
+    ringinfo.firstpixidx = firstpixidx + 1
+    ringinfo.numofpixels = numofpixels
+    ringinfo.colatitude_rad = θ
+    ringinfo.shifted = shifted
+end
+
+doc"""
+    getringinfo(resol::Resolution, ring) :: RingInfo
+
+Return a RingInfo structure containing information about
+the specified ring.
+"""
+function getringinfo(resol::Resolution, ring)
+    ringinfo = RingInfo(0, 0, 0, 0.0, true)
+    getringinfo!(resol, ring, ringinfo)
+    ringinfo
 end
 
 function ringabove(resol::Resolution, z)

@@ -9,7 +9,7 @@ export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
-export getringinfo, getinterpolRing
+export getringinfo!, getringinfo, getinterpolRing
 
 import FITSIO
 
