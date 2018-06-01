@@ -17,19 +17,31 @@ end
 
 even(x) = (x & 1) == 0
 
-function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo)
+doc"""
+    getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true) :: RingInfo
+
+Fill the RingInfo structure with information about the specified ring.
+If `full` is `false`, the field `colatitude_rad` (the most expensive in
+terms of computation) is set to `NaN`.
+"""
+function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true)
     # In the body of this code, firstidx is zero-based (we switch to 1-based
     # index just in the last statement)
 
+    # "northring" is always in the Northern emisphere
     northring = (ring > resol.nsideTimesTwo) ? (resol.nsideTimesFour - ring) : ring
     if northring < resol.nside
-        tmp = northring^2 * resol.fact2
-        θ = atan2(sqrt(tmp * (2 - tmp)), 1 - tmp)
+        θ = if full
+            tmp = northring^2 * resol.fact2
+            atan2(sqrt(tmp * (2 - tmp)), 1 - tmp)
+        else
+            NaN
+        end
         numofpixels = 4 * northring
         shifted = true
         firstpixidx = 2 * northring * (northring - 1)
     else
-        θ = acos((resol.nsideTimesTwo - northring) * resol.fact1)
+        θ = full ? acos((resol.nsideTimesTwo - northring) * resol.fact1) : NaN
         numofpixels = resol.nsideTimesFour
         shifted = even(northring - resol.nside)
         firstpixidx = resol.ncap + (northring - resol.nside) * numofpixels
@@ -37,7 +49,7 @@ function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo)
 
     if northring != ring
         # Southern emisphere
-        θ = π - θ
+        full && (θ = π - θ)
         firstpixidx = resol.numOfPixels - firstpixidx - numofpixels
     end
 
@@ -49,14 +61,15 @@ function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo)
 end
 
 doc"""
-    getringinfo(resol::Resolution, ring) :: RingInfo
+    getringinfo(resol::Resolution, ring; kwargs...) :: RingInfo
 
 Return a RingInfo structure containing information about
-the specified ring.
+the specified ring. For the list of accepted keyword arguments,
+see getringinfo!.
 """
-function getringinfo(resol::Resolution, ring)
+function getringinfo(resol::Resolution, ring; kwargs...)
     ringinfo = RingInfo(0, 0, 0, 0.0, true)
-    getringinfo!(resol, ring, ringinfo)
+    getringinfo!(resol, ring, ringinfo, kwargs...)
     ringinfo
 end
 
