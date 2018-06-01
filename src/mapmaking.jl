@@ -1,4 +1,4 @@
-export tod2map, combinemaps
+export tod2map, combinemaps!
 
 doc"""
     tod2map{T,O}(pixidx, tod::Array{T}; nside=128) :: (map, hits)
