@@ -58,14 +58,14 @@ Convert a pixel number into (x, y, face), using RING ordering."""
 function pix2xyfRing(resol::Resolution, ipix)
     if ipix < resol.ncap
         # North polar cap
-        iring = (1 + isqrt(1 + 2 * ipix)) >> 1
-        iphi = (ipix + 1) - 2 * iring * (iring - 1)
+        iring = (1 + isqrt(2 * ipix - 1)) >> 1
+        iphi = ipix - 2 * iring * (iring - 1)
         kshift = 0
         nr = iring
         facenum = (iphi - 1) ÷ nr
     elseif ipix < (resol.numOfPixels - resol.ncap)
         # Equatorial region
-        ip = ipix - resol.ncap
+        ip = ipix - 1 - resol.ncap
         tmp = (resol.order ≥ 0) ? (ip >> (resol.order + 2)) : (ip ÷ resol.nsideTimesFour)
         iring = tmp + resol.nside
         iphi = ip - tmp * resol.nsideTimesFour + 1
@@ -94,7 +94,7 @@ function pix2xyfRing(resol::Resolution, ipix)
         end
     else
         # South polar cap
-        ip = resol.numOfPixels - ipix
+        ip = resol.numOfPixels - ipix + 1
         iring = (1 + isqrt(2 * ip - 1)) >> 1
         iphi = 4 * iring + 1 - (ip - 2 * iring * (iring - 1))
         kshift = 0
@@ -123,7 +123,7 @@ function xyf2pixRing(resol::Resolution, ix, iy, facenum)
     jp = (JPLL[facenum + 1] * nr + ix - iy + 1 + kshift) ÷ 2
     jp < 1 && (jp += resol.nsideTimesFour)
 
-    (ringinfo.firstPixIdx - 1) + jp - 1
+    (ringinfo.firstPixIdx - 1) + jp
 end
 
 function spreadbits(v::Int)
@@ -151,8 +151,8 @@ doc"""
 
 Convert a pixel number into (x, y, face), using NESTED ordering."""
 function pix2xyfNest(resol::Resolution, ipix)
-    pix = ipix & (resol.pixelsPerFace - 1)
-    (compress_bits(pix), compress_bits(pix ÷ 2), ipix >> (2 * resol.order))
+    pix = (ipix - 1) & (resol.pixelsPerFace - 1)
+    (compress_bits(pix), compress_bits(pix ÷ 2), (ipix - 1) >> (2 * resol.order))
 end
 
 doc"""
@@ -160,5 +160,17 @@ doc"""
 
 Convert (x, y, face) into a pixel number, using NESTED ordering."""
 function xyf2pixNest(resol::Resolution, ix, iy, facenum)
-    facenum << (2 * resol.order) + spreadbits(ix) + 2spreadbits(iy)
+    facenum << (2 * resol.order) + spreadbits(ix) + 2spreadbits(iy) + 1
 end
+
+doc"""
+    ring2nest(resol::Resolution, ipix) :: Int
+
+Convert the number of a pixel from RING to NESTED scheme."""
+ring2nest(resol::Resolution, ipix) = xyf2pixNest(resol, pix2xyfRing(resol, ipix)...)
+
+doc"""
+    nest2ring(resol::Resolution, ipix) :: Int
+
+Convert the number of a pixel from NESTED to RING scheme."""
+nest2ring(resol::Resolution, ipix) = xyf2pixRing(resol, pix2xyfNest(resol, ipix)...)

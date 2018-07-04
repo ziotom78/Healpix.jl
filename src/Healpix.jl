@@ -11,6 +11,7 @@ export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
+export ring2nest, nest2ring
 
 import FITSIO
 
