@@ -111,7 +111,7 @@ function pix2xyfRing(resol::Resolution, ipix)
 end
 
 doc"""
-    xyf2pixRing(resol::Resolution, ix, iy, iz) :: Int
+    xyf2pixRing(resol::Resolution, ix, iy, facenum) :: Int
 
 Convert (x, y, face) into a pixel number, using RING ordering."""
 function xyf2pixRing(resol::Resolution, ix, iy, facenum)
@@ -144,4 +144,21 @@ function compress_bits(v::Int64)
     return (CTAB[raw & 0xff + 1] | (CTAB[(raw >> 8) & 0xff + 1] << 4) |
             (CTAB[(raw >> 32) & 0xff + 1] << 16) |
             (CTAB[(raw >> 40) & 0xff + 1] << 20))
+end
+
+doc"""
+    pix2xyfNest(resol::Resolution, ipix) :: (Int, Int, Int)
+
+Convert a pixel number into (x, y, face), using NESTED ordering."""
+function pix2xyfNest(resol::Resolution, ipix)
+    pix = ipix & (resol.pixelsPerFace - 1)
+    (compress_bits(pix), compress_bits(pix ÷ 2), ipix >> (2 * resol.order))
+end
+
+doc"""
+    xyf2pixNest(resol::Resolution, ix, iy, facenum) :: Int
+
+Convert (x, y, face) into a pixel number, using NESTED ordering."""
+function xyf2pixNest(resol::Resolution, ix, iy, facenum)
+    facenum << (2 * resol.order) + spreadbits(ix) + 2spreadbits(iy)
 end
