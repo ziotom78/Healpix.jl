@@ -578,7 +578,7 @@ result = Healpix.Resolution(4)
 @test Healpix.pix2xyfNest(resol, 190) == (2, 3, 11)
 @test Healpix.pix2xyfNest(resol, 191) == (3, 3, 11)
 
-@test Healpix.xyf2pixNest(resol, 0, 0, 0) == 1
+@test Healpix.xyf2pixNest(resol, 0, 0, 0) == 0
 @test Healpix.xyf2pixNest(resol, 1, 0, 0) == 1
 @test Healpix.xyf2pixNest(resol, 0, 1, 0) == 2
 @test Healpix.xyf2pixNest(resol, 1, 1, 0) == 3
