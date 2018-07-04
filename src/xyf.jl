@@ -133,12 +133,12 @@ function spreadbits(v::Int)
      Int64(UTAB[(v >> 24) & 0xff + 1] << 48))
 end
 
-function compress_bits(v::Int)
+function compress_bits(v::Int32)
     raw = (v & 0x5555) | ((v & 0x55550000) >> 15)
     CTAB[raw & 0xff + 1] | (ctab[raw >> 8 + 1] << 4)
 end
 
-function compress_bits(v::Int64)
+function compress_bits(v::Int)
     raw = v & 0x5555555555555555
     raw |= raw >> 15
     return (CTAB[raw & 0xff + 1] | (CTAB[(raw >> 8) & 0xff + 1] << 4) |
