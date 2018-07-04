@@ -94,8 +94,12 @@ function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
     cbarheight = get(args, :cbarheight, 50)
     cbarlblheight = get(args, :cbarlblheight, 20)
     cbarsteps = get(args, :cbarsteps, 80)
+    minval = get(args, :minval, Nullable{T}())
+    maxval = get(args, :maxval, Nullable{T}())
 
-    img, minval, maxval = drawmapbmp(invprojfn, m, bmpwidth, bmpheight, cs=colorscheme)
+    img, minval, maxval = drawmapbmp(invprojfn, m, bmpwidth, bmpheight,
+                                     minval=minval, maxval=maxval,
+                                     cs=colorscheme)
 
     io = IOBuffer()
     Images.save(Stream(format"PNG", io), img)
@@ -279,7 +283,7 @@ end
 High-level wrapper around `project` for equirectangular projections.
 """
 function equirectangular(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
-    project(equiprojinv, equiprojborder, m, 540, 540; kwargs...)
+    project(equiprojinv, equiprojborder, m, 720, 720; kwargs...)
 end
 
 """
@@ -288,7 +292,7 @@ end
 High-level wrapper around `project` for Mollweide projections.
 """
 function mollweide(m::Map{T,O}; kwargs...) where {T <: Number, O <: Order}
-    project(mollweideprojinv, mollweideborder, m, 540, 540 ÷ 2; kwargs...)
+    project(mollweideprojinv, mollweideborder, m, 720, 720 ÷ 2; kwargs...)
 end
 
 """

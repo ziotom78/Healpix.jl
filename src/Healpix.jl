@@ -10,6 +10,7 @@ export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPa
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export getringinfo!, getringinfo, getinterpolRing
+export pix2xyfRing, xyf2pixRing
 
 import FITSIO
 
@@ -415,6 +416,7 @@ pix2vecRing(res::Resolution, pixel) = ang2vec(pix2angRing(res, pixel)...)
 ################################################################################
 
 include("interp.jl")
+include("xyf.jl")
 
 ################################################################################
 

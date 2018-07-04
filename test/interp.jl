@@ -2,8 +2,8 @@ resol = Healpix.Resolution(4)
 
 function compare(r1::Healpix.RingInfo, r2::Healpix.RingInfo)
     @test r1.ring == r2.ring
-    @test r1.firstpixidx == r2.firstpixidx
-    @test r1.numofpixels == r2.numofpixels
+    @test r1.firstPixIdx == r2.firstPixIdx
+    @test r1.numOfPixels == r2.numOfPixels
     @test r1.colatitude_rad ≈ r2.colatitude_rad
     @test r1.shifted == r2.shifted
 end

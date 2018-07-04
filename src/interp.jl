@@ -9,8 +9,8 @@ reused many times without further memory allocations.
 """
 mutable struct RingInfo
     ring::Int
-    firstpixidx::Int
-    numofpixels::Int
+    firstPixIdx::Int
+    numOfPixels::Int
     colatitude_rad::Float64
     shifted::Bool
 end
@@ -37,25 +37,25 @@ function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true)
         else
             NaN
         end
-        numofpixels = 4 * northring
+        numOfPixels = 4 * northring
         shifted = true
-        firstpixidx = 2 * northring * (northring - 1)
+        firstPixIdx = 2 * northring * (northring - 1)
     else
         θ = full ? acos((resol.nsideTimesTwo - northring) * resol.fact1) : NaN
-        numofpixels = resol.nsideTimesFour
+        numOfPixels = resol.nsideTimesFour
         shifted = even(northring - resol.nside)
-        firstpixidx = resol.ncap + (northring - resol.nside) * numofpixels
+        firstPixIdx = resol.ncap + (northring - resol.nside) * numOfPixels
     end
 
     if northring != ring
         # Southern emisphere
         full && (θ = π - θ)
-        firstpixidx = resol.numOfPixels - firstpixidx - numofpixels
+        firstPixIdx = resol.numOfPixels - firstPixIdx - numOfPixels
     end
 
     ringinfo.ring = ring
-    ringinfo.firstpixidx = firstpixidx + 1
-    ringinfo.numofpixels = numofpixels
+    ringinfo.firstPixIdx = firstPixIdx + 1
+    ringinfo.numOfPixels = numOfPixels
     ringinfo.colatitude_rad = θ
     ringinfo.shifted = shifted
 end
@@ -67,9 +67,9 @@ Return a RingInfo structure containing information about
 the specified ring. For the list of accepted keyword arguments,
 see getringinfo!.
 """
-function getringinfo(resol::Resolution, ring; kwargs...)
+function getringinfo(resol::Resolution, ring; full=true)
     ringinfo = RingInfo(0, 0, 0, 0.0, true)
-    getringinfo!(resol, ring, ringinfo, kwargs...)
+    getringinfo!(resol, ring, ringinfo, full=full)
     ringinfo
 end
 
@@ -88,15 +88,15 @@ end
 function ring2idxw(ringinfo::RingInfo, ϕ)
     shift = ringinfo.shifted ? 0.5 : 0
     # Angle subtended by each pixel along this ring
-    δϕ = 2π / ringinfo.numofpixels
+    δϕ = 2π / ringinfo.numOfPixels
     tmp = ϕ / δϕ - shift
     i1 = (tmp < 0) ? round(Int, tmp, RoundToZero) - 1 : round(Int, tmp, RoundToZero)
     w1 = (ϕ - (i1 + shift) * δϕ) / δϕ
     i2 = i1 + 1
-    i1 < 0 && (i1 += ringinfo.numofpixels)
-    i2 >= ringinfo.numofpixels && (i2 -= ringinfo.numofpixels)
+    i1 < 0 && (i1 += ringinfo.numOfPixels)
+    i2 >= ringinfo.numOfPixels && (i2 -= ringinfo.numOfPixels)
 
-    ([ringinfo.firstpixidx + i1, ringinfo.firstpixidx + i2], [1 - w1, w1])
+    ([ringinfo.firstPixIdx + i1, ringinfo.firstPixIdx + i2], [1 - w1, w1])
 end
 
 doc"""
