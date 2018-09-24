@@ -1,6 +1,8 @@
 # Ring information and interpolation functions
 
-doc"""
+using Markdown
+
+Markdown.doc"""
     RingInfo
 
 Information about a ring of pixels, i.e., the set of pixels on a Healpix map
@@ -17,7 +19,7 @@ end
 
 even(x) = (x & 1) == 0
 
-doc"""
+Markdown.doc"""
     getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true) :: RingInfo
 
 Fill the RingInfo structure with information about the specified ring.
@@ -60,7 +62,7 @@ function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true)
     ringinfo.shifted = shifted
 end
 
-doc"""
+Markdown.doc"""
     getringinfo(resol::Resolution, ring; kwargs...) :: RingInfo
 
 Return a RingInfo structure containing information about
@@ -99,7 +101,7 @@ function ring2idxw(ringinfo::RingInfo, ϕ)
     ([ringinfo.firstPixIdx + i1, ringinfo.firstPixIdx + i2], [1 - w1, w1])
 end
 
-doc"""
+Markdown.doc"""
     getinterpolRing(resol::Resolution, θ, ϕ) :: (Array{Int,1}, Array{Float64, 1})
 
 Return the indices and the weights of the four neighbour pixels for the given

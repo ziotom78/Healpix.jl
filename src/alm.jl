@@ -58,7 +58,7 @@ information.)
 """
 function readAlmFromFITS(f::FITSIO.FITSFile,
                          t::Type{T}) where {T <: Complex}
-    const numOfRows = FITSIO.fits_get_num_rows(f)
+    numOfRows = FITSIO.fits_get_num_rows(f)
 
     idx = Array{Int64}(numOfRows)
     almReal = Array{Float64}(numOfRows)

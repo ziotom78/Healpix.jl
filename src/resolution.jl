@@ -1,5 +1,7 @@
 # Definition of the composite type "Resolution"
 
+using Printf
+
 """
 `Resolution` objects are needed to perform a number of
 pixel-related functions, e.g., convert a direction into a pixel number
