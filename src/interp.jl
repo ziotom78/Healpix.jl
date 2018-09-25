@@ -35,7 +35,7 @@ function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true)
     if northring < resol.nside
         θ = if full
             tmp = northring^2 * resol.fact2
-            atan2(sqrt(tmp * (2 - tmp)), 1 - tmp)
+            atan(sqrt(tmp * (2 - tmp)), 1 - tmp)
         else
             NaN
         end
@@ -114,19 +114,19 @@ function getinterpolRing(resol::Resolution, θ, ϕ)
     ir1 = ringabove(resol, z)
     ir2 = ir1 + 1
 
-    pix = Array{Int}(4) # Zero-based till the end
-    wgt = Array{Float64}(4)
+    pix = Array{Int}(undef, 4) # Zero-based till the end
+    wgt = Array{Float64}(undef, 4)
     if ir1 > 0
         ring1 = getringinfo(resol, ir1)
         pix1, w1 = ring2idxw(ring1, ϕ)
-        pix[1:2] = pix1 - 1 # Switch from 1-based to 0-based
+        pix[1:2] = pix1 .- 1 # Switch from 1-based to 0-based
         wgt[1:2] = w1
     end
 
     if ir2 < resol.nsideTimesFour
         ring2 = getringinfo(resol, ir2)
         pix2, w2 = ring2idxw(ring2, ϕ)
-        pix[3:4] = pix2 - 1 # Switch from 1-based to 0-based
+        pix[3:4] = pix2 .- 1 # Switch from 1-based to 0-based
         wgt[3:4] = w2
     end
 
@@ -150,5 +150,5 @@ function getinterpolRing(resol::Resolution, θ, ϕ)
         wgt[3:4] .*= wθ
     end
 
-    (pix + 1, wgt)
+    (pix .+ 1, wgt)
 end

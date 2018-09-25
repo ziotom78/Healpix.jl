@@ -31,7 +31,7 @@ Base.show(io::IO, r::Resolution) = @printf(io, "Healpix resolution(NSIDE = %d)",
 Create a `Resolution` object, given a value for `NSIDE`.
 """
 function Resolution(nside)
-    (1 ≤ nside ≤ NSIDE_MAX) || throw(DomainError())
+    (1 ≤ nside ≤ NSIDE_MAX) || throw(DomainError(nside))
     # The expression (nside & (nside - 1)) == 0 is a quick check for
     # detecting if nside is a power of two or not
     (nside & (nside - 1) == 0) || throw(DomainError())

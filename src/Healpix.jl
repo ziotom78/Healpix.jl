@@ -36,8 +36,10 @@ Return the number of pixels for a Healpix map with the specified
 throws a `DomainError` exception.
 """
 function nside2npix(nside::Integer)
+    (nside > 0) || throw(DomainError(nside, "`NSIDE` is not a positive number"))
+    
     nsidelog2 = round(Int, log2(nside))
-    (2^nsidelog2 == nside) || throw(DomainError())
+    (2^nsidelog2 == nside) || throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
 
     12(nside^2)
 end
@@ -52,10 +54,10 @@ resolution parameter. If the number is invalid, throw a `DomainError`
 exception.
 """
 function npix2nside(npix::Integer)
-    (npix % 12 == 0) || throw(DomainError())
+    (npix % 12 == 0) || throw(DomainError(npix, "Invalid number of pixels"))
 
     square_root = sqrt(npix / 12)
-    (square_root^2 == npix / 12) || throw(DomainError())
+    (square_root^2 == npix / 12) || throw(DomainError(npix, "Invalid number of pixels"))
 
     convert(Int, round(square_root))
 end
@@ -234,7 +236,7 @@ Given a direction in the sky with colatitude `theta` and longitude
 that direction.
 """
 function ang2vec(theta, phi)
-    (0 ≤ theta ≤ π) || throw(DomainError())
+    (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
 
     sintheta = sin(theta)
     return [sintheta * cos(phi), sintheta * sin(phi), cos(theta)]
@@ -253,7 +255,7 @@ pointing at.
 function vec2ang(x, y, z)
     norm = sqrt(x^2 + y^2 + z^2)
     theta = acos(z / norm)
-    phi = atan2(y, x)
+    phi = atan(y, x)
     if phi < 0
         phi += 2π
     end
@@ -509,9 +511,9 @@ function readMapFromFITS(f::FITSIO.FITSFile,
     end
 
     if ringOrdering
-        result = Map{T, RingOrder}(Array{T}(nside2npix(nside)))
+        result = Map{T, RingOrder}(Array{T}(undef, nside2npix(nside)))
     else
-        result = Map{T, NestedOrder}(Array{T}(nside2npix(nside)))
+        result = Map{T, NestedOrder}(Array{T}(undef, nside2npix(nside)))
     end
     FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
