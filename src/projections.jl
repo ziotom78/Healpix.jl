@@ -11,14 +11,14 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
                     background_color=Images.RGBA{Images.N0f8}(1.0, 1.0, 1.0, 0.0),
                     unseen_color=Images.RGBA{Images.N0f8}(0.5, 0.5, 0.5, 1.0),
                     cs=ColorSchemes.viridis,
-                    minval=Nullable{T}(),
-                    maxval=Nullable{T}(),
-                    unseen=Nullable{T}()) where {T <: Number, O <: Healpix.Order}
+                    minval=missing,
+                    maxval=missing,
+                    unseen=missing) where {T <: Number, O <: Healpix.Order}
 
-    if isnull(minval)
+    if isequal(minval, missing)
         minval = convert(Float64, minimum(m.pixels[isfinite.(m.pixels)]))
     end
-    if isnull(maxval)
+    if isequal(maxval, missing)
         maxval = convert(Float64, maximum(m.pixels[isfinite.(m.pixels)]))
     end
 
@@ -26,7 +26,7 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
         maxval = minval + 1.0
     end
 
-    img = Array{Images.RGBA{Images.N0f8}}(bmpheight, bmpwidth)
+    img = Array{Images.RGBA{Images.N0f8}}(undef, bmpheight, bmpwidth)
 
     for j in 1:bmpheight
         y = 2 * (j - 1) / (bmpheight - 1) - 1
@@ -36,7 +36,8 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
             visible, lat, long = invprojfn(x, -y)
             if visible
                 value = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
-                if isnull(value) || (!isnull(unseen) && unseen == value) || isnan(value)
+                if isequal(isequal(value, missing) || isnan(value) || (
+                    !isequal(value, missing) && unseen == value), true)
                     color = unseen_color
                 else
                     color = get(cs, (value - minval) / (maxval - minval))
@@ -94,8 +95,8 @@ function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
     cbarheight = get(args, :cbarheight, 50)
     cbarlblheight = get(args, :cbarlblheight, 20)
     cbarsteps = get(args, :cbarsteps, 80)
-    minval = get(args, :minval, Nullable{T}())
-    maxval = get(args, :maxval, Nullable{T}())
+    minval = get(args, :minval, missing)
+    maxval = get(args, :maxval, missing)
 
     img, minval, maxval = drawmapbmp(invprojfn, m, bmpwidth, bmpheight,
                                      minval=minval, maxval=maxval,
@@ -137,7 +138,7 @@ function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
     Cairo.save(cr)
     Cairo.rectangle(cr, 0.0, 0.0, 1.0, 1.0)
     Cairo.clip(cr)
-    for i = linspace(0.0, 1.0 - 1.0 / cbarsteps, cbarsteps)
+    for i = range(0.0, stop=(1.0 - 1.0 / cbarsteps), length=cbarsteps)
         color = get(colorscheme, i)
         Cairo.set_source_rgb(cr, color.r, color.g, color.b)
         Cairo.rectangle(cr, i, 0, 1.1 / cbarsteps, 1.0)
@@ -267,11 +268,11 @@ function orthoinv(x, y, ϕ1, λ0; kwargs...)
     
     ϕ = asin(cosc * sin(ϕ1) + y * sinc * cos(ϕ1) / ρ)
     if ϕ1 ≈ π / 2
-        λ = λ0 + atan2(x, -y)
+        λ = λ0 + atan(x, -y)
     elseif ϕ1 ≈ -π / 2
-        λ = λ0 + atan2(x, y)
+        λ = λ0 + atan(x, y)
     else
-        λ = λ0 + atan2(x * sinc, (ρ * cos(ϕ1) * cosc - y * sin(ϕ1) * sinc))
+        λ = λ0 + atan(x * sinc, (ρ * cos(ϕ1) * cosc - y * sin(ϕ1) * sinc))
     end
     
     (true, ϕ, λ)
