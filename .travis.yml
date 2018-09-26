@@ -1,14 +1,23 @@
 language: julia
+
 julia:
   - 0.7
   - 1.0
+  - nightly
+
 notifications:
   email: false
+
+matrix:
+  allow_failures:
+    - julia: nightly
+
 addons:
   apt:
     packages:
       - libcfitsio3
+
 after_success:
-  - julia -e 'using Pkg; cd(Pkg.dir("Healpix")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+#  - julia -e 'using Pkg; cd(Pkg.dir("Healpix")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   - julia -e 'Pkg.add("Documenter")'
   - julia -e 'using Pkg; cd(Pkg.dir("Healpix")); include(joinpath("docs", "make.jl"))'
