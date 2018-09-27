@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import ImageMagick  # Remove this once bug https://github.com/JuliaImages/ImageView.jl/pull/156#issuecomment-418200062 is solved
 import Healpix
 import Cairo
 using Test
