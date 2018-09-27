@@ -32,8 +32,9 @@ a_lm coefficients in the range of ℓ and m specified by `lmax` and
 `DomainError` exception is thrown.
 """
 function numberOfAlms(lmax, mmax)
-    (lmax >= 0) || throw(DomainError())
-    (0 ≤ mmax ≤ lmax) || throw(DomainError())
+    (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
+    (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
+    (0 ≤ mmax ≤ lmax) || throw(DomainError((lmax, mmax), "`lmax` and `mmax` are inconsistent"))
 
     div((mmax + 1) * (mmax + 2), 2) + (mmax + 1) * (lmax - mmax)
 end
@@ -43,7 +44,7 @@ numberOfAlms(lmax) = numberOfAlms(lmax, lmax)
 shr(x, y) = x >> y
 shr(x::Array{T}, y) where {T} = [a >> y for a in x]
 
-almIndexL0(alm::Alm{T}, m) where {T} = shr((m .* (alm.tval .- m)), 1) + 1
+almIndexL0(alm::Alm{T}, m) where {T} = shr((m .* (alm.tval .- m)), 1) .+ 1
 almIndex(alm::Alm{T}, l, m) where {T} = almIndexL0(alm, m) .+ l
 
 ################################################################################
@@ -58,18 +59,18 @@ information.)
 """
 function readAlmFromFITS(f::FITSIO.FITSFile,
                          t::Type{T}) where {T <: Complex}
-    const numOfRows = FITSIO.fits_get_num_rows(f)
+    numOfRows = FITSIO.fits_get_num_rows(f)
 
-    idx = Array{Int64}(numOfRows)
-    almReal = Array{Float64}(numOfRows)
-    almImag = Array{Float64}(numOfRows)
+    idx = Array{Int64}(undef, numOfRows)
+    almReal = Array{Float64}(undef, numOfRows)
+    almImag = Array{Float64}(undef, numOfRows)
 
     FITSIO.fits_read_col(f, 1, 1, 1, idx)
     FITSIO.fits_read_col(f, 2, 1, 1, almReal)
     FITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
-    l = floor.(Int64, sqrt.(idx - 1))
-    m = idx - l.^2 - l - 1
+    l = floor.(Int64, sqrt.(idx .- 1))
+    m = idx .- l.^2 .- l .- 1
     if count(x -> x < 0, m) > 0
         throw(DomainError())
     end

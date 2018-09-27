@@ -1,5 +1,5 @@
 module Healpix
-
+###
 export nsideok, nside2pixarea, nside2resol
 export Resolution, nside2npix, npix2nside
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
@@ -36,8 +36,10 @@ Return the number of pixels for a Healpix map with the specified
 throws a `DomainError` exception.
 """
 function nside2npix(nside::Integer)
+    (nside > 0) || throw(DomainError(nside, "`NSIDE` is not a positive number"))
+    
     nsidelog2 = round(Int, log2(nside))
-    (2^nsidelog2 == nside) || throw(DomainError())
+    (2^nsidelog2 == nside) || throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
 
     12(nside^2)
 end
@@ -52,10 +54,10 @@ resolution parameter. If the number is invalid, throw a `DomainError`
 exception.
 """
 function npix2nside(npix::Integer)
-    (npix % 12 == 0) || throw(DomainError())
+    (npix % 12 == 0) || throw(DomainError(npix, "Invalid number of pixels"))
 
     square_root = sqrt(npix / 12)
-    (square_root^2 == npix / 12) || throw(DomainError())
+    (square_root^2 == npix / 12) || throw(DomainError(npix, "Invalid number of pixels"))
 
     convert(Int, round(square_root))
 end
@@ -155,7 +157,7 @@ pixel indexes are 1-based (this is Julia)!
 """
 function ang2pixNest(resol::Resolution, theta, phi)
 
-    const nside = resol.nside
+    nside = resol.nside
     local ix, iy, face_num
 
     z          = cos(theta)
@@ -184,13 +186,13 @@ end
 
 function calcRingPosForEquator(resol::Resolution, z, z_abs, tt)
 
-    const jp = floor(Integer, resol.nside * (0.5 + tt - z * 0.75))
-    const jm = floor(Integer, resol.nside * (0.5 + tt + z * 0.75))
+    jp = floor(Integer, resol.nside * (0.5 + tt - z * 0.75))
+    jm = floor(Integer, resol.nside * (0.5 + tt + z * 0.75))
 
-    const ir = resol.nside + 1 + jp - jm
-    const kshift = (mod(ir, 2) == 0) ? 1 : 0
+    ir = resol.nside + 1 + jp - jm
+    kshift = (mod(ir, 2) == 0) ? 1 : 0
 
-    const nl4 = resol.nsideTimesFour;
+    nl4 = resol.nsideTimesFour;
 
     local ip = div(jp + jm - resol.nside + kshift + 1, 2) + 1
     if ip > nl4
@@ -204,8 +206,8 @@ end
 
 function calcRingPosForPole(resol::Resolution, z, z_abs, tt)
 
-    const tp = tt - floor(tt)
-    const tmp = sqrt(3. * (1. - z_abs))
+    tp = tt - floor(tt)
+    tmp = sqrt(3. * (1. - z_abs))
 
     jp = floor(Integer, resol.nside * tp * tmp )
     jm = floor(Integer, resol.nside * (1 - tp) * tmp)
@@ -234,7 +236,7 @@ Given a direction in the sky with colatitude `theta` and longitude
 that direction.
 """
 function ang2vec(theta, phi)
-    (0 ≤ theta ≤ π) || throw(DomainError())
+    (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
 
     sintheta = sin(theta)
     return [sintheta * cos(phi), sintheta * sin(phi), cos(theta)]
@@ -253,7 +255,7 @@ pointing at.
 function vec2ang(x, y, z)
     norm = sqrt(x^2 + y^2 + z^2)
     theta = acos(z / norm)
-    phi = atan2(y, x)
+    phi = atan(y, x)
     if phi < 0
         phi += 2π
     end
@@ -273,9 +275,9 @@ indexes are 1-based (this is Julia)!
 """
 function ang2pixRing(resol::Resolution, theta, phi)
 
-    const z = cos(theta)
-    const z_abs = abs(z)
-    const scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
+    z = cos(theta)
+    z_abs = abs(z)
+    scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
     if z_abs ≤ 2//3
         calcRingPosForEquator(resol, z, z_abs, scaled_phi)
@@ -295,29 +297,29 @@ corresponding to its center, both expressed in radians.
 """
 function pix2angNest(resol::Resolution, pixel)
 
-    const jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
-    const jpll = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
+    jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
+    jpll = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
 
-    const floatNside = Float64(resol.nside)
-    const fact1 = 1. / (3.0 * floatNside^2)
-    const fact2 = 2. / (3.0 * floatNside)
+    floatNside = Float64(resol.nside)
+    fact1 = 1. / (3.0 * floatNside^2)
+    fact2 = 2. / (3.0 * floatNside)
 
     # face number in {0,11} and pixel number within the face
-    const faceNum, ipf = divrem(pixel - 1, resol.pixelsPerFace)
+    faceNum, ipf = divrem(pixel - 1, resol.pixelsPerFace)
 
-    const ip_trunc, ip_low = divrem(ipf, 1024)
-    const ip_hi, ip_med = divrem(ip_trunc, 1024)
+    ip_trunc, ip_low = divrem(ipf, 1024)
+    ip_hi, ip_med = divrem(ip_trunc, 1024)
 
-    const ix = 1024 * pix2x[ip_hi+1] + 32 * pix2x[ip_med+1] + pix2x[ip_low+1]
-    const iy = 1024 * pix2y[ip_hi+1] + 32 * pix2y[ip_med+1] + pix2y[ip_low+1]
+    ix = 1024 * pix2x[ip_hi+1] + 32 * pix2x[ip_med+1] + pix2x[ip_low+1]
+    iy = 1024 * pix2y[ip_hi+1] + 32 * pix2y[ip_med+1] + pix2y[ip_low+1]
 
     # Transforms this in (horizontal, vertical) coordinates
-    const jrt = ix + iy # 'vertical' in {0,2*(nside-1)}
-    const jpt = ix - iy # 'horizontal' in {-nside+1,nside-1}
+    jrt = ix + iy # 'vertical' in {0,2*(nside-1)}
+    jpt = ix - iy # 'horizontal' in {-nside+1,nside-1}
 
-    const jr = jrll[faceNum+1] * resol.nside - jrt - 1
+    jr = jrll[faceNum+1] * resol.nside - jrt - 1
     local nr = resol.nside # Equatorial region (the most frequent)
-    const z = (2resol.nside - jr) * fact2
+    z = (2resol.nside - jr) * fact2
     local kshift = Int(mod(jr - resol.nside, 2))
     if jr < resol.nside
         # North polar cap
@@ -352,20 +354,20 @@ order, return a pair containing the (`colatitude`, `longitude`) angles
 corresponding to its center, both expressed in radians.
 """
 function pix2angRing(resol::Resolution, pixel)
-    const fact1 = 1.5 * resol.nside
-    const fact2 = 3.0 * resol.pixelsPerFace
+    fact1 = 1.5 * resol.nside
+    fact2 = 3.0 * resol.pixelsPerFace
 
     # Any reference to equations in this routine refers to Gorski et al. (2005)
 
     if pixel ≤ resol.ncap
         # North Polar cap
 
-        const p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
-        const floor_p_h = floor(p_h)
+        p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
+        floor_p_h = floor(p_h)
             # Eq. (2)
-        const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
+        i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
             # Eq. (3)
-        const j  = pixel - 2i*(i - 1)
+        j  = pixel - 2i*(i - 1)
 
             # Colatitude: Eq. (4); longitude: Eq. (5)
         return (acos(1 - i^2 / fact2),
@@ -374,18 +376,18 @@ function pix2angRing(resol::Resolution, pixel)
         # Equatorial belt
 
         # Zero-based index for pixels in the equatorial region
-        const ip    = pixel - resol.ncap - 1
+        ip    = pixel - resol.ncap - 1
         # Eq. (6) - ring counts from the North pole; resol.nside is
         # the number of pixels in the North Polar ring
-        const i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
+        i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
         # Eq. (7) - zero-based index of the pixel within this ring
-        const j  = Int(mod(ip, resol.nsideTimesFour)) + 1
+        j  = Int(mod(ip, resol.nsideTimesFour)) + 1
 
         # Eq. (9) - this equals 1 if i + resol.nside is odd, 1/2
         # otherwise. It is used to convert j into a longitude (since
         # pixel centers in odd rings are shifted with respect to
         # centers in even rings)
-        const s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
+        s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
 
         # Colatitude: Eq. (8) in disguise, latitude: Eq. (9)
         return (acos((resol.nsideTimesTwo - i) / fact1),
@@ -396,11 +398,11 @@ function pix2angRing(resol::Resolution, pixel)
         # The pixels in this cap are handled like the ones in the
         # North Polar cap, except that we must flip the value of "ip".
 
-        const ip = resol.numOfPixels - pixel + 1
-        const p_h = ip / 2
-        const floor_p_h = floor(p_h)
-        const i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
-        const j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
+        ip = resol.numOfPixels - pixel + 1
+        p_h = ip / 2
+        floor_p_h = floor(p_h)
+        i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
+        j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
 
         return (acos(-1 + i^2 / fact2),
                     (float(j) - 0.5) * π / (2i))
@@ -496,22 +498,22 @@ function readMapFromFITS(f::FITSIO.FITSFile,
                          column,
                          t::Type{T}) where {T <: Number}
     value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
-    const nside = parse(Int, value)
+    nside = parse(Int, value)
 
     value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
-    const ringOrdering = uppercase(strip(value[2:end-1])) == "RING"
+    ringOrdering = uppercase(strip(value[2:end-1])) == "RING"
 
-    const repeat = (FITSIO.fits_get_coltype(f, column))[2]
-    const nrows = FITSIO.fits_get_num_rows(f)
+    repeat = (FITSIO.fits_get_coltype(f, column))[2]
+    nrows = FITSIO.fits_get_num_rows(f)
 
     if repeat * nrows != nside2npix(nside)
         error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
     end
 
     if ringOrdering
-        result = Map{T, RingOrder}(Array{T}(nside2npix(nside)))
+        result = Map{T, RingOrder}(Array{T}(undef, nside2npix(nside)))
     else
-        result = Map{T, NestedOrder}(Array{T}(nside2npix(nside)))
+        result = Map{T, NestedOrder}(Array{T}(undef, nside2npix(nside)))
     end
     FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 

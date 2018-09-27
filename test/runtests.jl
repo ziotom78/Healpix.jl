@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 
+import ImageMagick  # Remove this once bug https://github.com/JuliaImages/ImageView.jl/pull/156#issuecomment-418200062 is solved
 import Healpix
 import Cairo
-using Base.Test
+using Test
 
 const eps = 1e-10
 
@@ -22,14 +23,16 @@ const eps = 1e-10
 
 @test Healpix.nside2pixarea(128) ≈ 6.391586616190171e-5
 @test Healpix.nside2resol(128) ≈ 0.007994739905831941
-@test_throws DomainError Healpix.nside2pixarea(-1)
-@test_throws DomainError Healpix.nside2resol(-1)
+@test_throws DomainError(-1, "`NSIDE` is not a positive number") Healpix.nside2pixarea(-1)
+@test_throws DomainError(-1, "`NSIDE` is not a positive number") Healpix.nside2resol(-1)
+@test_throws DomainError(513, "`NSIDE` is not an integer power of two") Healpix.nside2pixarea(513)
+@test_throws DomainError(513, "`NSIDE` is not an integer power of two") Healpix.nside2resol(513)
 
 @test Healpix.nside2npix(4) == 192
 @test Healpix.npix2nside(192) == 4
-@test_throws DomainError Healpix.nside2npix(15)
-@test_throws DomainError Healpix.npix2nside(7)
-@test_throws DomainError Healpix.npix2nside(12 * 8 * 9)
+@test_throws DomainError(15, "`NSIDE` is not an integer power of two") Healpix.nside2npix(15)
+@test_throws DomainError(7, "Invalid number of pixels") Healpix.npix2nside(7)
+@test_throws DomainError(12 * 8 * 9, "Invalid number of pixels") Healpix.npix2nside(12 * 8 * 9)
 
 # ang2vec
 
@@ -127,8 +130,8 @@ theta, phi = Healpix.vec2ang(2.922856075911509, 2.304551510739625, 0.87468748910
 
 # ang2pixNest
 
-@test_throws DomainError Healpix.Resolution(0)
-@test_throws DomainError Healpix.Resolution(100000000)
+@test_throws DomainError(0) Healpix.Resolution(0)
+@test_throws DomainError(100000000) Healpix.Resolution(100000000)
 lowresol = Healpix.Resolution(2)
 resol = Healpix.Resolution(256)
 
@@ -605,17 +608,17 @@ println("Orthographic projection saved in file $figname")
 @test Healpix.numberOfAlms(10, 7) == 60
 @test Healpix.numberOfAlms(12, 7) == 76
 @test Healpix.numberOfAlms(12, 12) == 91
-@test_throws DomainError Healpix.numberOfAlms(-1, 1)
-@test_throws DomainError Healpix.numberOfAlms(4, -1)
-@test_throws DomainError Healpix.numberOfAlms(5, 7)
+@test_throws DomainError(-1, "`lmax` is not positive or zero") Healpix.numberOfAlms(-1, 1)
+@test_throws DomainError(-1, "`mmax` is not positive or zero") Healpix.numberOfAlms(4, -1)
+@test_throws DomainError((5, 7), "`lmax` and `mmax` are inconsistent") Healpix.numberOfAlms(5, 7)
 
-alm = Healpix.Alm{Complex64}(10, 8)
+alm = Healpix.Alm{ComplexF32}(10, 8)
 @test Healpix.almIndex(alm, 4, 2) == 24
 @test Healpix.almIndex(alm, 5, 2) == 25
 @test Healpix.almIndex(alm, 5, 3) == 33
 @test Healpix.almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
 
-alm = Healpix.readAlmFromFITS("alm.fits", Complex128)
+alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
 @test alm[1]  ≈ (5.443205775735e+03 + 0.000000000000e+00im) atol = eps
 @test alm[2]  ≈ (-3.143659646589e+03 + 0.000000000000e+00im) atol = eps
 @test alm[3]  ≈ (-8.445976910202e-07 + 0.000000000000e+00im) atol = eps
