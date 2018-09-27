@@ -15,6 +15,7 @@ matrix:
 addons:
   apt:
     packages:
+      - zlib1g             # Needed by ImageMagick
       - libcfitsio3
 
 after_success:
