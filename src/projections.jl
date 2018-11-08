@@ -15,10 +15,10 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
                     maxval=missing,
                     unseen=missing) where {T <: Number, O <: Healpix.Order}
 
-    if isequal(minval, missing)
+    if ismissing(minval)
         minval = convert(Float64, minimum(m.pixels[isfinite.(m.pixels)]))
     end
-    if isequal(maxval, missing)
+    if ismissing(maxval)
         maxval = convert(Float64, maximum(m.pixels[isfinite.(m.pixels)]))
     end
 
@@ -36,8 +36,8 @@ function drawmapbmp(invprojfn, m::Map{T,O}, bmpwidth, bmpheight;
             visible, lat, long = invprojfn(x, -y)
             if visible
                 value = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
-                if isequal(isequal(value, missing) || isnan(value) || (
-                    !isequal(value, missing) && unseen == value), true)
+                if ismissing(value) || isnan(value) || (
+                    !ismissing(unseen) && unseen == value)
                     color = unseen_color
                 else
                     color = get(cs, (value - minval) / (maxval - minval))
@@ -73,8 +73,8 @@ The following keywords can be used in the call:
 - `figsize`: 2-tuple specifying the (height, width) of the bitmap in pixels
 - `center`: 2-tuple specifying the location (colatitude, longitude) of the sky
   point that is to be placed in the middle of the image (in radians)
-- `show`: Boolean; if true (the default), the bitmap will be shown using
-  functions from the "Plots" package.
+- `numfmt`: Number->String function to be used to convert the extrema of the color
+  bar into a textual representation. The default is `x -> @sprintf("%g", x)`.
 - `returnmask`: Boolean; if true, the function returns a 2-tuple containing
   the image bitmap and a mask bitmap, which is set to true if the pixel falls
   within the carthographic projection, false otherwise. If `returnmask` is
@@ -90,6 +90,7 @@ function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
     center = get(args, :center, (0, 0))
     returnmask = get(args, :returnmask, false)
     show = get(args, :show, true)
+    numfmt = get(args, :numfmt, x -> @sprintf("%g", x))
     colorscheme = get(args, :cs, ColorSchemes.temperaturemap)
     cbarmargin = get(args, :cbarmargin, 10)
     cbarheight = get(args, :cbarheight, 50)
@@ -157,9 +158,9 @@ function project(invprojfn, drawborderfn, m::Map{T,O}, bmpwidth, bmpheight;
 
     text_baseline = imgh + cbarheight + cbarlblheight - cbarmargin
     Cairo.move_to(cr, cbarmargin, text_baseline)
-    Cairo.show_text(cr, @sprintf("%g", minval))
+    Cairo.show_text(cr, numfmt(minval))
 
-    hilabel = @sprintf("%g", maxval)
+    hilabel = numfmt(maxval)
     Cairo.move_to(cr,
         width - cbarmargin - Cairo.textwidth(cr, hilabel),
         text_baseline)

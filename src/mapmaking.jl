@@ -14,12 +14,14 @@ function tod2map(pixidx, tod::Array{T}; nside=128, ordering=Healpix.RingOrder) w
     binnedmap = Map{T,ordering}(nside)
     hitmap = Map{Int,ordering}(nside)
     
-    for i in eachindex(pixidx)
-        binnedmap.pixels[pixidx[i]] += tod[i]
-        hitmap.pixels[pixidx[i]] += 1
+    @inbounds for i in eachindex(pixidx)
+        if !ismissing(tod[i])
+            binnedmap.pixels[pixidx[i]] += tod[i]
+            hitmap.pixels[pixidx[i]] += 1
+        end
     end
     
-    for i in eachindex(binnedmap.pixels)
+    @inbounds for i in eachindex(binnedmap.pixels)
         if hitmap.pixels[i] > 0
             binnedmap.pixels[i] /= hitmap.pixels[i]
         end
