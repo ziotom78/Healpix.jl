@@ -6,7 +6,8 @@ export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
 export Order, RingOrder, NestedOrder, Map
 export ang2vec, vec2ang, ang2pix, pix2ang
-export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables, ringWeightPath, readWeightRing
+export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
+export ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export getringinfo!, getringinfo, getinterpolRing
@@ -362,7 +363,7 @@ function pix2angRing(resol::Resolution, pixel)
     if pixel ≤ resol.ncap
         # North Polar cap
 
-        p_h   = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
+        p_h = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
         floor_p_h = floor(p_h)
             # Eq. (2)
         i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
@@ -591,12 +592,15 @@ end
 """
     saveToFITS(map::Map{T, O}, filename::AbstractString, typechar="D", unit="", extname="MAP") where {T <: Number, O <: Order}
 
-Save a map into a FITS file. The name of the file is specified in `filename`; if it begins with `!`,
-existing files will be overwritten without warning. The parameter `typechar` specifies the data type
-to be used in the FITS file: the default (`D`) will save 64-bit floating-point values. See the
-CFITSIO documentation for other values. The keyword `unit` specifies the measure unit used for the
-pixels in the map. The keyword `extname` specifies the name of the HDU where the map pixels will
-be written.
+Save a map into a FITS file. The name of the file is specified in
+`filename`; if it begins with `!`, existing files will be overwritten
+without warning. The parameter `typechar` specifies the data type to
+be used in the FITS file: the default (`D`) will save 64-bit
+floating-point values. See the CFITSIO documentation for other
+values. The keyword `unit` specifies the measure unit used for the
+pixels in the map. The keyword `extname` specifies the name of the HDU
+where the map pixels will be written.
+
 """
 function saveToFITS(map::Map{T, O},
                     fileName::AbstractString;

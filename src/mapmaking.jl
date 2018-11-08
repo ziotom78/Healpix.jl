@@ -5,8 +5,8 @@ export tod2map, combinemaps!
 Markdown.doc"""
     tod2map{T,O}(pixidx, tod::Array{T}; nside=128) :: (map, hits)
 
-Create a binned map for a TOD and return a tuple containing
-the map itself and the hit map.
+Create a binned map for a TOD and return a tuple containing the map
+itself and the hit map.
 """
 function tod2map(pixidx, tod::Array{T}; nside=128, ordering=Healpix.RingOrder) where {T}
     @assert length(pixidx) == length(tod)
@@ -31,10 +31,10 @@ end
 Markdown.doc"""
     combinemaps{T, O, H}(destmap::Map{T, O}, desthitmap::Map{H, O}, othermap::Map{T, O}, otherhitmap::Map{H, O})
 
-Sum "othermap" to "destmap", assuming that both maps have been produced
-by binning TODs. The parameters `desthitmap` and `otherhitmap` are the
-two hit maps. At the end of the call, `destmap` and `desthitmap` are
-updated.
+Sum "othermap" to "destmap", assuming that both maps have been
+produced by binning TODs. The parameters `desthitmap` and
+`otherhitmap` are the two hit maps. At the end of the call, `destmap`
+and `desthitmap` are updated.
 """
 function combinemaps!(destmap::Map{T,O},
                       desthitmap::Map{H,O},

@@ -3,9 +3,9 @@
 using Printf
 
 """
-`Resolution` objects are needed to perform a number of
-pixel-related functions, e.g., convert a direction into a pixel number
-and vice versa.
+`Resolution` objects are needed to perform a number of pixel-related
+functions, e.g., convert a direction into a pixel number and vice
+versa.
 """
 struct Resolution
     nside::Int
