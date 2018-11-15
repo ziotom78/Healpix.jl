@@ -446,7 +446,7 @@ a map, and it can be anything (even a string!). The type `O` is used
 to specify the ordering of the pixels, and it can either be
 `RingOrder` or `NestedOrder`.
 """
-mutable struct Map{T, O <: Order}
+mutable struct Map{T, O <: Order} <: AbstractArray{T, 1}
     pixels::Array{T}
     resolution::Resolution
 
@@ -483,6 +483,23 @@ import Base: +, -, *, /
 -(a::Number, b::Map{T,O}) where {T <: Number, O} = b + (-a)
 *(a::Number, b::Map{T,O}) where {T <: Number, O} = b * a
 /(a::Number, b::Map{T,O}) where {T <: Number, O} = Map{T, O}(a ./ b.pixels)
+
+################################################################################
+# Iterator interface
+
+Base.size(m::Map{T, O}) where {T, O} = (m.resolution.numOfPixels,)
+
+Base.IndexStyle(::Type{<:Map{T, O}}) where {T, O} = IndexLinear()
+
+function Base.getindex(m::Map{T, O}, i::Int) where {T, O}
+    1 ≤ i ≤ m.resolution.numOfPixels || throw(BoundsError(m, i))
+    m.pixels[i]
+end
+
+function Base.setindex!(m::Map{T, O}, i::Int, val) where {T, O}
+    1 ≤ i ≤ m.resolution.numOfPixels || throw(BoundsError(m, i))
+    m.pixels[i] = val
+end
 
 ################################################################################
 

@@ -1,7 +1,7 @@
 name = "Healpix"
 uuid = "0fe3d3e8-c00f-11e8-2353-b5858a79f927"
 authors = ["Maurizio Tomasi <maurizio.tomasi@unimi.it>"]
-version = "1.0.1"
+version = "1.1.0"
 
 [deps]
 Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"

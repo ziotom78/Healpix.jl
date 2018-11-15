@@ -1,3 +1,8 @@
+# Version 1.1.0
+
+- Maps implement the iterator interface, so it is possible to treat a
+  map like an array. This should make Healpix.jl more similar to healpy.
+
 # Version 1.0.1
 
 - Missing values are treated properly by `project` (using `ismissing`)
