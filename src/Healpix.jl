@@ -4,6 +4,7 @@ export nsideok, nside2pixarea, nside2resol
 export Resolution, nside2npix, npix2nside
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
+export pix2ringpos
 export Order, RingOrder, NestedOrder, Map
 export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
@@ -348,6 +349,53 @@ end
 ################################################################################
 
 """
+    pix2ringpos(resol::Resolution, pixel)
+
+Given the (1-based) index of a pixel in a Healpix map in ring
+order, return a pair of numbers (n, i, j) whose meaning is the following:
+
+- `n` can be one of the symbols `:northcap`, `:equator`, or
+  `:southcap`, representing the region of the sky
+- `i` is the ring index, from 1 to 4NSIDE - 1
+- `j` is the pixel-in-ring index
+"""
+function pix2ringpos(resol::Resolution, pixel)
+    # Any reference to equations in this routine refers to Gorski et al. (2005)
+    if pixel ≤ resol.ncap
+        # North polar cap
+
+        p_h = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
+        floor_p_h = floor(p_h)
+        # Eq. (2)
+        i = floor(Int, sqrt(p_h - sqrt(floor_p_h))) + 1
+        # Eq. (3)
+        j = pixel - 2i * (i - 1)
+        
+        (:northcap, i, j)
+    elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
+        ip    = pixel - resol.ncap - 1
+        # Eq. (6) - ring counts from the North pole; resol.nside is
+        # the number of pixels in the North Polar ring
+        i = floor(Int, ip / resol.nsideTimesFour) + resol.nside
+        # Eq. (7) - zero-based index of the pixel within this ring
+        j  = Int(mod(ip, resol.nsideTimesFour)) + 1
+        (:equator, i, j)
+    else
+        # South polar cap
+        
+        ip = resol.numOfPixels - pixel + 1
+        p_h = ip / 2
+        floor_p_h = floor(p_h)
+        i = floor(Int, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
+        j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
+
+        (:southcap, i, j)
+    end
+end
+
+################################################################################
+
+"""
     pix2angRing(resol::Resolution, pixel) -> (Float64, Float64)
 
 Given the (1-based) index of a pixel in a Healpix map in ring
@@ -359,30 +407,13 @@ function pix2angRing(resol::Resolution, pixel)
     fact2 = 3.0 * resol.pixelsPerFace
 
     # Any reference to equations in this routine refers to Gorski et al. (2005)
-
-    if pixel ≤ resol.ncap
-        # North Polar cap
-
-        p_h = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
-        floor_p_h = floor(p_h)
-            # Eq. (2)
-        i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from N. pole
-            # Eq. (3)
-        j  = pixel - 2i*(i - 1)
-
-            # Colatitude: Eq. (4); longitude: Eq. (5)
+    cap, i, j = pix2ringpos(resol, pixel)
+    if cap == :northcap
+        # Colatitude: Eq. (4); longitude: Eq. (5)
         return (acos(1 - i^2 / fact2),
                     (Float64(j) - 0.5) * π / (2i))
     elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
         # Equatorial belt
-
-        # Zero-based index for pixels in the equatorial region
-        ip    = pixel - resol.ncap - 1
-        # Eq. (6) - ring counts from the North pole; resol.nside is
-        # the number of pixels in the North Polar ring
-        i = floor(Integer, ip / resol.nsideTimesFour) + resol.nside
-        # Eq. (7) - zero-based index of the pixel within this ring
-        j  = Int(mod(ip, resol.nsideTimesFour)) + 1
 
         # Eq. (9) - this equals 1 if i + resol.nside is odd, 1/2
         # otherwise. It is used to convert j into a longitude (since
@@ -398,13 +429,6 @@ function pix2angRing(resol::Resolution, pixel)
 
         # The pixels in this cap are handled like the ones in the
         # North Polar cap, except that we must flip the value of "ip".
-
-        ip = resol.numOfPixels - pixel + 1
-        p_h = ip / 2
-        floor_p_h = floor(p_h)
-        i = floor(Integer, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
-        j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
-
         return (acos(-1 + i^2 / fact2),
                     (float(j) - 0.5) * π / (2i))
     end
