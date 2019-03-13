@@ -1,3 +1,7 @@
+# Version 1.1.1
+
+- Fix a bug in the implementation of `setindex!`
+
 # Version 1.1.0
 
 - Maps implement the iterator interface, so it is possible to treat a
