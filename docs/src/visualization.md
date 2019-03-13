@@ -1,30 +1,39 @@
 # Visualization functions
 
-Healpix.jl implements the [`project`](@ref) function, which creates a 2D matrix containing the cartographic projection of a map. A few standard cartographic projections are implemented, but users can provide their own projections. The function can optionally use `heatmap` (from the Plots.jl package) to display the 2D matrix. Two useful wrappers to `project` are [`equirectangular`](@ref) and [`mollweide`](@ref), which employ the equirectangular and Mollweide projections respectively.
+Healpix.jl uses RecipesBase to display maps. You need to import
+`Plots` in order to display maps, using the `plot` functions.  Maps
+are internally treated as heatmaps, so your backend should support
+this kind of visualization: at the moment, this is true for GR, PlotLy
+and PyPlot.
+
 
 ```@example
 using Healpix
+using Plots
+gr()  # Use the GR backend
 
 nside = 8
 m = Map{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
-mollweide(m)
+plot(m)
 ```
 
-```@docs
-project
+A call to `plot` can provide two additional arguments:
+
+1. A carthographic projection (see below).
+2. A dictionary containing parameters to be used by the carthographic
+   projection.
+   
+The following example shows the map in orthographic coordinates:
+
+```@example
+plot(m, orthographic)
 ```
 
 ## Cartographic projections
 
 ```@docs
-equiprojinv
-mollweideprojinv
-```
-
-## High-level wrappers to `project`
-
-```@docs
-equirectangular
 mollweide
+equirectangular
+orthographic
 ```
