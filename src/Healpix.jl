@@ -15,6 +15,7 @@ export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export ring2nest, nest2ring
 
 import FITSIO
+import Base: getindex, setindex!
 
 const NSIDE_MAX = 8192
 
@@ -491,12 +492,12 @@ Base.size(m::Map{T, O}) where {T, O} = (m.resolution.numOfPixels,)
 
 Base.IndexStyle(::Type{<:Map{T, O}}) where {T, O} = IndexLinear()
 
-function Base.getindex(m::Map{T, O}, i::Int) where {T, O}
+function getindex(m::Map{T, O}, i::Integer) where {T, O}
     1 ≤ i ≤ m.resolution.numOfPixels || throw(BoundsError(m, i))
     m.pixels[i]
 end
 
-function Base.setindex!(m::Map{T, O}, i::Int, val) where {T, O}
+function setindex!(m::Map{T, O}, val, i::Integer) where {T, O}
     1 ≤ i ≤ m.resolution.numOfPixels || throw(BoundsError(m, i))
     m.pixels[i] = val
 end
