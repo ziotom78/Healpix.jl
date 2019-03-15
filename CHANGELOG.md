@@ -1,3 +1,10 @@
+# Version 2.0.0
+
+- Use [RecipesBase](https://github.com/JuliaPlots/RecipesBase.jl) and
+  [Plots](https://github.com/JuliaPlots/Plots.jl) to display maps. The use of
+  Plots is not mandatory and can be avoided for headless terminals.
+- Upgrade the documentation to Documenter 0.21
+
 # Version 1.1.1
 
 - Fix a bug in the implementation of `setindex!`
