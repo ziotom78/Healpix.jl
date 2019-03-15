@@ -16,7 +16,9 @@ nside = 8
 m = Map{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
 plot(m)
+savefig("images/mollweide.png") # hide
 ```
+![](images/mollweide.png)
 
 A call to `plot` can provide two additional arguments:
 
@@ -29,7 +31,10 @@ coordinates:
 
 ```@example plotting
 plot(m, orthographic)
+savefig("images/orthographic.png") # hide
 ```
+![](images/orthographic.png)
+
 
 # Cartographic projections
 
