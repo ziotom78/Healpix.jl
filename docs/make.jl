@@ -1,23 +1,25 @@
 push!(LOAD_PATH, "../src/")
 using Documenter, Healpix
 
-makedocs(modules = [Healpix],
-    format = :html,
+makedocs(
+    modules = [Healpix],
+    format = Documenter.HTML(
+        prettyurls = get(ENV, "CI", nothing) == "true"
+    ),
     sitename = "Healpix.jl",
-    pages = Any[
+    pages = [
         "Introduction"  => "index.md",
         "Working with resolutions" => "resolutions.md",
         "Pixel functions" => "pixelfunc.md",
         "Map functions" => "mapfunc.md",
         "Spherical harmonics" => "alm.md",
         "Visualization" => "visualization.md",
-        "Miscellanea" => "misc.md"
+        "Miscellanea" => "misc.md",
     ])
 
 deploydocs(
     repo = "github.com/ziotom78/Healpix.jl.git",
     target = "build",
-    julia = "1.0",
     deps = nothing,
     make = nothing
 )

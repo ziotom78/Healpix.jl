@@ -1,5 +1,3 @@
-using Markdown
-
 const JRLL = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
 const JPLL = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
 
@@ -53,7 +51,7 @@ const CTAB = [0, 1, 256, 257, 2, 3, 258, 259, 512, 513, 768, 769, 514, 515, 770,
               3849, 3594, 3595, 3850, 3851, 3084, 3085, 3340, 3341, 3086, 3087,
               3342, 3343, 3596, 3597, 3852, 3853, 3598, 3599, 3854, 3855]
 
-Markdown.doc"""
+@doc raw"""
     pix2xyfRing(resol::Resolution, ipix) :: (Int, Int, Int)
 
 Convert a pixel number into (x, y, face), using RING ordering."""
@@ -112,7 +110,7 @@ function pix2xyfRing(resol::Resolution, ipix)
     ((ipt - irt) >> 1, (-ipt - irt) >> 1, facenum)
 end
 
-Markdown.doc"""
+@doc raw"""
     xyf2pixRing(resol::Resolution, ix, iy, facenum) :: Int
 
 Convert (x, y, face) into a pixel number, using RING ordering."""
@@ -148,7 +146,7 @@ function compress_bits(v::Int)
             (CTAB[(raw >> 40) & 0xff + 1] << 20))
 end
 
-Markdown.doc"""
+@doc raw"""
     pix2xyfNest(resol::Resolution, ipix) :: (Int, Int, Int)
 
 Convert a pixel number into (x, y, face), using NESTED ordering."""
@@ -157,7 +155,7 @@ function pix2xyfNest(resol::Resolution, ipix)
     (compress_bits(pix), compress_bits(pix ÷ 2), (ipix - 1) >> (2 * resol.order))
 end
 
-Markdown.doc"""
+@doc raw"""
     xyf2pixNest(resol::Resolution, ix, iy, facenum) :: Int
 
 Convert (x, y, face) into a pixel number, using NESTED ordering."""
@@ -165,13 +163,13 @@ function xyf2pixNest(resol::Resolution, ix, iy, facenum)
     facenum << (2 * resol.order) + spreadbits(ix) + 2spreadbits(iy) + 1
 end
 
-Markdown.doc"""
+@doc raw"""
     ring2nest(resol::Resolution, ipix) :: Int
 
 Convert the number of a pixel from RING to NESTED scheme."""
 ring2nest(resol::Resolution, ipix) = xyf2pixNest(resol, pix2xyfRing(resol, ipix)...)
 
-Markdown.doc"""
+@doc raw"""
     nest2ring(resol::Resolution, ipix) :: Int
 
 Convert the number of a pixel from NESTED to RING scheme."""

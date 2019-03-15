@@ -1,6 +1,10 @@
 # Map projections
 
-export UNSEEN, lat2colat, project, equiprojinv, mollweideprojinv, equirectangular, mollweide, plot
+export UNSEEN,
+    lat2colat, colat2lat,
+    project,
+    equiprojinv, mollweideprojinv, orthoinv,
+    equirectangular, mollweide, orthographic
 
 import RecipesBase
 
@@ -64,12 +68,17 @@ end
 
 ################################################################################
 
-"""
-   lat2colat(x)
-
-Convert latitude into colatitude. Both `x` and the result are expressed in radians.
-"""
 lat2colat(x) = π / 2 - x
+colat2lat(x) = π / 2 - x
+
+@doc raw"""
+   lat2colat(x)
+   colat2lat(x)
+
+Convert colatitude into latitude and vice versa. Both `x` and the
+result are expressed in radians.
+"""
+lat2colat, colat2lat
 
 ################################################################################
 
