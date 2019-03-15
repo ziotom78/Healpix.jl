@@ -19,7 +19,4 @@ makedocs(
 
 deploydocs(
     repo = "github.com/ziotom78/Healpix.jl.git",
-    target = "build",
-    deps = nothing,
-    make = nothing
 )
