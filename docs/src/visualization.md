@@ -16,7 +16,7 @@ nside = 8
 m = Map{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
 plot(m)
-savefig("images/mollweide.png") # hide
+savefig(joinpath("images", "mollweide.png")) # hide
 ```
 ![](images/mollweide.png)
 
@@ -31,7 +31,7 @@ coordinates:
 
 ```@example plotting
 plot(m, orthographic)
-savefig("images/orthographic.png") # hide
+savefig(joinpath("images", "orthographic.png")) # hide
 ```
 ![](images/orthographic.png)
 
