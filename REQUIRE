@@ -1,6 +1,4 @@
 julia 1.0
 
 FITSIO
-Printf
 RecipesBase
-Test
