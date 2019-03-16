@@ -4,10 +4,7 @@ authors = ["Maurizio Tomasi <maurizio.tomasi@unimi.it>"]
 version = "2.0.0"
 
 [deps]
-ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
-FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
