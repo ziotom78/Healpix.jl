@@ -108,6 +108,8 @@ Functions [`mollweide`](@ref), [`equirectangular`](@ref), and
 mollweide
 equirectangular
 orthographic
+orthographic2
+gnomonic
 ```
 
 They are based on *inverse* projection functions, i.e., functions that take a 
@@ -116,4 +118,6 @@ They are based on *inverse* projection functions, i.e., functions that take a
 mollweideprojinv
 equiprojinv
 orthoinv
+ortho2inv
+gnominv
 ```
