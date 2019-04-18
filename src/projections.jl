@@ -4,7 +4,7 @@ export UNSEEN,
     lat2colat, colat2lat,
     project,
     equiprojinv, mollweideprojinv, orthoinv,
-    equirectangular, mollweide, orthographic
+    equirectangular, mollweide, orthographic, orthographic2
 
 import RecipesBase
 
@@ -32,7 +32,7 @@ each pixel. Pixels falling outside the projection are marked as NaN,
 and unseen pixels are marked as `missing`.
 """
 function project(invprojfn, m::Map{T,O}, bmpwidth, bmpheight,
-                 projparams = Dict()) where {T <: Number, O <: Healpix.Order}
+                 projparams = Dict()) where {T <: Number,O <: Healpix.Order}
 
     center = get(projparams, :center, (0, 0))
     unseen = get(projparams, :unseen, UNSEEN)
@@ -169,6 +169,20 @@ function orthoinv(x, y, ϕ1, λ0; kwargs...)
     (true, ϕ, λ)
 end
 
+"""
+    function ortho2inv(x, y, ϕ1, λ0)
+
+Inverse stereo orthographic projection centered on (ϕ1, λ0). Given
+a point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
+a 3-tuple of type (Bool, Number, Number). The boolean specifies
+if (x, y) falls within the map (true) or not (false), the second
+and third arguments are the latitude and longitude in radians.
+"""
+function ortho2inv(x, y, ϕ1, λ0; kwargs...)
+    x ≤ 0 && return orthoinv(2x + 1, y, ϕ1, λ0)
+    orthoinv(2x - 1, y, ϕ1, λ0 + π)
+end
+
 ################################################################################
 
 """
@@ -176,7 +190,7 @@ end
 
 High-level wrapper around `project` for equirectangular projections.
 """
-function equirectangular(m::Map{T,O}, projparams = Dict()) where {T <: Number, O <: Order}
+function equirectangular(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     project(equiprojinv, m, width, height, projparams)
@@ -187,7 +201,7 @@ end
 
 High-level wrapper around `project` for Mollweide projections.
 """
-function mollweide(m::Map{T,O}, projparams = Dict()) where {T <: Number, O <: Order}
+function mollweide(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width ÷ 2)
     project(mollweideprojinv, m, width, height, projparams)
@@ -198,12 +212,27 @@ end
 
 High-level wrapper around `project` for orthographic projections centered around the point (ϕ0, λ0).
 """
-function orthographic(m::Map{T,O}, projparams = Dict()) where {T <: Number, O <: Order}
+function orthographic(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
-    project(m, width, width, projparams) do x, y
+    project(m, width, height, projparams) do x, y
         orthoinv(x, y, ϕ0, λ0)
+    end
+end
+
+"""
+    orthographic2(m::Map{T,O}, ϕ0, λ0; kwargs...) where {T <: Number, O <: Order}
+
+High-level wrapper around `project` for stereo orthographic projections centered
+around the point (ϕ0, λ0).
+"""
+function orthographic2(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
+    width = get(projparams, :width, 720)
+    height = get(projparams, :height, width ÷ 2)
+    ϕ0, λ0 = get(projparams, :center, (0, 0))
+    project(m, width, height, projparams) do x, y
+    ortho2inv(x, y, ϕ0, λ0)
     end
 end
 
@@ -211,7 +240,7 @@ end
 
 RecipesBase.@recipe function plot(m::Map{T,O},
                                   projection = mollweide,
-                                  projparams = Dict()) where {T <: Number, O <: Order}
+                                  projparams = Dict()) where {T <: Number,O <: Order}
     
     img, mask, anymasked = projection(m, projparams)
 
@@ -249,7 +278,7 @@ RecipesBase.@recipe function plot(m::Map{T,O},
                             y + 0.5,
                             y - 0.5, NaN])
                     else
-                        curx += 1
+                    curx += 1
                     end
                 end
             end
