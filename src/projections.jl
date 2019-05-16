@@ -93,9 +93,8 @@ or not (false), and the two numbers are the x and y coordinates of the point
 on the projection plane (both are in the range [−1, 1]).
 """
 function equiproj(lat, lon)
-    # The weird usage of mod2pi(x + π) - π allows to have angles in the range
-    # [-π, +π]
-    x, y = ((mod2pi(lon + π) - π) / π, 2 * (mod2pi(lat + π) - π) / π)
+    # We use `rem2pi` because we need angles in the range [-π, +π]
+    x, y = ((rem2pi(lon + π, RoundNearest) - π) / π, 2 * (rem2pi(lat + π, RoundNearest) - π) / π)
     (true, x, y)
 end
 
@@ -124,7 +123,8 @@ or not (false), and the two numbers are the x and y coordinates of the point
 on the projection plane (both are in the range [−1, 1]).
 """
 function mollweideproj(lat, lon)
-    (true, sin(lat), 2 / π * lon * cos(lat))
+    sinlat, coslat = sincos(lat)
+    (true, sinlat, 2 / π * lon * coslat)
 end
 
 """
@@ -171,7 +171,7 @@ function orthoinv(x, y, ϕ1, λ0)
     
     R = 1
     ρ = √(x^2 + y^2)
-    if ρ > R
+        if ρ > R
         return (false, zero(ϕ1), zero(λ0))
     end
     
@@ -326,7 +326,7 @@ function orthographic2(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <:
     height = get(projparams, :height, width ÷ 2)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
     project(m, width, height, projparams) do x, y
-        ortho2inv(x, y, ϕ0, λ0)
+ortho2inv(x, y, ϕ0, λ0)
     end
 end
 
@@ -405,7 +405,7 @@ RecipesBase.@recipe function plot(m::Map{T,O},
                             y - 0.5,
                             y + 0.5,
                             y + 0.5,
-                            y - 0.5, NaN])
+                    y - 0.5, NaN])
                     else
                     curx += 1
                     end
