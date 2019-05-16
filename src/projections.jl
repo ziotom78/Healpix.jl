@@ -84,22 +84,51 @@ lat2colat, colat2lat
 ################################################################################
 
 """
-    function equiprojinv(x, y)
+    equiproj(lat, lon)
+
+Equirectangular projection. Given the latitude `lat` (in radians) and the
+longitude (in radians), return a tuple (Bool, Number, Number) where the
+first Boolean is a flag telling if the point falls within the projection (true)
+or not (false), and the two numbers are the x and y coordinates of the point
+on the projection plane (both are in the range [−1, 1]).
+"""
+function equiproj(lat, lon)
+    # The weird usage of mod2pi(x + π) - π allows to have angles in the range
+    # [-π, +π]
+    x, y = ((mod2pi(lon + π) - π) / π, 2 * (mod2pi(lat + π) - π) / π)
+    (true, x, y)
+end
+
+"""
+    equiprojinv(x, y)
 
 Inverse equirectangular projection. Given a point (x, y)
 on the plane [-1, 1] × [-1, 1], return a tuple (Bool, Number, Number)
 where the first Boolean is a flag telling if the point falls
 within the projection (true) or not (false), and the two numbers
-are the latitude and colatitude in radians.
+are the latitude and longitude in radians.
 """
-function equiprojinv(x, y; kwargs...)
+function equiprojinv(x, y)
     ((-1 ≤ x ≤ 1) && (-1 ≤ y ≤ 1)) || return (false, 0, 0)
      
     (true, π / 2 * y, π * x)
 end
 
 """
-    function mollweideprojinv(x, y)
+    mollweideproj(lat, lon)
+
+Mollweide projection. Given the latitude `lat` (in radians) and the
+longitude (in radians), return a tuple (Bool, Number, Number) where the
+first Boolean is a flag telling if the point falls within the projection (true)
+or not (false), and the two numbers are the x and y coordinates of the point
+on the projection plane (both are in the range [−1, 1]).
+"""
+function mollweideproj(lat, lon)
+    (true, sin(lat), 2 / π * lon * cos(lat))
+end
+
+"""
+    mollweideprojinv(x, y)
 
 Inverse Mollweide projection. Given a point (x, y) on the plane,
 with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type
@@ -107,7 +136,7 @@ with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type
 the map (true) or not (false), the second and third arguments are
 the latitude and longitude in radians.
 """
-function mollweideprojinv(x, y; kwargs...)
+function mollweideprojinv(x, y)
     # See https://en.wikipedia.org/wiki/Mollweide_projection, we set
     #
     #     R = 1/√2
@@ -127,7 +156,7 @@ function mollweideprojinv(x, y; kwargs...)
 end
 
 """
-    function orthoinv(x, y, ϕ1, λ0)
+    orthoinv(x, y, ϕ1, λ0)
 
 Inverse orthographic projection centered on (ϕ1, λ0). Given a
 point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
@@ -135,7 +164,7 @@ a 3-tuple of type (Bool, Number, Number). The boolean specifies
 if (x, y) falls within the map (true) or not (false), the second
 and third arguments are the latitude and longitude in radians.
 """
-function orthoinv(x, y, ϕ1, λ0; kwargs...)
+function orthoinv(x, y, ϕ1, λ0)
     # Assume R = 1/√2. The notation ϕ1, λ0 closely follows
     # the book "Map projections — A working manual" by
     # John P. Snyder (page 145 and ff.)
@@ -177,7 +206,7 @@ a 3-tuple of type (Bool, Number, Number). The boolean specifies
 if (x, y) falls within the map (true) or not (false), the second
 and third arguments are the latitude and longitude in radians.
 """
-function ortho2inv(x, y, ϕ1, λ0; kwargs...)
+function ortho2inv(x, y, ϕ1, λ0)
     x ≤ 0 && return orthoinv(2x + 1, y, ϕ1, λ0)
     orthoinv(2x - 1, y, ϕ1, λ0 + π)
 end
@@ -192,7 +221,7 @@ Number, Number). The boolean specifies if (x, y) falls within
 the map (true) or not (false), the second and third arguments
 are the latitude and longitude in radians.
 """
-function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad; kwargs...)
+function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad)
     # We fix a Earth radius such that the field of view of the
     # projection is the one expected. Note that the formula
     # diverges if `fov_rad` is 90° (as expected).
@@ -203,6 +232,11 @@ function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad; kwargs...)
     # intersection between the ray and the sphere.
     gamma = 1 / sqrt(1 + (x^2 + y^2) / R^2)
     vecx, vecy, vecz = gamma * R, -gamma * x, -gamma * y
+
+    # We implement the rotations in the following order:
+    # 1. Rotation by -ψ0 (orientation) around the x axis
+    # 2. Rotation by λ0 (longitude) around the z axis
+    # 3. Rotation by ϕ1 (latitude) around the y axis
 
     sin_ϕ1, cos_ϕ1 = sincos(ϕ1)
     sin_λ0, cos_λ0 = sincos(λ0)
