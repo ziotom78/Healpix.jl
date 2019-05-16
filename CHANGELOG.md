@@ -1,3 +1,7 @@
+# HEAD
+
+- Two new map projections: `orthographic2` and `gnomonic`
+
 # Version 2.0.0
 
 - Use [RecipesBase](https://github.com/JuliaPlots/RecipesBase.jl) and
