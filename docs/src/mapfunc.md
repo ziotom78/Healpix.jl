@@ -31,7 +31,27 @@ mollweide(m * 2.0)
 mollweide(m * m)
 ```
 
+The [`Map{T, O <: Order}`](@ref) is derived from the abstract type
+[`GenericMap{T}`](@ref), which does not encode the ordering. It is useful for
+functions that can either work on ring/nested-ordered maps but cannot be
+executed on plain generic arrays:
+
+```julia
+# Return the number of pixels in the map, regardless of its ordering
+maplength(m::GenericMap{T}) where T = length(m)
+
+# This returns 12
+maplength(Map{Float64, RingOrder}(1))
+
+# This too returns 12
+maplength(Map{Float64, NestedOrder}(1))
+
+# This fails
+maplength(zeros(Float64, 12))
+```
+
 ```@docs
+GenericMap
 Map
 ```
 
