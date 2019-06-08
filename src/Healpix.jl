@@ -472,7 +472,7 @@ abstract type NestedOrder <: Order end
 An abstract type representing an Healpix map without a specified
 ordering. This can be used to implement multiple dispatch when you
 don't care about the ordering of a map."""
-abstract type GenericMap{T} <: AbstractArray{T, 1}
+abstract type GenericMap{T} <: AbstractArray{T, 1} end
 
 """
     struct Map{T, O <: Order} <: GenericMap{T}
