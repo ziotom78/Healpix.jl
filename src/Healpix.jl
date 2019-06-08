@@ -466,12 +466,29 @@ ordering. (See also `RingOrder`.)
 """
 abstract type NestedOrder <: Order end
 
-"""A Healpix map. The type `T` is used for the value of the pixels in
+"""
+    GenericMap{T} <: AbstractArray{T, 1}
+
+An abstract type representing an Healpix map without a specified
+ordering. This can be used to implement multiple dispatch when you
+don't care about the ordering of a map."""
+abstract type GenericMap{T} <: AbstractArray{T, 1}
+
+"""
+    struct Map{T, O <: Order} <: GenericMap{T}
+
+A Healpix map. The type `T` is used for the value of the pixels in
 a map, and it can be anything (even a string!). The type `O` is used
 to specify the ordering of the pixels, and it can either be
 `RingOrder` or `NestedOrder`.
+
+A `Map` type contains the following fields:
+
+- `pixels`: array of pixels
+- `resolution`: instance of a `Resolution` object
+
 """
-mutable struct Map{T, O <: Order} <: AbstractArray{T, 1}
+mutable struct Map{T, O <: Order} <: GenericMap{T}
     pixels::Array{T}
     resolution::Resolution
 
