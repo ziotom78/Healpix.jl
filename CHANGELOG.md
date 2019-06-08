@@ -1,6 +1,8 @@
 # HEAD
 
 - Two new map projections: `orthographic2` and `gnomonic`
+- Make `Map` descend from the abstract type `GenericMap`
+  ([#12](https://github.com/ziotom78/Healpix.jl/pull/12))
 
 # Version 2.0.0
 
