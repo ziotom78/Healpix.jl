@@ -1,7 +1,13 @@
 # HEAD
 
-- New type `PolarizedMap` added
+- Add Appveyor support to test Healpix under Windows
+  ([#14](https://github.com/ziotom78/Healpix.jl/pull/14))
+- Better structure of the code: now the source code is split into
+  smaller files, and tests have been grouped in sets
+  ([#13](https://github.com/ziotom78/Healpix.jl/pull/13))
+- New type `PolarizedMap` added ([#13](https://github.com/ziotom78/Healpix.jl/pull/13))
 - New keyword `write_keywords` added to `saveToFITS`
+  ([#13](https://github.com/ziotom78/Healpix.jl/pull/13))
 - Make `Map` descend from the abstract type `GenericMap`
   ([#12](https://github.com/ziotom78/Healpix.jl/pull/12))
 
