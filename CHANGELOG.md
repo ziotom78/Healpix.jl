@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 2.2.0
+
 - Add Appveyor support to test Healpix under Windows
   ([#14](https://github.com/ziotom78/Healpix.jl/pull/14))
 - Better structure of the code: now the source code is split into
