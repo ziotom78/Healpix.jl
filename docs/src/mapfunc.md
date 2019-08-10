@@ -50,9 +50,15 @@ maplength(Map{Float64, NestedOrder}(1))
 maplength(zeros(Float64, 12))
 ```
 
+Healpix.jl implements the [`PolarizedMap{T, O <: Order}`](@ref) type
+as well. This encodes three maps containing the I/Q/U signal: the
+intensity (I), and the Q and U Stokes parameters. The three maps must
+have the same resolution.
+
 ```@docs
 GenericMap
 Map
+PolarizedMap
 ```
 
 ## Encoding the order
