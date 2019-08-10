@@ -1,8 +1,13 @@
 # HEAD
 
-- Two new map projections: `orthographic2` and `gnomonic`
+- New type `PolarizedMap` added
+- New keyword `write_keywords` added to `saveToFITS`
 - Make `Map` descend from the abstract type `GenericMap`
   ([#12](https://github.com/ziotom78/Healpix.jl/pull/12))
+
+# Version 2.1.0
+
+- Two new map projections: `orthographic2` and `gnomonic` ([43e90915](https://github.com/ziotom78/Healpix.jl/commit/43e90915dba47577de322970bbc14d58b9830ab5))
 
 # Version 2.0.0
 

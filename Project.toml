@@ -3,11 +3,11 @@ uuid = "9f4e344d-96bc-545a-84a3-ae6b9e1b672b"
 authors = ["Maurizio Tomasi <maurizio.tomasi@unimi.it>"]
 version = "2.1.0"
 
-[compat]
-julia = "1"
-
 [deps]
 FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+julia = "1"
