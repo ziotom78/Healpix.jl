@@ -1,5 +1,7 @@
 # HEAD
 
+- Add Appveyor support to test Healpix under Windows
+  ([#14](https://github.com/ziotom78/Healpix.jl/pull/14))
 - Better structure of the code: now the source code is split into
   smaller files, and tests have been grouped in sets
   ([#13](https://github.com/ziotom78/Healpix.jl/pull/13))
