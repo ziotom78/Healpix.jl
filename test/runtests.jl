@@ -17,6 +17,10 @@ end
     include("test_pixelfunctions.jl")
 end
 
+@testset "Polarized maps" begin
+    include("test_polarizedmap.jl")
+end
+
 @testset "Interpolation functions" begin
     include("test_interp.jl")
 end
