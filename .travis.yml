@@ -1,8 +1,11 @@
 language: julia
 
+os:
+  - linux
+  - osx
+  
 julia:
   - 1.0
-  - 1.1
   - nightly
 
 notifications:
@@ -12,16 +15,10 @@ matrix:
   allow_failures:
     - julia: nightly
 
-addons:
-  apt:
-    packages:
-      - libcfitsio3
-
 jobs:
   include:
     - stage: "Documentation"
-      julia: 1.1
-      os: linux
+      julia: 1.0
       script:
         - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));
                                                Pkg.instantiate()'

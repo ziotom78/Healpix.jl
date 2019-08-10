@@ -359,7 +359,7 @@ function gnomonic(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Orde
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0, ψ0 = get(projparams, :center, (0, 0, 0))
-    fov_rad = get(projparams, :fov_rad, deg2rad(15 / 60))
+    fov_rad = get(projparams, :fov_rad, deg2rad(15))
     project(m, width, height, projparams) do x, y
         gnominv(x, y, ϕ0, λ0, ψ0, fov_rad)
     end
