@@ -1,5 +1,8 @@
 # HEAD
 
+- Relicense the library under GPL2
+  ([#16](https://github.com/ziotom78/Healpix.jl/pull/16))
+
 # Version 2.2.0
 
 - Add Appveyor support to test Healpix under Windows
