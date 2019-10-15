@@ -75,4 +75,4 @@ print("average: $(mean(m.pixels))\n")
 Healpix.jl is released under the GPL license. Versions before 2.3.0
 were released under a MIT license, but this was considered
 incompatible with the way the code has been written
-([#1](https://github.com/ziotom78/Healpix.jl/issues/15)).
+([#15](https://github.com/ziotom78/Healpix.jl/issues/15)).
