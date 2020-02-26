@@ -133,6 +133,23 @@ conformables(m1, m4)
 conformables
 ```
 
+## Interpolation
+
+The fact that a Healpix map is, well, pixelized means that there is a
+sharp boundary between adjacent pixels. This can lead to undesidable
+effects, and therefore Healpix.jl provides a function,
+[`interpolate`](@ref), that returns the interpolated value of the map
+along some direction in the sky:
+
+- If the direction (θ, ɸ) passes through the center of a pixel,
+  `interpolate` returns the value of the pixel itself;
+- Otherwise, the value of the pixel and its neighbours will be
+  interpolated using a linear function to return a weighted value.
+
+```@docs
+interpolate
+```
+
 ## Map-making
 
 Map-making is the process of converting a time series of measurements

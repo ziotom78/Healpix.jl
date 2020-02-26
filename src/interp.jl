@@ -129,54 +129,72 @@ function ring2idxw(ringinfo::RingInfo, ϕ)
     ([ringinfo.firstPixIdx + i1, ringinfo.firstPixIdx + i2], [1 - w1, w1])
 end
 
-@doc raw"""
-    getinterpolRing(resol::Resolution, θ, ϕ) :: (Array{Int,1}, Array{Float64, 1})
-
-Return the indices and the weights of the four neighbour pixels for the given
-direction (θ, ϕ) in a map with the specified resolution.
-"""
-function getinterpolRing(resol::Resolution, θ, ϕ)
+function getinterpolRing(resol::Resolution, θ, ϕ, pix, weights)
     @assert (0 ≤ θ ≤ π)
 
     z = cos(θ)
     ir1 = ringabove(resol, z)
     ir2 = ir1 + 1
 
-    pix = Array{Int}(undef, 4) # Zero-based till the end
-    wgt = Array{Float64}(undef, 4)
+    # Note that "pix" will be zero-based till the end
     if ir1 > 0
         ring1 = getringinfo(resol, ir1)
         pix1, w1 = ring2idxw(ring1, ϕ)
         pix[1:2] = pix1 .- 1 # Switch from 1-based to 0-based
-        wgt[1:2] = w1
+        weights[1:2] = w1
     end
 
     if ir2 < resol.nsideTimesFour
         ring2 = getringinfo(resol, ir2)
         pix2, w2 = ring2idxw(ring2, ϕ)
         pix[3:4] = pix2 .- 1 # Switch from 1-based to 0-based
-        wgt[3:4] = w2
+        weights[3:4] = w2
     end
 
     if ir1 == 0
         wθ = θ / ring2.colatitude_rad
-        wgt[3:4] .*= wθ
+        weights[3:4] .*= wθ
         fac = (1 - wθ) / 4
-        wgt[:] = [fac, fac, wgt[3] + fac, wgt[4] + fac]
+        weights[:] = [fac, fac, weights[3] + fac, weights[4] + fac]
         pix[1] = (pix[3] + 2) & 3
         pix[2] = (pix[4] + 2) & 3
     elseif ir2 == resol.nsideTimesFour
         wθ = (θ - ring1.colatitude_rad) / (π - ring1.colatitude_rad)
-        wgt[1:2] .*= 1 - wθ
+        weights[1:2] .*= 1 - wθ
         fac = wθ / 4
-        wgt[:] = [wgt[1] + fac, wgt[2] + fac, fac, fac]
+        weights[:] = [weights[1] + fac, weights[2] + fac, fac, fac]
         pix[3] = ((pix[1] + 2) & 3) + resol.numOfPixels - 4
         pix[4] = ((pix[2] + 2) & 3) + resol.numOfPixels - 4
     else
         wθ = (θ - ring1.colatitude_rad) / (ring2.colatitude_rad - ring1.colatitude_rad)
-        wgt[1:2] .*= (1 - wθ)
-        wgt[3:4] .*= wθ
+        weights[1:2] .*= (1 - wθ)
+        weights[3:4] .*= wθ
     end
 
-    (pix .+ 1, wgt)
+    # Fix the order from 0-based to 1-based
+    pix .+= 1
 end
+
+function getinterpolRing(resol::Resolution, θ, ϕ)
+    pix = Array{Int}(undef, 4)
+    wgt = Array{Float64}(undef, 4)
+
+    getinterpolRing!(resol, θ, ϕ, pix, wgt)
+
+    (pix, wgt)
+end
+
+@doc raw"""
+    getinterpolRing(resol::Resolution, θ, ϕ) -> (Array{Int,1}, Array{Float64, 1})
+    getinterpolRing!(resol::Resolution, θ, ϕ, pix, weights) -> (Array{Int,1}, Array{Float64, 1})
+
+Return the indices and the weights of the four neighbour pixels for
+the given direction (θ, ϕ) in a map with the specified resolution.
+
+If provided, the parameters `pix` and `weights` should point to two
+4-element arrays of integers and floating-points, respectively. They
+can be reused in multiple calls to avoid heap allocations and speed up
+the code.
+
+"""
+getinterpolRing

@@ -35,3 +35,47 @@ Return the pair (`theta`, `phi`), where `theta` is the colatitude and
 `ipix`.
 """
 pix2ang
+
+################################################################################
+# Interpolation
+
+function interpolate(m::Map{T, RingOrder}, θ, ϕ, pixbuf, weightbuf) where {T}
+    getinterpolRing!(m.resolution, θ, ϕ, pixbuf, weightbuf)
+
+    result = zero(weightbuf[1])
+    for i in 1:4
+        result += m[pixbuf[i]] * weightbuf[i]
+    end
+    
+    result
+end
+
+function interpolate(m::Map{T, RingOrder}, θ, ϕ) where {T}
+    pixbuf = Array{Int}(undef, 4)
+    weightbuf = Array{Float64}(undef, 4)
+
+    interpolate!(m, θ, ϕ, pixbuf, weightbuf)
+end
+
+"""
+    interpolate(m::Map{T, RingOrder}, θ, ϕ) -> Value
+    interpolate(m::Map{T, RingOrder}, θ, ϕ, pixbuf, weightbuf) -> Value
+
+Return an interpolated value of the map along the specified direction.
+
+When provided, the parameters `pixbuf` and `weightbuf` must be
+4-element arrays of integer and floating-point values,
+respectively. They can be reused across multiple calls of
+`interpolate!`, to save heap allocations:
+
+```
+pixbuf = Array{Int}(undef, 4)
+weightbuf = Array{Float64}(undef, 4)
+
+m = Map{Float64, RingOrder}(1)
+for (θ, ϕ) in [(0., 0.), (π/2, π/2)]
+    println(interpolate!(m, θ, ϕ, pixbuf, weightbuf))
+end
+```
+"""
+interpolate
