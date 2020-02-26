@@ -1,5 +1,8 @@
 # HEAD
 
+- Add functions `pix2zphiRing`, `pix2zphiNest`, `ringAbove`
+  ([#18](https://github.com/ziotom78/Healpix.jl/pull/18))
+
 # Version 2.3.0
 
 - Relicense the library under GPL2
