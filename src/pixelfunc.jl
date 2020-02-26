@@ -350,3 +350,152 @@ vec2pixNest(res::Resolution, x, y, z) = ang2pixNest(res, vec2ang(x, y, z)...)
 vec2pixRing(res::Resolution, x, y, z) = ang2pixRing(res, vec2ang(x, y, z)...)
 pix2vecNest(res::Resolution, pixel) = ang2vec(pix2angNest(res, pixel)...)
 pix2vecRing(res::Resolution, pixel) = ang2vec(pix2angRing(res, pixel)...)
+
+################################################################################
+
+function pix2locRing(
+    res::Resolution,
+    ipix,
+)
+
+    pix = ipix - 1
+    if pix < res.ncap
+        # North polar cap
+        (pix < 0) && println("res = $res, ipix = $ipix, pix = $pix")
+        iring = (1 + round(Int, sqrt(1 + 2pix), RoundDown)) >> 1
+        iphi = (pix + 1) - 2iring * (iring - 1)
+
+        tmp = iring^2 * res.fact2
+        z = 1.0 - tmp
+        (sth, have_sth) = if z > 0.99
+            (sqrt(tmp * (2 - tmp)), true)
+        else
+            (0.0, false)
+        end
+
+        phi = (iphi - 0.5) * π/2 / iring
+
+        return (z, phi, sth, have_sth)
+    end
+
+    if pix < (res.numOfPixels - res.ncap)
+        # Equatorial region
+        nl4 = 4 * res.nside
+        ip = pix - res.ncap
+        tmp = (res.order >= 0) ? (ip >> (res.order + 2)) : (ip / nl4)
+        iring = tmp + res.nside
+        iphi = ip - nl4 * tmp + 1
+
+        fodd = (((iring + res.nside) & 1) != 0) ? 1.0 : 0.5
+
+        z = (2 * res.nside - iring) * res.fact1
+        phi = (iphi - fodd) * π * 0.75 * res.fact1
+
+        return (z, phi, 0.0, false)
+    end
+
+    # South polar cap
+    
+    ip = res.numOfPixels - pix
+
+    # Counted from south pole
+    iring = (1 + round(Int, sqrt(2 * ip - 1), RoundDown)) >> 1
+    iphi = 4iring + 1 - (ip - 2iring * (iring - 1))
+
+    tmp = iring^2 * res.fact2
+    z = tmp - 1.0
+
+    (sth, have_sth) = if z < -0.99
+        (sqrt(tmp * (2 - tmp)), true)
+    else
+        (0.0, false)
+    end
+
+    phi = (iphi - 0.5) * π/2 / iring
+
+    (z, phi, sth, have_sth)
+end
+
+"""
+    pix2zphiRing(res::Resolution, pix) -> (z, phi)
+
+Compute the angular coordinates `z = cos(θ), ϕ` of the center of the
+pixel with number `pix`, assuming the `RING` numbering scheme for
+pixels. *Caution:* this method is inaccurate near the poles at high
+resolutions.
+
+"""
+function pix2zphiRing(res::Resolution, pix)
+    (z, phi, _, _) = pix2locRing(res, pix)
+    (z, phi)
+end
+
+function pix2locNest(
+    res::Resolution,
+    pix,
+)
+
+    z = 0.0
+    phi = 0.0
+    sth = 0.0
+    have_sth = false
+
+    (ix, iy, face_num) = pix2xyfNest(res, pix)
+
+    jr = (JRLL[face_num + 1] << res.order) - ix - iy - 1
+
+    nr = 0
+
+    if res.nside <= jr <= 3res.nside
+        nr = res.nside
+        z = (2 * res.nside - jr) * res.fact1
+    else
+        nr = (jr < res.nside) ? jr : (res.nsideTimesFour - jr)
+
+        tmp = nr^2 * res.fact2
+        z = (jr < res.nside) ? (1.0 - tmp) : (tmp - 1.0)
+        if abs(z) > 0.99
+            sth = sqrt(tmp * (2 - tmp))
+            have_sth = true
+        end
+    end
+
+    tmp = round(Int, JPLL[face_num + 1]) * nr + ix - iy
+
+    (tmp < 0) && (tmp += 8nr)
+
+    phi = (nr == res.nside) ? (3π/8 * tmp * res.fact1) : ((π/4 * tmp) / nr)
+
+    (z, phi, sth, have_sth)
+end
+
+"""
+    pix2zphiNest(res::Resolution, pix) -> (z, phi)
+
+Compute the angular coordinates `z = cos(θ), ϕ` of the center of the
+pixel with number `pix`, assuming the `NEST` numbering scheme for
+pixels. *Caution:* this method is inaccurate near the poles at high
+resolutions.
+
+"""
+function pix2zphiNest(res::Resolution, pix)
+    (z, phi, _, _) = pix2locNest(res, pix)
+    (z, phi)
+end
+
+################################################################################
+
+"""
+    ringAbove(res::Resolution, z) -> (ring_number)
+
+Return the number of the next ring to the north of `z = cos(θ)`.
+If `z` lies north of all rings, the function returns 0.
+
+"""
+function ringAbove(res::Resolution, z)
+    az = abs(z)
+    3az <= 2 && return round(Int, res.nside * (4 - 3z) * 0.5)
+    iring = round(Int, res.nside * sqrt(3(1 - az)))
+
+    (z > 0) ? iring : (4 * res.nside - iring - 1)
+end

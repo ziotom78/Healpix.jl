@@ -495,3 +495,1545 @@ resol = Healpix.Resolution(256)
 @test Healpix.pix2angRing(resol, 786431)[2] ≈ 3.9269908169872414 atol = eps
 @test Healpix.pix2angRing(resol, 786432)[1] ≈ 3.1384032124686820 atol = eps
 @test Healpix.pix2angRing(resol, 786432)[2] ≈ 5.4977871437821380 atol = eps
+
+@testset "pix2zphiRing, NSIDE=1" begin
+    res = Healpix.Resolution(1)
+
+    (z, phi) = Healpix.pix2zphiRing(res, 1)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 2)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 3)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 4)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 5)
+    @test z ≈ 0
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 6)
+    @test z ≈ 0
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 7)
+    @test z ≈ 0
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 8)
+    @test z ≈ 0
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 9)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 10)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 11)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 12)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.497787143782
+end
+
+@testset "pix2zphiNest, NSIDE=1" begin
+    res = Healpix.Resolution(1)
+
+    (z, phi) = Healpix.pix2zphiNest(res, 1)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 2)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 3)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 4)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 5)
+    @test z ≈ 0
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 6)
+    @test z ≈ 0
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 7)
+    @test z ≈ 0
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 8)
+    @test z ≈ 0
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 9)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 10)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 11)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 12)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.497787143782
+end
+
+@testset "Healpix.pix2zphiRing, NSIDE=2" begin
+    res = Healpix.Resolution(2)
+
+    (z, phi) = Healpix.pix2zphiRing(res, 1)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 2)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 3)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 4)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 5)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 6)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 7)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 8)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 9)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 10)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 11)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 12)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 13)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 14)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 15)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 16)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 17)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 18)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 19)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 20)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 21)
+    @test z ≈ 0
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 22)
+    @test z ≈ 0
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 23)
+    @test z ≈ 0
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 24)
+    @test z ≈ 0
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 25)
+    @test z ≈ 0
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 26)
+    @test z ≈ 0
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 27)
+    @test z ≈ 0
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 28)
+    @test z ≈ 0
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 29)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 30)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 31)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 32)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 33)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 34)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 35)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 36)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 37)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 38)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 39)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 40)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 41)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 42)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 43)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 44)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 45)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 46)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 47)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 48)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.497787143782
+end
+
+@testset "Healpix.pix2zphiNest, NSIDE=2" begin
+    res = Healpix.Resolution(2)
+
+    (z, phi) = Healpix.pix2zphiNest(res, 1)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 2)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 3)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 4)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 5)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 6)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 7)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 8)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 9)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 10)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 11)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 12)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 13)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 14)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 15)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 16)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 17)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 18)
+    @test z ≈ 0
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 19)
+    @test z ≈ 0
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 20)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 21)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 22)
+    @test z ≈ 0
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 23)
+    @test z ≈ 0
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 24)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 25)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 26)
+    @test z ≈ 0
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 27)
+    @test z ≈ 0
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 28)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 29)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 30)
+    @test z ≈ 0
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 31)
+    @test z ≈ 0
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 32)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 33)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 34)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 35)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 36)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 37)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 38)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 39)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 40)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 41)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 42)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 43)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 44)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 45)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 46)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 47)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 48)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.497787143782
+end
+
+@testset "Healpix.pix2zphiRing, NSIDE=4" begin
+    res = Healpix.Resolution(4)
+
+    (z, phi) = Healpix.pix2zphiRing(res, 1)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 2)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 3)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 4)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 5)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 6)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 7)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 8)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 9)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 10)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 11)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 12)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 13)
+    @test z ≈ 0.8125
+    @test phi ≈ 0.2617993877991
+    (z, phi) = Healpix.pix2zphiRing(res, 14)
+    @test z ≈ 0.8125
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 15)
+    @test z ≈ 0.8125
+    @test phi ≈ 1.308996938996
+    (z, phi) = Healpix.pix2zphiRing(res, 16)
+    @test z ≈ 0.8125
+    @test phi ≈ 1.832595714594
+    (z, phi) = Healpix.pix2zphiRing(res, 17)
+    @test z ≈ 0.8125
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 18)
+    @test z ≈ 0.8125
+    @test phi ≈ 2.879793265791
+    (z, phi) = Healpix.pix2zphiRing(res, 19)
+    @test z ≈ 0.8125
+    @test phi ≈ 3.403392041389
+    (z, phi) = Healpix.pix2zphiRing(res, 20)
+    @test z ≈ 0.8125
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 21)
+    @test z ≈ 0.8125
+    @test phi ≈ 4.450589592586
+    (z, phi) = Healpix.pix2zphiRing(res, 22)
+    @test z ≈ 0.8125
+    @test phi ≈ 4.974188368184
+    (z, phi) = Healpix.pix2zphiRing(res, 23)
+    @test z ≈ 0.8125
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 24)
+    @test z ≈ 0.8125
+    @test phi ≈ 6.02138591938
+    (z, phi) = Healpix.pix2zphiRing(res, 25)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 26)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 27)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiRing(res, 28)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiRing(res, 29)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiRing(res, 30)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiRing(res, 31)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiRing(res, 32)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiRing(res, 33)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiRing(res, 34)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiRing(res, 35)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiRing(res, 36)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiRing(res, 37)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiRing(res, 38)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiRing(res, 39)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiRing(res, 40)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiRing(res, 41)
+    @test z ≈ 0.5
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 42)
+    @test z ≈ 0.5
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 43)
+    @test z ≈ 0.5
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 44)
+    @test z ≈ 0.5
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 45)
+    @test z ≈ 0.5
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 46)
+    @test z ≈ 0.5
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 47)
+    @test z ≈ 0.5
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 48)
+    @test z ≈ 0.5
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 49)
+    @test z ≈ 0.5
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 50)
+    @test z ≈ 0.5
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 51)
+    @test z ≈ 0.5
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 52)
+    @test z ≈ 0.5
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 53)
+    @test z ≈ 0.5
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 54)
+    @test z ≈ 0.5
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 55)
+    @test z ≈ 0.5
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 56)
+    @test z ≈ 0.5
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 57)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 58)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 59)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiRing(res, 60)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiRing(res, 61)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiRing(res, 62)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiRing(res, 63)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiRing(res, 64)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiRing(res, 65)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiRing(res, 66)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiRing(res, 67)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiRing(res, 68)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiRing(res, 69)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiRing(res, 70)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiRing(res, 71)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiRing(res, 72)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiRing(res, 73)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 74)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 75)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 76)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 77)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 78)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 79)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 80)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 81)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 82)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 83)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 84)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 85)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 86)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 87)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 88)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 89)
+    @test z ≈ 0
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 90)
+    @test z ≈ 0
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 91)
+    @test z ≈ 0
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiRing(res, 92)
+    @test z ≈ 0
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiRing(res, 93)
+    @test z ≈ 0
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiRing(res, 94)
+    @test z ≈ 0
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiRing(res, 95)
+    @test z ≈ 0
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiRing(res, 96)
+    @test z ≈ 0
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiRing(res, 97)
+    @test z ≈ 0
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiRing(res, 98)
+    @test z ≈ 0
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiRing(res, 99)
+    @test z ≈ 0
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiRing(res, 100)
+    @test z ≈ 0
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiRing(res, 101)
+    @test z ≈ 0
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiRing(res, 102)
+    @test z ≈ 0
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiRing(res, 103)
+    @test z ≈ 0
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiRing(res, 104)
+    @test z ≈ 0
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiRing(res, 105)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 106)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 107)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 108)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 109)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 110)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 111)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 112)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 113)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 114)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 115)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 116)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 117)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 118)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 119)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 120)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 121)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 122)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 123)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiRing(res, 124)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiRing(res, 125)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiRing(res, 126)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiRing(res, 127)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiRing(res, 128)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiRing(res, 129)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiRing(res, 130)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiRing(res, 131)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiRing(res, 132)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiRing(res, 133)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiRing(res, 134)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiRing(res, 135)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiRing(res, 136)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiRing(res, 137)
+    @test z ≈ -0.5
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiRing(res, 138)
+    @test z ≈ -0.5
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 139)
+    @test z ≈ -0.5
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 140)
+    @test z ≈ -0.5
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 141)
+    @test z ≈ -0.5
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiRing(res, 142)
+    @test z ≈ -0.5
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 143)
+    @test z ≈ -0.5
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 144)
+    @test z ≈ -0.5
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 145)
+    @test z ≈ -0.5
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiRing(res, 146)
+    @test z ≈ -0.5
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 147)
+    @test z ≈ -0.5
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 148)
+    @test z ≈ -0.5
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 149)
+    @test z ≈ -0.5
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiRing(res, 150)
+    @test z ≈ -0.5
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 151)
+    @test z ≈ -0.5
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 152)
+    @test z ≈ -0.5
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 153)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 154)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 155)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiRing(res, 156)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiRing(res, 157)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiRing(res, 158)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiRing(res, 159)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiRing(res, 160)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiRing(res, 161)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiRing(res, 162)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiRing(res, 163)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiRing(res, 164)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiRing(res, 165)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiRing(res, 166)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiRing(res, 167)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiRing(res, 168)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiRing(res, 169)
+    @test z ≈ -0.8125
+    @test phi ≈ 0.2617993877991
+    (z, phi) = Healpix.pix2zphiRing(res, 170)
+    @test z ≈ -0.8125
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 171)
+    @test z ≈ -0.8125
+    @test phi ≈ 1.308996938996
+    (z, phi) = Healpix.pix2zphiRing(res, 172)
+    @test z ≈ -0.8125
+    @test phi ≈ 1.832595714594
+    (z, phi) = Healpix.pix2zphiRing(res, 173)
+    @test z ≈ -0.8125
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 174)
+    @test z ≈ -0.8125
+    @test phi ≈ 2.879793265791
+    (z, phi) = Healpix.pix2zphiRing(res, 175)
+    @test z ≈ -0.8125
+    @test phi ≈ 3.403392041389
+    (z, phi) = Healpix.pix2zphiRing(res, 176)
+    @test z ≈ -0.8125
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 177)
+    @test z ≈ -0.8125
+    @test phi ≈ 4.450589592586
+    (z, phi) = Healpix.pix2zphiRing(res, 178)
+    @test z ≈ -0.8125
+    @test phi ≈ 4.974188368184
+    (z, phi) = Healpix.pix2zphiRing(res, 179)
+    @test z ≈ -0.8125
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiRing(res, 180)
+    @test z ≈ -0.8125
+    @test phi ≈ 6.02138591938
+    (z, phi) = Healpix.pix2zphiRing(res, 181)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 182)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiRing(res, 183)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiRing(res, 184)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiRing(res, 185)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiRing(res, 186)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiRing(res, 187)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiRing(res, 188)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiRing(res, 189)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiRing(res, 190)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiRing(res, 191)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiRing(res, 192)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 5.497787143782
+end
+
+@testset "Healpix.pix2zphiNest, NSIDE=4" begin
+    res = Healpix.Resolution(4)
+
+    (z, phi) = Healpix.pix2zphiNest(res, 1)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 2)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiNest(res, 3)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 4)
+    @test z ≈ 0.5
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 5)
+    @test z ≈ 0.5
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 6)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiNest(res, 7)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiNest(res, 8)
+    @test z ≈ 0.8125
+    @test phi ≈ 1.308996938996
+    (z, phi) = Healpix.pix2zphiNest(res, 9)
+    @test z ≈ 0.5
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 10)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 11)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 12)
+    @test z ≈ 0.8125
+    @test phi ≈ 0.2617993877991
+    (z, phi) = Healpix.pix2zphiNest(res, 13)
+    @test z ≈ 0.8125
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 14)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 15)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 16)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 17)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 18)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiNest(res, 19)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiNest(res, 20)
+    @test z ≈ 0.5
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 21)
+    @test z ≈ 0.5
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 22)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiNest(res, 23)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiNest(res, 24)
+    @test z ≈ 0.8125
+    @test phi ≈ 2.879793265791
+    (z, phi) = Healpix.pix2zphiNest(res, 25)
+    @test z ≈ 0.5
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 26)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiNest(res, 27)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiNest(res, 28)
+    @test z ≈ 0.8125
+    @test phi ≈ 1.832595714594
+    (z, phi) = Healpix.pix2zphiNest(res, 29)
+    @test z ≈ 0.8125
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 30)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 31)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 32)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 33)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 34)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiNest(res, 35)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiNest(res, 36)
+    @test z ≈ 0.5
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 37)
+    @test z ≈ 0.5
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 38)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiNest(res, 39)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiNest(res, 40)
+    @test z ≈ 0.8125
+    @test phi ≈ 4.450589592586
+    (z, phi) = Healpix.pix2zphiNest(res, 41)
+    @test z ≈ 0.5
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 42)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiNest(res, 43)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiNest(res, 44)
+    @test z ≈ 0.8125
+    @test phi ≈ 3.403392041389
+    (z, phi) = Healpix.pix2zphiNest(res, 45)
+    @test z ≈ 0.8125
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 46)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 47)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 48)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 49)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 50)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiNest(res, 51)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiNest(res, 52)
+    @test z ≈ 0.5
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 53)
+    @test z ≈ 0.5
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 54)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiNest(res, 55)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiNest(res, 56)
+    @test z ≈ 0.8125
+    @test phi ≈ 6.02138591938
+    (z, phi) = Healpix.pix2zphiNest(res, 57)
+    @test z ≈ 0.5
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 58)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiNest(res, 59)
+    @test z ≈ 0.6666666666667
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiNest(res, 60)
+    @test z ≈ 0.8125
+    @test phi ≈ 4.974188368184
+    (z, phi) = Healpix.pix2zphiNest(res, 61)
+    @test z ≈ 0.8125
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 62)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 63)
+    @test z ≈ 0.9166666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 64)
+    @test z ≈ 0.9791666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 65)
+    @test z ≈ -0.5
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 66)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 67)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiNest(res, 68)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 69)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 70)
+    @test z ≈ 0
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 71)
+    @test z ≈ 0
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 72)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 73)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 74)
+    @test z ≈ 0
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiNest(res, 75)
+    @test z ≈ 0
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiNest(res, 76)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 77)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 78)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 79)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiNest(res, 80)
+    @test z ≈ 0.5
+    @test phi ≈ 0
+    (z, phi) = Healpix.pix2zphiNest(res, 81)
+    @test z ≈ -0.5
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 82)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiNest(res, 83)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiNest(res, 84)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 85)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 86)
+    @test z ≈ 0
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiNest(res, 87)
+    @test z ≈ 0
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiNest(res, 88)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 89)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 90)
+    @test z ≈ 0
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiNest(res, 91)
+    @test z ≈ 0
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiNest(res, 92)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 93)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 94)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiNest(res, 95)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiNest(res, 96)
+    @test z ≈ 0.5
+    @test phi ≈ 1.570796326795
+    (z, phi) = Healpix.pix2zphiNest(res, 97)
+    @test z ≈ -0.5
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 98)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiNest(res, 99)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiNest(res, 100)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 101)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 102)
+    @test z ≈ 0
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiNest(res, 103)
+    @test z ≈ 0
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiNest(res, 104)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 105)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 106)
+    @test z ≈ 0
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiNest(res, 107)
+    @test z ≈ 0
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiNest(res, 108)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 109)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 110)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiNest(res, 111)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiNest(res, 112)
+    @test z ≈ 0.5
+    @test phi ≈ 3.14159265359
+    (z, phi) = Healpix.pix2zphiNest(res, 113)
+    @test z ≈ -0.5
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 114)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiNest(res, 115)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiNest(res, 116)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 117)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 118)
+    @test z ≈ 0
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiNest(res, 119)
+    @test z ≈ 0
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiNest(res, 120)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 121)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 122)
+    @test z ≈ 0
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiNest(res, 123)
+    @test z ≈ 0
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiNest(res, 124)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 125)
+    @test z ≈ 0.1666666666667
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 126)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiNest(res, 127)
+    @test z ≈ 0.3333333333333
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiNest(res, 128)
+    @test z ≈ 0.5
+    @test phi ≈ 4.712388980385
+    (z, phi) = Healpix.pix2zphiNest(res, 129)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 130)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 131)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 132)
+    @test z ≈ -0.8125
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 133)
+    @test z ≈ -0.8125
+    @test phi ≈ 1.308996938996
+    (z, phi) = Healpix.pix2zphiNest(res, 134)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.374446785946
+    (z, phi) = Healpix.pix2zphiNest(res, 135)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiNest(res, 136)
+    @test z ≈ -0.5
+    @test phi ≈ 1.178097245096
+    (z, phi) = Healpix.pix2zphiNest(res, 137)
+    @test z ≈ -0.8125
+    @test phi ≈ 0.2617993877991
+    (z, phi) = Healpix.pix2zphiNest(res, 138)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 139)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 0.1963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 140)
+    @test z ≈ -0.5
+    @test phi ≈ 0.3926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 141)
+    @test z ≈ -0.5
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 142)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.9817477042468
+    (z, phi) = Healpix.pix2zphiNest(res, 143)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 0.5890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 144)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 0.7853981633974
+    (z, phi) = Healpix.pix2zphiNest(res, 145)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 146)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 147)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 148)
+    @test z ≈ -0.8125
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 149)
+    @test z ≈ -0.8125
+    @test phi ≈ 2.879793265791
+    (z, phi) = Healpix.pix2zphiNest(res, 150)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.94524311274
+    (z, phi) = Healpix.pix2zphiNest(res, 151)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiNest(res, 152)
+    @test z ≈ -0.5
+    @test phi ≈ 2.748893571891
+    (z, phi) = Healpix.pix2zphiNest(res, 153)
+    @test z ≈ -0.8125
+    @test phi ≈ 1.832595714594
+    (z, phi) = Healpix.pix2zphiNest(res, 154)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiNest(res, 155)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 1.767145867644
+    (z, phi) = Healpix.pix2zphiNest(res, 156)
+    @test z ≈ -0.5
+    @test phi ≈ 1.963495408494
+    (z, phi) = Healpix.pix2zphiNest(res, 157)
+    @test z ≈ -0.5
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 158)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.552544031042
+    (z, phi) = Healpix.pix2zphiNest(res, 159)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 2.159844949343
+    (z, phi) = Healpix.pix2zphiNest(res, 160)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 2.356194490192
+    (z, phi) = Healpix.pix2zphiNest(res, 161)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 162)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 163)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 164)
+    @test z ≈ -0.8125
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 165)
+    @test z ≈ -0.8125
+    @test phi ≈ 4.450589592586
+    (z, phi) = Healpix.pix2zphiNest(res, 166)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.516039439535
+    (z, phi) = Healpix.pix2zphiNest(res, 167)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiNest(res, 168)
+    @test z ≈ -0.5
+    @test phi ≈ 4.319689898686
+    (z, phi) = Healpix.pix2zphiNest(res, 169)
+    @test z ≈ -0.8125
+    @test phi ≈ 3.403392041389
+    (z, phi) = Healpix.pix2zphiNest(res, 170)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiNest(res, 171)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 3.337942194439
+    (z, phi) = Healpix.pix2zphiNest(res, 172)
+    @test z ≈ -0.5
+    @test phi ≈ 3.534291735289
+    (z, phi) = Healpix.pix2zphiNest(res, 173)
+    @test z ≈ -0.5
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 174)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 4.123340357837
+    (z, phi) = Healpix.pix2zphiNest(res, 175)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 3.730641276138
+    (z, phi) = Healpix.pix2zphiNest(res, 176)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 3.926990816987
+    (z, phi) = Healpix.pix2zphiNest(res, 177)
+    @test z ≈ -0.9791666666667
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 178)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 179)
+    @test z ≈ -0.9166666666667
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 180)
+    @test z ≈ -0.8125
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 181)
+    @test z ≈ -0.8125
+    @test phi ≈ 6.02138591938
+    (z, phi) = Healpix.pix2zphiNest(res, 182)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 6.08683576633
+    (z, phi) = Healpix.pix2zphiNest(res, 183)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiNest(res, 184)
+    @test z ≈ -0.5
+    @test phi ≈ 5.890486225481
+    (z, phi) = Healpix.pix2zphiNest(res, 185)
+    @test z ≈ -0.8125
+    @test phi ≈ 4.974188368184
+    (z, phi) = Healpix.pix2zphiNest(res, 186)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiNest(res, 187)
+    @test z ≈ -0.6666666666667
+    @test phi ≈ 4.908738521234
+    (z, phi) = Healpix.pix2zphiNest(res, 188)
+    @test z ≈ -0.5
+    @test phi ≈ 5.105088062083
+    (z, phi) = Healpix.pix2zphiNest(res, 189)
+    @test z ≈ -0.5
+    @test phi ≈ 5.497787143782
+    (z, phi) = Healpix.pix2zphiNest(res, 190)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.694136684632
+    (z, phi) = Healpix.pix2zphiNest(res, 191)
+    @test z ≈ -0.3333333333333
+    @test phi ≈ 5.301437602933
+    (z, phi) = Healpix.pix2zphiNest(res, 192)
+    @test z ≈ -0.1666666666667
+    @test phi ≈ 5.497787143782
+end
