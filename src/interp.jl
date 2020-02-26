@@ -179,7 +179,7 @@ function getinterpolRing(resol::Resolution, θ, ϕ)
     pix = Array{Int}(undef, 4)
     wgt = Array{Float64}(undef, 4)
 
-    getinterpolRing!(resol, θ, ϕ, pix, wgt)
+    getinterpolRing(resol, θ, ϕ, pix, wgt)
 
     (pix, wgt)
 end

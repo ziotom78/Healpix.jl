@@ -40,7 +40,7 @@ pix2ang
 # Interpolation
 
 function interpolate(m::Map{T, RingOrder}, θ, ϕ, pixbuf, weightbuf) where {T}
-    getinterpolRing!(m.resolution, θ, ϕ, pixbuf, weightbuf)
+    getinterpolRing(m.resolution, θ, ϕ, pixbuf, weightbuf)
 
     result = zero(weightbuf[1])
     for i in 1:4
@@ -54,7 +54,7 @@ function interpolate(m::Map{T, RingOrder}, θ, ϕ) where {T}
     pixbuf = Array{Int}(undef, 4)
     weightbuf = Array{Float64}(undef, 4)
 
-    interpolate!(m, θ, ϕ, pixbuf, weightbuf)
+    interpolate(m, θ, ϕ, pixbuf, weightbuf)
 end
 
 """
