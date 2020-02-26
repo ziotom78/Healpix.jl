@@ -1,4 +1,4 @@
-result = Healpix.Resolution(4)
+resol = Healpix.Resolution(4)
 
 @test Healpix.pix2xyfRing(resol, 1) == (3, 3, 0)
 @test Healpix.pix2xyfRing(resol, 2) == (3, 3, 1)
@@ -385,8 +385,8 @@ result = Healpix.Resolution(4)
 @test Healpix.xyf2pixRing(resol, 0, 0, 9) == 190
 @test Healpix.xyf2pixRing(resol, 0, 0, 10) == 191
 @test Healpix.xyf2pixRing(resol, 0, 0, 11) == 192
-result = Healpix.Resolution(4)
 
+resol = Healpix.Resolution(4)
 @test Healpix.pix2xyfNest(resol, 1) == (0, 0, 0)
 @test Healpix.pix2xyfNest(resol, 2) == (1, 0, 0)
 @test Healpix.pix2xyfNest(resol, 3) == (0, 1, 0)
