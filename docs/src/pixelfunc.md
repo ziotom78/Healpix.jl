@@ -60,4 +60,6 @@ pix2xyfNest(resol::Resolution, ipix)
 pix2xyfRing(resol::Resolution, ipix)
 xyf2pixNest(resol::Resolution, ix, iy, facenum)
 xyf2pixRing(resol::Resolution, ix, iy, facenum)
+pix2zphiRing(res::Resolution, pix)
+pix2zphiNest(res::Resolution, pix)
 ```
