@@ -1,5 +1,8 @@
 # HEAD
 
+- Add function `interpolate`
+  ([#19](https://github.com/ziotom78/Healpix.jl/pull/19))
+
 - Add functions `pix2zphiRing`, `pix2zphiNest`, `ringAbove`
   ([#18](https://github.com/ziotom78/Healpix.jl/pull/18))
 
