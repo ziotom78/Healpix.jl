@@ -7,9 +7,37 @@ convert your map to Float64 if it isn't already, and will output a ComplexF64 Al
 """
 function map2alm end
 
-function map2alm(m::Map{T, RingOrder}, 
-        lmax::Integer, mmax::Integer) where T
+
+# internal function for iterating map2alm
+function iterate_map2alm!(maps::Array{Array{T,1},1}, alms::Array{Array{Complex{T},1},1}, 
+        geom_info::Libsharp.GeomInfo, alm_info::Libsharp.AlmInfo, 
+        niter::Integer, spin::Integer) where T
+
+    ncomp = size(maps, 1)
+    residual_maps = [zero(m) for m in maps] # set up buffers
+    residual_alms = [zero(a) for a in alms]
+    for iter_index in 1:niter
+        Libsharp.sharp_execute!(
+            Libsharp.SHARP_ALM2MAP, spin, alms, residual_maps,
+            geom_info, alm_info, Libsharp.SHARP_DP)
+        for i_comp in 1:ncomp
+            residual_maps[i_comp] .= maps[i_comp] .- residual_maps[i_comp]
+        end
+        Libsharp.sharp_execute!(
+            Libsharp.SHARP_MAP2ALM, spin, residual_alms, residual_maps,
+            geom_info, alm_info, Libsharp.SHARP_DP)
+        for i_comp in 1:ncomp
+            alms[i_comp] .= alms[i_comp] .+ residual_alms[i_comp]
+        end
+    end
+end
+
+function map2alm(m::Map{T, RingOrder}; 
+        lmax::Integer=nothing, mmax::Integer=nothing, niter::Integer=3) where T
+
     nside = m.resolution.nside
+    lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
+    mmax = isnothing(mmax) ? lmax : mmax
 
     geom_info = Libsharp.make_healpix_geom_info(nside, 1)  # unweighted healpix map
     alm_info = Libsharp.make_triangular_alm_info(lmax, mmax, 1)
@@ -24,17 +52,21 @@ function map2alm(m::Map{T, RingOrder},
         Libsharp.SHARP_MAP2ALM, 0, alms, maps,
         geom_info, alm_info, Libsharp.SHARP_DP)
 
+    if niter > 0
+        iterate_map2alm!(maps, alms, geom_info, alm_info, niter, 0)
+    end
+
     return Alm{ComplexF64}(lmax, mmax, alms[1])
 end
 
-map2alm(m::Map{T, RingOrder}, lmax::Integer) where T = map2alm(m, lmax, lmax)
-map2alm(m::Map{T, RingOrder}) where T = map2alm(m, 3 * m.resolution.nside - 1)
 
-
-function map2alm(m::PolarizedMap{T, RingOrder}, 
-        lmax::Integer, mmax::Integer) where T
+function map2alm(m::PolarizedMap{T, RingOrder};
+        lmax::Integer=nothing, mmax::Integer=nothing, niter::Integer=3) where T
 
     nside = m.i.resolution.nside
+    lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
+    mmax = isnothing(mmax) ? lmax : mmax
+
     geom_info = Libsharp.make_healpix_geom_info(nside, 1)  # unweighted healpix map
     alm_info = Libsharp.make_triangular_alm_info(lmax, mmax, 1)
     npix = Libsharp.map_size(geom_info)
@@ -57,15 +89,17 @@ function map2alm(m::PolarizedMap{T, RingOrder},
         Libsharp.SHARP_MAP2ALM, 2, alms_2, maps_2,
         geom_info, alm_info, Libsharp.SHARP_DP)
 
+    if niter > 0
+        iterate_map2alm!(maps_0, alms_0, geom_info, alm_info, niter, 0)
+        iterate_map2alm!(maps_2, alms_2, geom_info, alm_info, niter, 2)
+    end
+
     return [
         Alm{ComplexF64}(lmax, mmax, alms_0[1]),
         Alm{ComplexF64}(lmax, mmax, alms_2[1]),
         Alm{ComplexF64}(lmax, mmax, alms_2[2])
     ]
 end
-
-map2alm(m::PolarizedMap{T, RingOrder}, lmax::Integer) where T = map2alm(m, lmax, lmax)
-map2alm(m::PolarizedMap{T, RingOrder}) where T = map2alm(m, 3 * m.resolution.nside - 1)
 
 
 """
