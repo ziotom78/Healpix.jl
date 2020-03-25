@@ -11,12 +11,14 @@ export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
+export map2alm, alm2map
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
 export ring2nest, nest2ring
 
 import FITSIO
+import Libsharp
 import Base: getindex, setindex!
 
 include("nside.jl")
@@ -35,6 +37,7 @@ include("pixelwindow.jl")
 include("map_pixelfunc.jl")
 include("projections.jl")
 include("alm.jl")
+include("sphtfunc.jl")
 include("mapmaking.jl")
 
 end
