@@ -14,8 +14,14 @@ test_alm_spin0 = [
     0.00000000e+00,  0.00000000e+00, -7.87873039e-04-9.64866195e-20im]
 @test isapprox(alm.alm , test_alm_spin0)
 
-## spin 0 map2alm niter=3
+## test type convert
+map_int = Healpix.Map{Int64, Healpix.RingOrder}(
+    2 .* ones(Int64,Healpix.nside2npix(nside)))
+alm = Healpix.map2alm(map_int, lmax=lmax, mmax=lmax, niter=0)
+@test isapprox(alm.alm , test_alm_spin0)
 
+## spin 0 map2alm niter=3
+map = Healpix.Map{Float64, Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
 alm_niter_3 = Healpix.map2alm(map, lmax=lmax, mmax=lmax, niter=3).alm
 alm_niter_0 = Healpix.map2alm(map, lmax=lmax, mmax=lmax, niter=0).alm
 reference_Δ = [
@@ -49,6 +55,11 @@ test_map_spin0 = [
         0.21777049,  0.21777049,  1.03769816]
 @test isapprox(map.pixels, test_map_spin0)
 
+## test type convert
+alm_bf = Healpix.Alm{BigFloat}(lmax, lmax, 2 .* ones(BigFloat, nalms))
+map_bf = Healpix.alm2map(alm, nside)
+@test isapprox(map_bf.pixels, test_map_spin0)
+
 ## spin 2 map2alm
 nside = 4
 lmax = 4
@@ -69,6 +80,16 @@ test_alm_spin2 = [
 @test isapprox(alms[1].alm, test_alm_spin0)
 @test isapprox(alms[2].alm, test_alm_spin2)
 @test isapprox(alms[3].alm, test_alm_spin2)
+
+## test type convert
+map_int = Healpix.PolarizedMap{BigFloat, Healpix.RingOrder}(
+    2 .* ones(BigFloat, Healpix.nside2npix(nside)),
+    2 .* ones(BigFloat, Healpix.nside2npix(nside)),
+    2 .* ones(BigFloat, Healpix.nside2npix(nside)))
+alms_int = Healpix.map2alm(map_int, lmax=lmax, mmax=lmax, niter=0)
+@test isapprox(alms_int[1].alm, test_alm_spin0)
+@test isapprox(alms_int[2].alm, test_alm_spin2)
+@test isapprox(alms_int[3].alm, test_alm_spin2)
 
 ## spin 2 map2alm niter=3
 alm_niter_3 = Healpix.map2alm(map, lmax=lmax, mmax=lmax, niter=3)[2].alm
@@ -121,3 +142,13 @@ test_map_spin2_u = [
     -2.6071711 , -1.4882688 ,  0.1809384 , -0.25943678, -0.59650858,
      1.06275217, -1.9631492 ,  1.00333301]
 @test isapprox(maps.u , test_map_spin2_u)
+
+## test type conversion
+alm_t = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+alm_e = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+alm_b = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
+
+@test isapprox(maps_float.i , test_map_spin0)
+@test isapprox(maps_float.q , test_map_spin2_q)
+@test isapprox(maps_float.u , test_map_spin2_u)
