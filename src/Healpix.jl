@@ -11,7 +11,7 @@ export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
-export map2alm, alm2map
+export map2alm, alm2map, map2alm!, alm2map!
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
