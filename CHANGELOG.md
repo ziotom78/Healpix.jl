@@ -1,5 +1,12 @@
 # HEAD
 
+-   Add dependency on [Libsharp.jl](https://github.com/ziotom78/libsharp.jl)
+    and implement `map2alm` and `alm2map`
+    ([#21](https://github.com/ziotom78/Healpix.jl/pull/21)). **Caution**: this
+    change drops support for Julia 1.0, 1.1, and 1.2, as Libsharp.jl requires
+    [Julia's artifacts](https://julialang.org/blog/2019/11/artifacts/), which
+    were implemented in Julia 1.3.
+
 - Add function `interpolate`
   ([#19](https://github.com/ziotom78/Healpix.jl/pull/19))
 
