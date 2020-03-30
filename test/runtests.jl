@@ -53,5 +53,9 @@ end
     include("test_alm.jl")
 end
 
+@testset "Spherical Harmonic Transforms" begin
+    include("test_sphtfunc.jl")
+end
+
 # Alm creation
 
