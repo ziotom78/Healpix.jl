@@ -14,6 +14,10 @@ test_alm_spin0 = [
     0.00000000e+00,  0.00000000e+00, -7.87873039e-04-9.64866195e-20im]
 @test isapprox(alm.alm , test_alm_spin0)
 
+# test kwarg defaults
+@test isapprox(Healpix.map2alm(map).alm[1:2], 
+    [7.08915321e+00+0.0im, -3.33069318e-17+0.0im])
+
 ## test type convert
 map_int = Healpix.Map{Int64, Healpix.RingOrder}(
     2 .* ones(Int64,Healpix.nside2npix(nside)))
