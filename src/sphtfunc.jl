@@ -104,8 +104,8 @@ end
 
 """
     map2alm(map::Map{Float64, RingOrder}; 
-        lmax::Integer=nothing, mmax::Integer=nothing, niter::Integer=3)
-    map2alm(m::Map{T, RingOrder}; lmax::Integer=nothing, mmax::Integer=nothing, 
+        lmax=nothing, mmax=nothing, niter::Integer=3)
+    map2alm(m::Map{T, RingOrder}; lmax=nothing, mmax=nothing, 
         niter::Integer=3) where T <: Real
 
 Compute the spherical harmonic coefficients of a map. To enhance precision, more iterations
@@ -128,7 +128,7 @@ Float64.
 function map2alm end
 
 function map2alm(map::Map{Float64, RingOrder}; 
-        lmax::Integer=nothing, mmax::Integer=nothing, niter::Integer=3)
+        lmax=nothing, mmax=nothing, niter::Integer=3)
 
     nside = map.resolution.nside
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
@@ -141,7 +141,7 @@ function map2alm(map::Map{Float64, RingOrder};
 end
 
 function map2alm(map::PolarizedMap{Float64, RingOrder};
-        lmax::Integer=nothing, mmax::Integer=nothing, niter::Integer=3)
+        lmax=nothing, mmax=nothing, niter::Integer=3)
 
     nside = map.i.resolution.nside
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
@@ -156,15 +156,15 @@ function map2alm(map::PolarizedMap{Float64, RingOrder};
 end
 
 # convert maps to Float64
-function map2alm(map::Map{T, RingOrder}; lmax::Integer=nothing, mmax::Integer=nothing, 
+function map2alm(map::Map{T, RingOrder}; lmax=nothing, mmax=nothing, 
         niter::Integer=3) where T <: Real
     map_float = Map{Float64, RingOrder}(convert(Array{Float64,1}, map.pixels))
     return map2alm(map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
 # convert PolarizedMap to Float64
-function map2alm(map::PolarizedMap{T, RingOrder}; lmax::Integer=nothing, 
-        mmax::Integer=nothing, niter::Integer=3) where T <: Real
+function map2alm(map::PolarizedMap{T, RingOrder}; lmax=nothing, mmax=nothing, 
+                 niter::Integer=3) where T <: Real
     m_i = convert(Array{Float64,1}, map.i)
     m_q = convert(Array{Float64,1}, map.q)
     m_u = convert(Array{Float64,1}, map.u)
