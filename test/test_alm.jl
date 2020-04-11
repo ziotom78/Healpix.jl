@@ -41,3 +41,7 @@ alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
 @test alm[26] ≈ (6.806207052149e-01 + -5.769903744427e+00im) atol = eps
 @test alm[27] ≈ (-1.307082489340e-15 + 1.143824238899e-14im) atol = eps
 @test alm[28] ≈ (-6.698490836781e-01 + 4.661675665246e+00im) atol = eps
+
+## test alm2cl
+testalm = Healpix.Alm{Complex{Float64}}(2,2,ComplexF64.(1:6))
+@test isapprox(Healpix.alm2cl(testalm), [1., 12., 26.2])

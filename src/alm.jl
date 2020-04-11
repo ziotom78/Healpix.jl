@@ -90,3 +90,37 @@ function readAlmFromFITS(fileName,
         FITSIO.fits_close_file(f)
     end
 end
+
+
+raw"""
+    alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+Compute ``C_{\ell}`` from the spherical harmonic coefficients of two fields.
+
+# Arguments
+- `alm₁::Alm{Complex{T}}`: the spherical harmonic coefficients of the first field
+- `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
+
+# Returns
+- `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
+"""
+function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
+    (alm₁.mmax != alm₂.mmax) && throw(ArgumentError("Alm mmax do not match."))
+    (alm₁.mmax < alm₂.lmax) && throw(ArgumentError("Alm mmax < lmax."))
+
+    lmax = alm₁.lmax
+    cl = zeros(T, lmax+1)
+    for l in 0:lmax
+        for m in 1:l 
+            index = almIndex(alm₁, l, m)
+            cl[l+1] += 2 * alm₁.alm[index] * conj(alm₂.alm[index])
+        end
+        index0 = almIndex(alm₁, l, 0)
+        cl[l+1] += alm₁.alm[index0] * conj(alm₂.alm[index0])
+        cl[l+1] = cl[l+1] / (2 * l + 1)
+    end
+    return cl
+end
+alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
+

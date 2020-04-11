@@ -156,3 +156,12 @@ maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 @test isapprox(maps_float.i , test_map_spin0)
 @test isapprox(maps_float.q , test_map_spin2_q)
 @test isapprox(maps_float.u , test_map_spin2_u)
+
+## test alm2cl
+nside = 4
+map = Healpix.Map{Float64, Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+alm = Healpix.map2alm(map)
+testcl = [1.25640233e+01, 1.27295801e-34, 1.17546223e-07, 2.09140064e-34,
+          1.15173969e-07, 2.68729688e-34, 1.07550820e-07, 2.15804136e-34,
+          1.45013461e-07, 2.31116580e-34, 2.24003707e-07, 5.30295132e-34]
+@test isapprox(Healpix.alm2cl(alm), testcl)
