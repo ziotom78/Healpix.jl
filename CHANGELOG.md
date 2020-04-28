@@ -1,5 +1,8 @@
 # HEAD
 
+-   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional
+    array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
+
 -   Add dependency on [Libsharp.jl](https://github.com/ziotom78/libsharp.jl)
     and implement `map2alm`, `alm2map`, and `alm2cl`
     ([#21](https://github.com/ziotom78/Healpix.jl/pull/21), 
