@@ -2,7 +2,7 @@
 
 "An array of a_ℓm numbers."
 mutable struct Alm{T <: Number}
-    alm::Array{T}
+    alm::Array{T, 1}
     lmax::Int
     mmax::Int
     tval::Int
@@ -12,7 +12,7 @@ mutable struct Alm{T <: Number}
                                                  mmax,
                                                  2lmax + 1)
 
-    function Alm{T}(lmax, mmax, arr::Array{T}) where {T <: Number}
+    function Alm{T}(lmax, mmax, arr::Array{T, 1}) where {T <: Number}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
         new{T}(arr, lmax, mmax, 2lmax + 1)
