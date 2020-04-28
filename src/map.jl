@@ -41,7 +41,7 @@ A `Map` type contains the following fields:
 
 """
 mutable struct Map{T, O <: Order} <: GenericMap{T}
-    pixels::Array{T}
+    pixels::Array{T,1}
     resolution::Resolution
 
     """
@@ -55,7 +55,7 @@ mutable struct Map{T, O <: Order} <: GenericMap{T}
     """
     Create a map with the specified array of pixels.
     """
-    function Map{T, O}(arr::Array{T}) where {T, O <: Order}
+    function Map{T, O}(arr::Array{T,1}) where {T, O <: Order}
         nside = npix2nside(length(arr))
         new(arr, Resolution(nside))
     end
