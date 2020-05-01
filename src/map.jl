@@ -65,8 +65,11 @@ with zeroes:
 Finally, the following examples show how to use `SharedArray`:
 
     using SharedArrays
+    
+    # Create a map with all pixels set to zero
     mymap = Healpix.Map{Float64, Healpix.NestedOrder, SharedArray{Float64, 1}}(64)
 
+    # Create a map and initialize pixel values with a SharedArray
     pixels = SharedArray{Int64, 1}(1:12 |> collect)
     mymap = Healpix.Map{Int64, Healpix.RingOrder, SharedArray{Int64, 1}}(m)
 """
