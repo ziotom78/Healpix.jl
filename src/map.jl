@@ -71,7 +71,7 @@ Finally, the following examples show how to use `SharedArray`:
     mymap = Healpix.Map{Int64, Healpix.RingOrder, SharedArray{Int64, 1}}(m)
 """
 mutable struct Map{T, O <: Order, AA <: AbstractArray{T, 1}} <: GenericMap{T}
-    pixels::Array{T,1}
+    pixels::AA
     resolution::Resolution
 
     """
