@@ -135,7 +135,7 @@ end
 
 function compress_bits(v::Int32)
     raw = (v & 0x5555) | ((v & 0x55550000) >> 15)
-    CTAB[raw & 0xff + 1] | (ctab[raw >> 8 + 1] << 4)
+    CTAB[raw & 0xff + 1] | (CTAB[raw >> 8 + 1] << 4)
 end
 
 function compress_bits(v::Int)

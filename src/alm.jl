@@ -114,10 +114,10 @@ function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Nu
     for l in 0:lmax
         for m in 1:l 
             index = almIndex(alm₁, l, m)
-            cl[l+1] += 2 * alm₁.alm[index] * conj(alm₂.alm[index])
+            cl[l+1] += 2 * real(alm₁.alm[index] * conj(alm₂.alm[index]))
         end
         index0 = almIndex(alm₁, l, 0)
-        cl[l+1] += alm₁.alm[index0] * conj(alm₂.alm[index0])
+        cl[l+1] += real(alm₁.alm[index0] * conj(alm₂.alm[index0]))
         cl[l+1] = cl[l+1] / (2 * l + 1)
     end
     return cl
