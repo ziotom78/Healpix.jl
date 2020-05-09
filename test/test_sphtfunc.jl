@@ -43,7 +43,7 @@ reference_Δ = [
 nside = 2
 lmax = 2
 nalms = Healpix.numberOfAlms(lmax, lmax)
-alm = Healpix.Alm{ComplexF64}(lmax, lmax, 2 .* ones(ComplexF64, nalms))
+alm = Healpix.Alm(lmax, lmax, 2 .* ones(ComplexF64, nalms))
 map = Healpix.alm2map(alm, nside)
 
 test_map_spin0 = [
@@ -60,7 +60,7 @@ test_map_spin0 = [
 @test isapprox(map.pixels, test_map_spin0)
 
 ## test type convert
-alm_bf = Healpix.Alm{BigFloat}(lmax, lmax, 2 .* ones(BigFloat, nalms))
+alm_bf = Healpix.Alm(lmax, lmax, 2 .* ones(BigFloat, nalms))
 map_bf = Healpix.alm2map(alm, nside)
 @test isapprox(map_bf.pixels, test_map_spin0)
 
@@ -113,9 +113,9 @@ reference_Δ = [
 nside = 2
 lmax = 2
 nalms = Healpix.numberOfAlms(lmax, lmax)
-alm_t = Healpix.Alm{ComplexF64}(lmax, lmax, 2 .* ones(ComplexF64, nalms))
-alm_e = Healpix.Alm{ComplexF64}(lmax, lmax, 2 .* ones(ComplexF64, nalms))
-alm_b = Healpix.Alm{ComplexF64}(lmax, lmax, 2 .* ones(ComplexF64, nalms))
+alm_t = Healpix.Alm(lmax, lmax, 2 .* ones(ComplexF64, nalms))
+alm_e = Healpix.Alm(lmax, lmax, 2 .* ones(ComplexF64, nalms))
+alm_b = Healpix.Alm(lmax, lmax, 2 .* ones(ComplexF64, nalms))
 
 maps = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 
@@ -148,9 +148,9 @@ test_map_spin2_u = [
 @test isapprox(maps.u , test_map_spin2_u)
 
 ## test type conversion
-alm_t = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
-alm_e = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
-alm_b = Healpix.Alm{Complex{Float16}}(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+alm_t = Healpix.Alm(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+alm_e = Healpix.Alm(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
+alm_b = Healpix.Alm(lmax, lmax, 2 .* ones(Complex{Float16}, nalms))
 maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 
 @test isapprox(maps_float.i , test_map_spin0)

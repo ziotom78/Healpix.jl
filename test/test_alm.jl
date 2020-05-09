@@ -6,6 +6,12 @@
 @test_throws DomainError(-1, "`mmax` is not positive or zero") Healpix.numberOfAlms(4, -1)
 @test_throws DomainError((5, 7), "`lmax` and `mmax` are inconsistent") Healpix.numberOfAlms(5, 7)
 
+alm = Healpix.Alm(10, 8)
+@test Healpix.almIndex(alm, 4, 2) == 24
+@test Healpix.almIndex(alm, 5, 2) == 25
+@test Healpix.almIndex(alm, 5, 3) == 33
+@test Healpix.almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
+
 alm = Healpix.Alm{ComplexF32}(10, 8)
 @test Healpix.almIndex(alm, 4, 2) == 24
 @test Healpix.almIndex(alm, 5, 2) == 25
@@ -43,5 +49,5 @@ alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
 @test alm[28] ≈ (-6.698490836781e-01 + 4.661675665246e+00im) atol = eps
 
 ## test alm2cl
-testalm = Healpix.Alm{Complex{Float64}}(2,2,ComplexF64.(1:6))
+testalm = Healpix.Alm(2,2,ComplexF64.(1:6))
 @test isapprox(Healpix.alm2cl(testalm), [1., 12., 26.2])

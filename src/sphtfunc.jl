@@ -146,7 +146,7 @@ function map2alm(map::Map{Float64, RingOrder, Array{Float64, 1}};
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
     mmax = isnothing(mmax) ? lmax : mmax
     nalms = numberOfAlms(lmax, mmax)
-    alm = Alm{ComplexF64}(lmax, mmax, zeros(ComplexF64, nalms))
+    alm = Alm(lmax, mmax, zeros(ComplexF64, nalms))
 
     map2alm!(map, alm; niter=niter)
     return alm
@@ -159,9 +159,9 @@ function map2alm(map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}};
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
     mmax = isnothing(mmax) ? lmax : mmax
     nalms = numberOfAlms(lmax, mmax)
-    alms = [Alm{ComplexF64}(lmax, mmax, zeros(ComplexF64, nalms)),
-            Alm{ComplexF64}(lmax, mmax, zeros(ComplexF64, nalms)),
-            Alm{ComplexF64}(lmax, mmax, zeros(ComplexF64, nalms))]
+    alms = [Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+            Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+            Alm(lmax, mmax, zeros(ComplexF64, nalms))]
 
     map2alm!(map, alms; niter=niter)
     return alms
@@ -256,9 +256,9 @@ are converted to types based on Float64.
 # Arguments
 
 - `alm`: the spherical harmonic coefficients to transform. If of type
-  `Alm{T}`, we assume a spin-0 spherical harmonic transform. If an
-  array of `Alm` is passed, we assume that the components correspond
-  to T, E, and B coefficients.
+  `Alm{T, Array{T, 1}}`, we assume a spin-0 spherical harmonic
+  transform. If an array of `Alm` is passed, we assume that the
+  components correspond to T, E, and B coefficients.
 
 # Keywords
 - `nside::Integer`: Healpix resolution parameter
@@ -303,11 +303,8 @@ function alm2map(
 ) where T <: Real
     lmax = alms[1].lmax
     mmax = alms[1].mmax
-    alm_t = Alm{ComplexF64}(lmax, mmax,
-        convert(Array{ComplexF64,1}, alms[1].alm))
-    alm_e = Alm{ComplexF64}(lmax, mmax,
-        convert(Array{ComplexF64,1}, alms[2].alm))
-    alm_b = Alm{ComplexF64}(lmax, mmax,
-        convert(Array{ComplexF64,1}, alms[3].alm))
+    alm_t = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[1].alm))
+    alm_e = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[2].alm))
+    alm_b = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[3].alm))
     return alm2map([alm_t, alm_e, alm_b], nside)
 end

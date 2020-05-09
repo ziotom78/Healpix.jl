@@ -45,8 +45,9 @@ mutable struct Alm{T <: Number, AA <: AbstractArray{T, 1}}
 end
 
 Alm{T}(lmax, mmax) where {T <: Number} = Alm{T, Array{T, 1}}(lmax, mmax)
-Alm{T}(lmax, mmax, arr) where {T <: Number} =
-    Alm{T, Array{T, 1}}(lmax, mmax, collect(arr))
+Alm(lmax, mmax) = Alm{ComplexF64}(lmax, mmax)
+Alm(lmax, mmax, arr::AA) where {T <: Number, AA <: AbstractArray{T,1}} =
+    Alm{T, AA}(lmax, mmax, arr)
 
 ################################################################################
 
