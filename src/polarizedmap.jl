@@ -11,7 +11,7 @@ when you don't care about the ordering of a map.
 abstract type GenericPolarizedMap{T} end
 
 @doc raw"""
-    mutable struct PolarizedMap{T, O <: Healpix.Order}
+    mutable struct PolarizedMap{T, O <: Healpix.Order, AA <: AbstractArray{T, 1}}
 
 A polarized I/Q/U map. It contains three Healpix maps with the same NSIDE:
 
@@ -22,21 +22,21 @@ A polarized I/Q/U map. It contains three Healpix maps with the same NSIDE:
 You can create an instance of this type using the function
 [`PolarizedMap{T,O}`](@ref), which comes in three flavours:
 
-- `PolarizedMap(i::Map{T,O}, q::Map{T,O}, u::Map{T,O})`
+- `PolarizedMap(i::Map{T,O,AA}, q::Map{T,O,AA}, u::Map{T,O,AA})`
 - `PolarizedMap{T,O}(i::AbstractVector{T}, q::AbstractVector{T}, u::AbstractVector{T})`
 - `PolarizedMap{T,O}(nside::Number)`
 
 """
-mutable struct PolarizedMap{T, O <: Order} <: GenericPolarizedMap{T}
-    i::Map{T,O}
-    q::Map{T,O}
-    u::Map{T,O}
+mutable struct PolarizedMap{T, O <: Order, AA <: AbstractArray{T, 1}} <: GenericPolarizedMap{T}
+    i::Map{T,O,AA}
+    q::Map{T,O,AA}
+    u::Map{T,O,AA}
 
-    function PolarizedMap{T, O}(
-        i::Map{T, O},
-        q::Map{T, O},
-        u::Map{T, O},
-    ) where {T, O <: Order}
+    function PolarizedMap{T, O, AA}(
+        i::Map{T, O, AA},
+        q::Map{T, O, AA},
+        u::Map{T, O, AA},
+    ) where {T, O <: Order, AA <: AbstractArray{T, 1}}
         ((length(i) != length(q)) || (length(i) != length(q))) && throw(
             ArgumentError("The three I/Q/U maps must have the same resolution"),
         )
@@ -44,24 +44,41 @@ mutable struct PolarizedMap{T, O <: Order} <: GenericPolarizedMap{T}
         new(i, q, u)
     end
 
-    function PolarizedMap{T, O}(
-        i::AbstractVector{T},
-        q::AbstractVector{T},
-        u::AbstractVector{T},
-    ) where {T, O <: Order}
+    function PolarizedMap{T, O, AA}(
+        i::AA,
+        q::AA,
+        u::AA,
+    ) where {T, O <: Order, AA <: AbstractArray{T, 1}}
+        ((length(i) != length(q)) || (length(i) != length(q))) && throw(
+            ArgumentError("The three I/Q/U vectors must have the same resolution"),
+        )
 
-        PolarizedMap{T, O}(
-            Map{T, O}(i),
-            Map{T, O}(q),
-            Map{T, O}(u),
+        new(
+            Map{T, O, AA}(i),
+            Map{T, O, AA}(q),
+            Map{T, O, AA}(u),
         )
     end
 
-    function PolarizedMap{T, O}(nside::Number) where {T, O <: Order}
-        PolarizedMap{T, O}(
-            Map{T, O}(nside),
-            Map{T, O}(nside),
-            Map{T, O}(nside),
+    function PolarizedMap{T, O, AA}(
+        nside::Number
+    ) where {T, O <: Order, AA <: AbstractArray{T, 1}}
+        new(
+            Map{T, O, AA}(nside),
+            Map{T, O, AA}(nside),
+            Map{T, O, AA}(nside),
         )
     end
+end
+
+function PolarizedMap{T, O}(nside::Number) where {T, O <: Order}
+    PolarizedMap{T, O, Array{T, 1}}(nside)
+end
+
+function PolarizedMap{T, O}(
+    i::Array{T, 1},
+    q::Array{T, 1},
+    u::Array{T, 1},
+) where {T, O <: Order}
+    PolarizedMap{T, O, Array{T, 1}}(i, q, u)
 end

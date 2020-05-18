@@ -16,7 +16,7 @@ polmap = Healpix.PolarizedMap{Int8, Healpix.RingOrder}(128)
 @test length(polmap.i) == length(polmap.q) == length(polmap.u)
 @test length(polmap.i) == Healpix.nside2npix(128)
 
-@test_throws ArgumentError("The three I/Q/U maps must have the same resolution") Healpix.PolarizedMap{Int, Healpix.RingOrder}(
+@test_throws ArgumentError("The three I/Q/U vectors must have the same resolution") Healpix.PolarizedMap{Int, Healpix.RingOrder}(
     pixels_nside1,
     pixels_nside2,
     pixels_nside4,

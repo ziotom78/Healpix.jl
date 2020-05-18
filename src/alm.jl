@@ -1,24 +1,54 @@
 # Definition of the composite type Alm
 
-"An array of a_ℓm numbers."
-mutable struct Alm{T <: Number}
-    alm::Array{T, 1}
+"""An array of harmonic coefficients (a_ℓm).
+
+The type `T` is used for the value of each harmonic coefficient, and
+it must be a `Number` (one should however only use complex types for
+this). The type `AA` is used to store the array of coefficients; a
+typical choice is `Vector`.
+
+A `Alm` type contains the following fields:
+
+- `alm`: the array of harmonic coefficients
+- `lmax`: the maximum value for ``ℓ``
+- `mmax`: the maximum value for ``m``
+- ``tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
+
+
+"""
+mutable struct Alm{T <: Number, AA <: AbstractArray{T, 1}}
+    alm::AA
     lmax::Int
     mmax::Int
     tval::Int
 
-    Alm{T}(lmax, mmax) where {T <: Number} = new(zeros(T, numberOfAlms(lmax, mmax)),
-                                                 lmax,
-                                                 mmax,
-                                                 2lmax + 1)
+    Alm{T, AA}(
+        lmax,
+        mmax,
+    ) where {T <: Number, AA <: AbstractArray{T, 1}} =
+        new{T, AA}(
+            zeros(T, numberOfAlms(lmax, mmax)),
+            lmax,
+            mmax,
+            2lmax + 1,
+        )
 
-    function Alm{T}(lmax, mmax, arr::Array{T, 1}) where {T <: Number}
+    function Alm{T, AA}(
+        lmax,
+        mmax,
+        arr::AA,
+    ) where {T <: Number, AA <: AbstractArray{T, 1}}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
-        new{T}(arr, lmax, mmax, 2lmax + 1)
+        new{T, AA}(arr, lmax, mmax, 2lmax + 1)
     end
 end
-                                            
+
+Alm{T}(lmax, mmax) where {T <: Number} = Alm{T, Array{T, 1}}(lmax, mmax)
+Alm(lmax, mmax) = Alm{ComplexF64}(lmax, mmax)
+Alm(lmax, mmax, arr::AA) where {T <: Number, AA <: AbstractArray{T,1}} =
+    Alm{T, AA}(lmax, mmax, arr)
+
 ################################################################################
 
 """
