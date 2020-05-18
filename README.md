@@ -23,7 +23,7 @@ The
 [mweastwood/LibHealpix.jl](https://github.com/mweastwood/LibHealpix.jl)
 library provides straight bindings to the original C++ library. For
 the reasons stated above, it is able to provide a wider set of
-functions (e.g., computation of spherical harmonics).
+functions.
 
 ## Installation
 
