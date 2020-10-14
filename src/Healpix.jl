@@ -17,7 +17,9 @@ export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
 export ring2nest, nest2ring
 
-import FITSIO
+import FITSIO.Libcfitsio
+const FITSIO = Libcfitsio
+
 import Libsharp
 import Base: getindex, setindex!
 

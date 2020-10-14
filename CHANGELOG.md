@@ -15,6 +15,9 @@
     [Julia's artifacts](https://julialang.org/blog/2019/11/artifacts/), which
     were implemented in Julia 1.3.
 
+- Fix incompatibility with FITSIO 1.0
+  ([#32](https://github.com/ziotom78/Healpix.jl/pull/32))
+
 - Add function `interpolate`
   ([#19](https://github.com/ziotom78/Healpix.jl/pull/19))
 
