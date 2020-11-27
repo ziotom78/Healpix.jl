@@ -16,38 +16,26 @@ A `Alm` type contains the following fields:
 
 
 """
-mutable struct Alm{T <: Number, AA <: AbstractArray{T, 1}}
+mutable struct Alm{T<:Number,AA<:AbstractArray{T,1}}
     alm::AA
     lmax::Int
     mmax::Int
     tval::Int
 
-    Alm{T, AA}(
-        lmax,
-        mmax,
-    ) where {T <: Number, AA <: AbstractArray{T, 1}} =
-        new{T, AA}(
-            zeros(T, numberOfAlms(lmax, mmax)),
-            lmax,
-            mmax,
-            2lmax + 1,
-        )
+    Alm{T,AA}(lmax, mmax) where {T<:Number,AA<:AbstractArray{T,1}} =
+        new{T,AA}(zeros(T, numberOfAlms(lmax, mmax)), lmax, mmax, 2lmax + 1)
 
-    function Alm{T, AA}(
-        lmax,
-        mmax,
-        arr::AA,
-    ) where {T <: Number, AA <: AbstractArray{T, 1}}
+    function Alm{T,AA}(lmax, mmax, arr::AA) where {T<:Number,AA<:AbstractArray{T,1}}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
-        new{T, AA}(arr, lmax, mmax, 2lmax + 1)
+        new{T,AA}(arr, lmax, mmax, 2lmax + 1)
     end
 end
 
-Alm{T}(lmax, mmax) where {T <: Number} = Alm{T, Array{T, 1}}(lmax, mmax)
+Alm{T}(lmax, mmax) where {T<:Number} = Alm{T,Array{T,1}}(lmax, mmax)
 Alm(lmax, mmax) = Alm{ComplexF64}(lmax, mmax)
-Alm(lmax, mmax, arr::AA) where {T <: Number, AA <: AbstractArray{T,1}} =
-    Alm{T, AA}(lmax, mmax, arr)
+Alm(lmax, mmax, arr::AA) where {T<:Number,AA<:AbstractArray{T,1}} =
+    Alm{T,AA}(lmax, mmax, arr)
 
 ################################################################################
 
@@ -64,7 +52,8 @@ a_lm coefficients in the range of ℓ and m specified by `lmax` and
 function numberOfAlms(lmax, mmax)
     (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
     (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
-    (0 ≤ mmax ≤ lmax) || throw(DomainError((lmax, mmax), "`lmax` and `mmax` are inconsistent"))
+    (0 ≤ mmax ≤ lmax) ||
+        throw(DomainError((lmax, mmax), "`lmax` and `mmax` are inconsistent"))
 
     div((mmax + 1) * (mmax + 2), 2) + (mmax + 1) * (lmax - mmax)
 end
@@ -87,8 +76,7 @@ Read a set of a_ℓm coefficients from a FITS file. If the code fails,
 FITSIO will raise an exception. (Refer to the FITSIO library for more
 information.)
 """
-function readAlmFromFITS(f::FITSIO.FITSFile,
-                         t::Type{T}) where {T <: Complex}
+function readAlmFromFITS(f::FITSIO.FITSFile, t::Type{T}) where {T<:Complex}
     numOfRows = FITSIO.fits_get_num_rows(f)
 
     idx = Array{Int64}(undef, numOfRows)
@@ -100,7 +88,7 @@ function readAlmFromFITS(f::FITSIO.FITSFile,
     FITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
     l = floor.(Int64, sqrt.(idx .- 1))
-    m = idx .- l.^2 .- l .- 1
+    m = idx .- l .^ 2 .- l .- 1
     if count(x -> x < 0, m) > 0
         throw(DomainError())
     end
@@ -110,8 +98,7 @@ function readAlmFromFITS(f::FITSIO.FITSFile,
     result.alm = complex.(almReal[i], almImag[i])
 end
 
-function readAlmFromFITS(fileName,
-                         t::Type{T}) where {T <: Complex}
+function readAlmFromFITS(fileName, t::Type{T}) where {T<:Complex}
     f = FITSIO.fits_open_table(fileName)
     try
         result = readAlmFromFITS(f, t)
@@ -134,15 +121,15 @@ Compute ``C_{\ell}`` from the spherical harmonic coefficients of two fields.
 # Returns
 - `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
 """
-function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T<:Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
     (alm₁.mmax != alm₂.mmax) && throw(ArgumentError("Alm mmax do not match."))
     (alm₁.mmax < alm₂.lmax) && throw(ArgumentError("Alm mmax < lmax."))
 
     lmax = alm₁.lmax
-    cl = zeros(T, lmax+1)
-    for l in 0:lmax
-        for m in 1:l 
+    cl = zeros(T, lmax + 1)
+    for l = 0:lmax
+        for m = 1:l
             index = almIndex(alm₁, l, m)
             cl[l+1] += 2 * real(alm₁.alm[index] * conj(alm₂.alm[index]))
         end
@@ -152,5 +139,4 @@ function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Nu
     end
     return cl
 end
-alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
-
+alm2cl(alm::Alm{Complex{T}}) where {T<:Number} = alm2cl(alm, alm)

@@ -28,7 +28,8 @@ function nside2npix(nside::Integer)
     (nside > 0) || throw(DomainError(nside, "`NSIDE` is not a positive number"))
 
     nsidelog2 = round(Int, log2(nside))
-    (2^nsidelog2 == nside) || throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
+    (2^nsidelog2 == nside) ||
+        throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
 
     12(nside^2)
 end

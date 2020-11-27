@@ -54,7 +54,7 @@ Fill the RingInfo structure with information about the specified ring.
 If `full` is `false`, the field `colatitude_rad` (the most expensive in
 terms of computation) is set to `NaN`.
 """
-function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full=true)
+function getringinfo!(resol::Resolution, ring, ringinfo::RingInfo; full = true)
     # In the body of this code, firstidx is zero-based (we switch to 1-based
     # index just in the last statement)
 
@@ -97,16 +97,16 @@ Return a RingInfo structure containing information about
 the specified ring. For the list of accepted keyword arguments,
 see getringinfo!.
 """
-function getringinfo(resol::Resolution, ring; full=true)
+function getringinfo(resol::Resolution, ring; full = true)
     ringinfo = RingInfo(0, 0, 0, 0.0, true)
-    getringinfo!(resol, ring, ringinfo, full=full)
+    getringinfo!(resol, ring, ringinfo, full = full)
     ringinfo
 end
 
 function ringabove(resol::Resolution, z)
     az = abs(z)
     az <= 2 // 3 && return round(Int, resol.nside * (2 - 1.5 * z), RoundToZero)
-    
+
     iring = round(Int, resol.nside * sqrt(3 * (1 - az)), RoundToZero)
     if z > 0
         iring

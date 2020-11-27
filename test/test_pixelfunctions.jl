@@ -99,15 +99,15 @@ theta, phi = Healpix.vec2ang(2.922856075911509, 2.304551510739625, 0.87468748910
 lowresol = Healpix.Resolution(2)
 resol = Healpix.Resolution(256)
 
-@test Healpix.ang2pixNest(resol, 0.0000000000000000, 0.0000000000000000) ==  65536
-@test Healpix.ang2pixNest(resol, 0.0000000000000000, 1.2566370614359172) ==  65536
+@test Healpix.ang2pixNest(resol, 0.0000000000000000, 0.0000000000000000) == 65536
+@test Healpix.ang2pixNest(resol, 0.0000000000000000, 1.2566370614359172) == 65536
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 2.5132741228718345) == 131072
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 3.7699111843077517) == 196608
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 5.0265482457436690) == 262144
 @test Healpix.ang2pixNest(resol, 0.0000000000000000, 6.2831853071795862) == 262144
 
-@test Healpix.ang2pixNest(resol, 0.6283185307179586, 0.0000000000000000) ==  45055
-@test Healpix.ang2pixNest(resol, 0.6283185307179586, 1.2566370614359172) ==  31074
+@test Healpix.ang2pixNest(resol, 0.6283185307179586, 0.0000000000000000) == 45055
+@test Healpix.ang2pixNest(resol, 0.6283185307179586, 1.2566370614359172) == 31074
 @test Healpix.ang2pixNest(resol, 0.6283185307179586, 2.5132741228718345) == 116111
 @test Healpix.ang2pixNest(resol, 0.6283185307179586, 3.7699111843077517) == 182862
 @test Healpix.ang2pixNest(resol, 0.6283185307179586, 5.0265482457436690) == 243347
@@ -115,7 +115,7 @@ resol = Healpix.Resolution(256)
 
 @test Healpix.ang2pixNest(resol, 1.2566370614359172, 0.0000000000000000) == 315344
 @test Healpix.ang2pixNest(resol, 1.2566370614359172, 1.2566370614359172) == 387305
-@test Healpix.ang2pixNest(resol, 1.2566370614359172, 2.5132741228718345) ==  71955
+@test Healpix.ang2pixNest(resol, 1.2566370614359172, 2.5132741228718345) == 71955
 @test Healpix.ang2pixNest(resol, 1.2566370614359172, 3.7699111843077517) == 140834
 @test Healpix.ang2pixNest(resol, 1.2566370614359172, 5.0265482457436690) == 513237
 @test Healpix.ang2pixNest(resol, 1.2566370614359172, 6.2831853071795862) == 315344
@@ -143,18 +143,18 @@ resol = Healpix.Resolution(256)
 
 # ang2pixRing
 
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 0.0000000000000000) ==      1
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 1.2566370614359172) ==      1
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 2.5132741228718345) ==      2
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 3.7699111843077517) ==      3
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 5.0265482457436690) ==      4
-@test Healpix.ang2pixRing(resol, 0.0000000000000000, 6.2831853071795862) ==      1
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 0.0000000000000000) ==  74885
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 1.2566370614359172) ==  75040
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 2.5132741228718345) ==  75195
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 3.7699111843077517) ==  75350
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 5.0265482457436690) ==  75505
-@test Healpix.ang2pixRing(resol, 0.6283185307179586, 6.2831853071795862) ==  74885
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 0.0000000000000000) == 1
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 1.2566370614359172) == 1
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 2.5132741228718345) == 2
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 3.7699111843077517) == 3
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 5.0265482457436690) == 4
+@test Healpix.ang2pixRing(resol, 0.0000000000000000, 6.2831853071795862) == 1
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 0.0000000000000000) == 74885
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 1.2566370614359172) == 75040
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 2.5132741228718345) == 75195
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 3.7699111843077517) == 75350
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 5.0265482457436690) == 75505
+@test Healpix.ang2pixRing(resol, 0.6283185307179586, 6.2831853071795862) == 74885
 @test Healpix.ang2pixRing(resol, 1.2566370614359172, 0.0000000000000000) == 270849
 @test Healpix.ang2pixRing(resol, 1.2566370614359172, 1.2566370614359172) == 271054
 @test Healpix.ang2pixRing(resol, 1.2566370614359172, 2.5132741228718345) == 272282
@@ -182,24 +182,24 @@ resol = Healpix.Resolution(256)
 
 # pix2angNest
 
-@test Healpix.pix2angNest(lowresol,  1)[1] ≈ 1.230959417340775 atol = eps
-@test Healpix.pix2angNest(lowresol,  1)[2] ≈ 0.785398163397448 atol = eps
-@test Healpix.pix2angNest(lowresol,  2)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angNest(lowresol,  2)[2] ≈ 1.178097245096172 atol = eps
-@test Healpix.pix2angNest(lowresol,  3)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angNest(lowresol,  3)[2] ≈ 0.392699081698724 atol = eps
-@test Healpix.pix2angNest(lowresol,  4)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angNest(lowresol,  4)[2] ≈ 0.785398163397448 atol = eps
-@test Healpix.pix2angNest(lowresol,  5)[1] ≈ 1.230959417340775 atol = eps
-@test Healpix.pix2angNest(lowresol,  5)[2] ≈ 2.356194490192345 atol = eps
-@test Healpix.pix2angNest(lowresol,  6)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angNest(lowresol,  6)[2] ≈ 2.748893571891069 atol = eps
-@test Healpix.pix2angNest(lowresol,  7)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angNest(lowresol,  7)[2] ≈ 1.963495408493621 atol = eps
-@test Healpix.pix2angNest(lowresol,  8)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angNest(lowresol,  8)[2] ≈ 2.356194490192345 atol = eps
-@test Healpix.pix2angNest(lowresol,  9)[1] ≈ 1.230959417340775 atol = eps
-@test Healpix.pix2angNest(lowresol,  9)[2] ≈ 3.926990816987241 atol = eps
+@test Healpix.pix2angNest(lowresol, 1)[1] ≈ 1.230959417340775 atol = eps
+@test Healpix.pix2angNest(lowresol, 1)[2] ≈ 0.785398163397448 atol = eps
+@test Healpix.pix2angNest(lowresol, 2)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angNest(lowresol, 2)[2] ≈ 1.178097245096172 atol = eps
+@test Healpix.pix2angNest(lowresol, 3)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angNest(lowresol, 3)[2] ≈ 0.392699081698724 atol = eps
+@test Healpix.pix2angNest(lowresol, 4)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angNest(lowresol, 4)[2] ≈ 0.785398163397448 atol = eps
+@test Healpix.pix2angNest(lowresol, 5)[1] ≈ 1.230959417340775 atol = eps
+@test Healpix.pix2angNest(lowresol, 5)[2] ≈ 2.356194490192345 atol = eps
+@test Healpix.pix2angNest(lowresol, 6)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angNest(lowresol, 6)[2] ≈ 2.748893571891069 atol = eps
+@test Healpix.pix2angNest(lowresol, 7)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angNest(lowresol, 7)[2] ≈ 1.963495408493621 atol = eps
+@test Healpix.pix2angNest(lowresol, 8)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angNest(lowresol, 8)[2] ≈ 2.356194490192345 atol = eps
+@test Healpix.pix2angNest(lowresol, 9)[1] ≈ 1.230959417340775 atol = eps
+@test Healpix.pix2angNest(lowresol, 9)[2] ≈ 3.926990816987241 atol = eps
 @test Healpix.pix2angNest(lowresol, 10)[1] ≈ 0.841068670567930 atol = eps
 @test Healpix.pix2angNest(lowresol, 10)[2] ≈ 4.319689898685965 atol = eps
 @test Healpix.pix2angNest(lowresol, 11)[1] ≈ 0.841068670567930 atol = eps
@@ -277,24 +277,24 @@ resol = Healpix.Resolution(256)
 @test Healpix.pix2angNest(lowresol, 47)[1] ≈ 2.300523983021863 atol = eps
 @test Healpix.pix2angNest(lowresol, 47)[2] ≈ 5.105088062083414 atol = eps
 
-@test Healpix.pix2angNest(resol,      1)[1] ≈ 1.5681921571847817 atol = eps
-@test Healpix.pix2angNest(resol,      1)[2] ≈ 0.7853981633974483 atol = eps
-@test Healpix.pix2angNest(resol,      2)[1] ≈ 1.5655879699137618 atol = eps
-@test Healpix.pix2angNest(resol,      2)[2] ≈ 0.7884661249732196 atol = eps
-@test Healpix.pix2angNest(resol,      3)[1] ≈ 1.5655879699137618 atol = eps
-@test Healpix.pix2angNest(resol,      3)[2] ≈ 0.7823302018216770 atol = eps
-@test Healpix.pix2angNest(resol,      4)[1] ≈ 1.5629837473198540 atol = eps
-@test Healpix.pix2angNest(resol,      4)[2] ≈ 0.7853981633974483 atol = eps
-@test Healpix.pix2angNest(resol,  74885)[1] ≈ 1.2884125182769750 atol = eps
-@test Healpix.pix2angNest(resol,  74885)[2] ≈ 2.2396119503130363 atol = eps
-@test Healpix.pix2angNest(resol,  75040)[1] ≈ 1.2447369771100412 atol = eps
-@test Healpix.pix2angNest(resol,  75040)[2] ≈ 2.3193789512830896 atol = eps
-@test Healpix.pix2angNest(resol,  75195)[1] ≈ 1.2198889832038156 atol = eps
-@test Healpix.pix2angNest(resol,  75195)[2] ≈ 2.2733595276465204 atol = eps
-@test Healpix.pix2angNest(resol,  75350)[1] ≈ 1.2309594173407747 atol = eps
-@test Healpix.pix2angNest(resol,  75350)[2] ≈ 2.2549517581918925 atol = eps
-@test Healpix.pix2angNest(resol,  75505)[1] ≈ 1.2059873663963379 atol = eps
-@test Healpix.pix2angNest(resol,  75505)[2] ≈ 2.2089323345553233 atol = eps
+@test Healpix.pix2angNest(resol, 1)[1] ≈ 1.5681921571847817 atol = eps
+@test Healpix.pix2angNest(resol, 1)[2] ≈ 0.7853981633974483 atol = eps
+@test Healpix.pix2angNest(resol, 2)[1] ≈ 1.5655879699137618 atol = eps
+@test Healpix.pix2angNest(resol, 2)[2] ≈ 0.7884661249732196 atol = eps
+@test Healpix.pix2angNest(resol, 3)[1] ≈ 1.5655879699137618 atol = eps
+@test Healpix.pix2angNest(resol, 3)[2] ≈ 0.7823302018216770 atol = eps
+@test Healpix.pix2angNest(resol, 4)[1] ≈ 1.5629837473198540 atol = eps
+@test Healpix.pix2angNest(resol, 4)[2] ≈ 0.7853981633974483 atol = eps
+@test Healpix.pix2angNest(resol, 74885)[1] ≈ 1.2884125182769750 atol = eps
+@test Healpix.pix2angNest(resol, 74885)[2] ≈ 2.2396119503130363 atol = eps
+@test Healpix.pix2angNest(resol, 75040)[1] ≈ 1.2447369771100412 atol = eps
+@test Healpix.pix2angNest(resol, 75040)[2] ≈ 2.3193789512830896 atol = eps
+@test Healpix.pix2angNest(resol, 75195)[1] ≈ 1.2198889832038156 atol = eps
+@test Healpix.pix2angNest(resol, 75195)[2] ≈ 2.2733595276465204 atol = eps
+@test Healpix.pix2angNest(resol, 75350)[1] ≈ 1.2309594173407747 atol = eps
+@test Healpix.pix2angNest(resol, 75350)[2] ≈ 2.2549517581918925 atol = eps
+@test Healpix.pix2angNest(resol, 75505)[1] ≈ 1.2059873663963379 atol = eps
+@test Healpix.pix2angNest(resol, 75505)[2] ≈ 2.2089323345553233 atol = eps
 @test Healpix.pix2angNest(resol, 270849)[1] ≈ 2.0439875486296080 atol = eps
 @test Healpix.pix2angNest(resol, 270849)[2] ≈ 6.0377483811178836 atol = eps
 @test Healpix.pix2angNest(resol, 271054)[1] ≈ 1.9834500066417189 atol = eps
@@ -340,24 +340,24 @@ resol = Healpix.Resolution(256)
 
 # pix2angRing
 
-@test Healpix.pix2angRing(lowresol,  1)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angRing(lowresol,  1)[2] ≈ 0.785398163397448 atol = eps
-@test Healpix.pix2angRing(lowresol,  2)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angRing(lowresol,  2)[2] ≈ 2.356194490192345 atol = eps
-@test Healpix.pix2angRing(lowresol,  3)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angRing(lowresol,  3)[2] ≈ 3.926990816987241 atol = eps
-@test Healpix.pix2angRing(lowresol,  4)[1] ≈ 0.411137862322348 atol = eps
-@test Healpix.pix2angRing(lowresol,  4)[2] ≈ 5.497787143782138 atol = eps
-@test Healpix.pix2angRing(lowresol,  5)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angRing(lowresol,  5)[2] ≈ 0.392699081698724 atol = eps
-@test Healpix.pix2angRing(lowresol,  6)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angRing(lowresol,  6)[2] ≈ 1.178097245096172 atol = eps
-@test Healpix.pix2angRing(lowresol,  7)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angRing(lowresol,  7)[2] ≈ 1.963495408493621 atol = eps
-@test Healpix.pix2angRing(lowresol,  8)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angRing(lowresol,  8)[2] ≈ 2.748893571891069 atol = eps
-@test Healpix.pix2angRing(lowresol,  9)[1] ≈ 0.841068670567930 atol = eps
-@test Healpix.pix2angRing(lowresol,  9)[2] ≈ 3.534291735288517 atol = eps
+@test Healpix.pix2angRing(lowresol, 1)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angRing(lowresol, 1)[2] ≈ 0.785398163397448 atol = eps
+@test Healpix.pix2angRing(lowresol, 2)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angRing(lowresol, 2)[2] ≈ 2.356194490192345 atol = eps
+@test Healpix.pix2angRing(lowresol, 3)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angRing(lowresol, 3)[2] ≈ 3.926990816987241 atol = eps
+@test Healpix.pix2angRing(lowresol, 4)[1] ≈ 0.411137862322348 atol = eps
+@test Healpix.pix2angRing(lowresol, 4)[2] ≈ 5.497787143782138 atol = eps
+@test Healpix.pix2angRing(lowresol, 5)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angRing(lowresol, 5)[2] ≈ 0.392699081698724 atol = eps
+@test Healpix.pix2angRing(lowresol, 6)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angRing(lowresol, 6)[2] ≈ 1.178097245096172 atol = eps
+@test Healpix.pix2angRing(lowresol, 7)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angRing(lowresol, 7)[2] ≈ 1.963495408493621 atol = eps
+@test Healpix.pix2angRing(lowresol, 8)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angRing(lowresol, 8)[2] ≈ 2.748893571891069 atol = eps
+@test Healpix.pix2angRing(lowresol, 9)[1] ≈ 0.841068670567930 atol = eps
+@test Healpix.pix2angRing(lowresol, 9)[2] ≈ 3.534291735288517 atol = eps
 @test Healpix.pix2angRing(lowresol, 10)[1] ≈ 0.841068670567930 atol = eps
 @test Healpix.pix2angRing(lowresol, 10)[2] ≈ 4.319689898685965 atol = eps
 @test Healpix.pix2angRing(lowresol, 11)[1] ≈ 0.841068670567930 atol = eps
@@ -435,24 +435,24 @@ resol = Healpix.Resolution(256)
 @test Healpix.pix2angRing(lowresol, 47)[1] ≈ 2.730454791267445 atol = eps
 @test Healpix.pix2angRing(lowresol, 47)[2] ≈ 3.926990816987241 atol = eps
 
-@test Healpix.pix2angRing(resol,      1)[1] ≈ 0.0031894411211228 atol = eps
-@test Healpix.pix2angRing(resol,      1)[2] ≈ 0.7853981633974483 atol = eps
-@test Healpix.pix2angRing(resol,      2)[1] ≈ 0.0031894411211113 atol = eps
-@test Healpix.pix2angRing(resol,      2)[2] ≈ 2.3561944901923448 atol = eps
-@test Healpix.pix2angRing(resol,      3)[1] ≈ 0.0031894411211113 atol = eps
-@test Healpix.pix2angRing(resol,      3)[2] ≈ 3.9269908169872414 atol = eps
-@test Healpix.pix2angRing(resol,      4)[1] ≈ 0.0031894411211113 atol = eps
-@test Healpix.pix2angRing(resol,      4)[2] ≈ 5.4977871437821380 atol = eps
-@test Healpix.pix2angRing(resol,  74885)[1] ≈ 0.6290728186524177 atol = eps
-@test Healpix.pix2angRing(resol,  74885)[2] ≈ 0.0040484441412240 atol = eps
-@test Healpix.pix2angRing(resol,  75040)[1] ≈ 0.6290728186524177 atol = eps
-@test Healpix.pix2angRing(resol,  75040)[2] ≈ 1.2590661279206516 atol = eps
-@test Healpix.pix2angRing(resol,  75195)[1] ≈ 0.6290728186524177 atol = eps
-@test Healpix.pix2angRing(resol,  75195)[2] ≈ 2.5140838117000794 atol = eps
-@test Healpix.pix2angRing(resol,  75350)[1] ≈ 0.6290728186524177 atol = eps
-@test Healpix.pix2angRing(resol,  75350)[2] ≈ 3.7691014954795072 atol = eps
-@test Healpix.pix2angRing(resol,  75505)[1] ≈ 0.6290728186524177 atol = eps
-@test Healpix.pix2angRing(resol,  75505)[2] ≈ 5.0241191792589346 atol = eps
+@test Healpix.pix2angRing(resol, 1)[1] ≈ 0.0031894411211228 atol = eps
+@test Healpix.pix2angRing(resol, 1)[2] ≈ 0.7853981633974483 atol = eps
+@test Healpix.pix2angRing(resol, 2)[1] ≈ 0.0031894411211113 atol = eps
+@test Healpix.pix2angRing(resol, 2)[2] ≈ 2.3561944901923448 atol = eps
+@test Healpix.pix2angRing(resol, 3)[1] ≈ 0.0031894411211113 atol = eps
+@test Healpix.pix2angRing(resol, 3)[2] ≈ 3.9269908169872414 atol = eps
+@test Healpix.pix2angRing(resol, 4)[1] ≈ 0.0031894411211113 atol = eps
+@test Healpix.pix2angRing(resol, 4)[2] ≈ 5.4977871437821380 atol = eps
+@test Healpix.pix2angRing(resol, 74885)[1] ≈ 0.6290728186524177 atol = eps
+@test Healpix.pix2angRing(resol, 74885)[2] ≈ 0.0040484441412240 atol = eps
+@test Healpix.pix2angRing(resol, 75040)[1] ≈ 0.6290728186524177 atol = eps
+@test Healpix.pix2angRing(resol, 75040)[2] ≈ 1.2590661279206516 atol = eps
+@test Healpix.pix2angRing(resol, 75195)[1] ≈ 0.6290728186524177 atol = eps
+@test Healpix.pix2angRing(resol, 75195)[2] ≈ 2.5140838117000794 atol = eps
+@test Healpix.pix2angRing(resol, 75350)[1] ≈ 0.6290728186524177 atol = eps
+@test Healpix.pix2angRing(resol, 75350)[2] ≈ 3.7691014954795072 atol = eps
+@test Healpix.pix2angRing(resol, 75505)[1] ≈ 0.6290728186524177 atol = eps
+@test Healpix.pix2angRing(resol, 75505)[2] ≈ 5.0241191792589346 atol = eps
 @test Healpix.pix2angRing(resol, 270849)[1] ≈ 1.2557128565725952 atol = eps
 @test Healpix.pix2angRing(resol, 270849)[2] ≈ 0.0000000000000000 atol = eps
 @test Healpix.pix2angRing(resol, 271054)[1] ≈ 1.2557128565725952 atol = eps

@@ -1,12 +1,12 @@
 ################################################################################
 
-ang2pix(map::Map{T, RingOrder, AA}, theta, phi) where {T, AA} =
+ang2pix(map::Map{T,RingOrder,AA}, theta, phi) where {T,AA} =
     ang2pixRing(map.resolution, theta, phi)
-ang2pix(map::Map{T, NestedOrder, AA}, theta, phi) where {T, AA} =
+ang2pix(map::Map{T,NestedOrder,AA}, theta, phi) where {T,AA} =
     ang2pixNest(map.resolution, theta, phi)
-ang2pix(map::PolarizedMap{T, RingOrder, AA}, theta, phi) where {T, AA} =
+ang2pix(map::PolarizedMap{T,RingOrder,AA}, theta, phi) where {T,AA} =
     ang2pixRing(map.i.resolution, theta, phi)
-ang2pix(map::PolarizedMap{T, NestedOrder, AA}, theta, phi) where {T, AA} =
+ang2pix(map::PolarizedMap{T,NestedOrder,AA}, theta, phi) where {T,AA} =
     ang2pixNest(map.i.resolution, theta, phi)
 
 @doc raw"""
@@ -21,13 +21,11 @@ ang2pix
 
 ################################################################################
 
-pix2ang(map::Map{T, RingOrder, AA}, ipix) where {T, AA} =
-    pix2angRing(map.resolution, ipix)
-pix2ang(map::Map{T, NestedOrder, AA}, ipix) where {T, AA} =
-    pix2angNest(map.resolution, ipix)
-pix2ang(map::PolarizedMap{T, RingOrder, AA}, ipix) where {T, AA} =
+pix2ang(map::Map{T,RingOrder,AA}, ipix) where {T,AA} = pix2angRing(map.resolution, ipix)
+pix2ang(map::Map{T,NestedOrder,AA}, ipix) where {T,AA} = pix2angNest(map.resolution, ipix)
+pix2ang(map::PolarizedMap{T,RingOrder,AA}, ipix) where {T,AA} =
     pix2angRing(map.i.resolution, ipix)
-pix2ang(map::PolarizedMap{T, NestedOrder, AA}, ipix) where {T, AA} =
+pix2ang(map::PolarizedMap{T,NestedOrder,AA}, ipix) where {T,AA} =
     pix2angNest(map.i.resolution, ipix)
 
 @doc raw"""
@@ -43,18 +41,18 @@ pix2ang
 ################################################################################
 # Interpolation
 
-function interpolate(m::Map{T, RingOrder, AA}, θ, ϕ, pixbuf, weightbuf) where {T, AA}
+function interpolate(m::Map{T,RingOrder,AA}, θ, ϕ, pixbuf, weightbuf) where {T,AA}
     getinterpolRing(m.resolution, θ, ϕ, pixbuf, weightbuf)
 
     result = zero(weightbuf[1])
-    for i in 1:4
+    for i = 1:4
         result += m[pixbuf[i]] * weightbuf[i]
     end
-    
+
     result
 end
 
-function interpolate(m::Map{T, RingOrder, AA}, θ, ϕ) where {T, AA}
+function interpolate(m::Map{T,RingOrder,AA}, θ, ϕ) where {T,AA}
     pixbuf = Array{Int}(undef, 4)
     weightbuf = Array{Float64}(undef, 4)
 

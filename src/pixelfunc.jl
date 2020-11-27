@@ -50,8 +50,8 @@ function calcNestPosForPole(z, z_abs, scaled_phi)
         iy = NSIDE_MAX - jp - 1
     else
         face_num = ntt + 8 # in {8,11} */
-        ix =  jp
-        iy =  jm
+        ix = jp
+        iy = jm
     end
 
     (ix, iy, face_num)
@@ -72,11 +72,11 @@ function ang2pixNest(resol::Resolution, theta, phi)
     nside = resol.nside
     local ix, iy, face_num
 
-    z          = cos(theta)
-    z_abs      = abs(z)
+    z = cos(theta)
+    z_abs = abs(z)
     scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
-    if z_abs ≤ 2//3
+    if z_abs ≤ 2 // 3
         (ix, iy, face_num) = calcNestPosForEquator(z, z_abs, scaled_phi)
     else
         (ix, iy, face_num) = calcNestPosForPole(z, z_abs, scaled_phi)
@@ -85,9 +85,9 @@ function ang2pixNest(resol::Resolution, theta, phi)
     (ix_hi, ix_low) = divrem(ix, 128)
     (iy_hi, iy_low) = divrem(iy, 128)
 
-    ipf = ((x2pix[ix_hi + 1] + y2pix[iy_hi + 1]) * (128^2)
-           + (x2pix[ix_low + 1] + y2pix[iy_low + 1]))
-    ipf = floor(Integer, ipf / ((NSIDE_MAX / nside) ^ 2))
+    ipf =
+        ((x2pix[ix_hi+1] + y2pix[iy_hi+1]) * (128^2) + (x2pix[ix_low+1] + y2pix[iy_low+1]))
+    ipf = floor(Integer, ipf / ((NSIDE_MAX / nside)^2))
 
     # Add 1 to have a 1-based index
     ipf + face_num * nside * nside + 1
@@ -104,11 +104,11 @@ function calcRingPosForEquator(resol::Resolution, z, z_abs, tt)
     ir = resol.nside + 1 + jp - jm
     kshift = (mod(ir, 2) == 0) ? 1 : 0
 
-    nl4 = resol.nsideTimesFour;
+    nl4 = resol.nsideTimesFour
 
     local ip = div(jp + jm - resol.nside + kshift + 1, 2) + 1
     if ip > nl4
-	    ip = ip - nl4
+        ip = ip - nl4
     end
 
     resol.ncap + nl4 * (ir - 1) + ip
@@ -119,19 +119,19 @@ end
 function calcRingPosForPole(resol::Resolution, z, z_abs, tt)
 
     tp = tt - floor(tt)
-    tmp = sqrt(3. * (1. - z_abs))
+    tmp = sqrt(3.0 * (1.0 - z_abs))
 
-    jp = floor(Integer, resol.nside * tp * tmp )
+    jp = floor(Integer, resol.nside * tp * tmp)
     jm = floor(Integer, resol.nside * (1 - tp) * tmp)
 
     ir = jp + jm + 1
     ip = floor(Integer, tt * ir) + 1
     if ip > 4ir
-	    ip -= 4ir
+        ip -= 4ir
     end
 
     if z ≤ 0
-	    resol.numOfPixels - 2ir * (ir + 1) + ip
+        resol.numOfPixels - 2ir * (ir + 1) + ip
     else
         2ir * (ir - 1) + ip
     end
@@ -191,7 +191,7 @@ function ang2pixRing(resol::Resolution, theta, phi)
     z_abs = abs(z)
     scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
-    if z_abs ≤ 2//3
+    if z_abs ≤ 2 // 3
         calcRingPosForEquator(resol, z, z_abs, scaled_phi)
     else
         calcRingPosForPole(resol, z, z_abs, scaled_phi)
@@ -209,12 +209,12 @@ corresponding to its center, both expressed in radians.
 """
 function pix2angNest(resol::Resolution, pixel)
 
-    jrll = [ 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4 ]
-    jpll = [ 1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7 ]
+    jrll = [2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4]
+    jpll = [1, 3, 5, 7, 0, 2, 4, 6, 1, 3, 5, 7]
 
     floatNside = Float64(resol.nside)
-    fact1 = 1. / (3.0 * floatNside^2)
-    fact2 = 2. / (3.0 * floatNside)
+    fact1 = 1.0 / (3.0 * floatNside^2)
+    fact2 = 2.0 / (3.0 * floatNside)
 
     # face number in {0,11} and pixel number within the face
     faceNum, ipf = divrem(pixel - 1, resol.pixelsPerFace)
@@ -235,14 +235,14 @@ function pix2angNest(resol::Resolution, pixel)
     local kshift = Int(mod(jr - resol.nside, 2))
     if jr < resol.nside
         # North polar cap
-	nr = jr
-	z = 1. - nr^2 * fact1
-	kshift = 0
+        nr = jr
+        z = 1.0 - nr^2 * fact1
+        kshift = 0
     elseif jr > 3 * resol.nside
         # South polar cap
-	nr = resol.nsideTimesFour - jr
-	z = - 1. + nr^2 * fact1
-	kshift = 0
+        nr = resol.nsideTimesFour - jr
+        z = -1.0 + nr^2 * fact1
+        kshift = 0
     end
 
     local jp = div(jpll[faceNum+1] * nr + jpt + 1 + kshift, 2)
@@ -283,12 +283,12 @@ function pix2ringpos(resol::Resolution, pixel)
 
         (:northcap, i, j)
     elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
-        ip    = pixel - resol.ncap - 1
+        ip = pixel - resol.ncap - 1
         # Eq. (6) - ring counts from the North pole; resol.nside is
         # the number of pixels in the North Polar ring
         i = floor(Int, ip / resol.nsideTimesFour) + resol.nside
         # Eq. (7) - zero-based index of the pixel within this ring
-        j  = Int(mod(ip, resol.nsideTimesFour)) + 1
+        j = Int(mod(ip, resol.nsideTimesFour)) + 1
         (:equator, i, j)
     else
         # South polar cap
@@ -320,8 +320,7 @@ function pix2angRing(resol::Resolution, pixel)
     cap, i, j = pix2ringpos(resol, pixel)
     if cap == :northcap
         # Colatitude: Eq. (4); longitude: Eq. (5)
-        return (acos(1 - i^2 / fact2),
-                    (Float64(j) - 0.5) * π / (2i))
+        return (acos(1 - i^2 / fact2), (Float64(j) - 0.5) * π / (2i))
     elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
         # Equatorial belt
 
@@ -332,15 +331,16 @@ function pix2angRing(resol::Resolution, pixel)
         s_half = 0.5 * (1 + mod(Float64(i + resol.nside), 2))
 
         # Colatitude: Eq. (8) in disguise, latitude: Eq. (9)
-        return (acos((resol.nsideTimesTwo - i) / fact1),
-                    (Float64(j) - s_half) * π / (2resol.nside))
+        return (
+            acos((resol.nsideTimesTwo - i) / fact1),
+            (Float64(j) - s_half) * π / (2resol.nside),
+        )
     else
         # South Polar cap
 
         # The pixels in this cap are handled like the ones in the
         # North Polar cap, except that we must flip the value of "ip".
-        return (acos(-1 + i^2 / fact2),
-                    (float(j) - 0.5) * π / (2i))
+        return (acos(-1 + i^2 / fact2), (float(j) - 0.5) * π / (2i))
     end
 end
 
@@ -353,10 +353,7 @@ pix2vecRing(res::Resolution, pixel) = ang2vec(pix2angRing(res, pixel)...)
 
 ################################################################################
 
-function pix2locRing(
-    res::Resolution,
-    ipix,
-)
+function pix2locRing(res::Resolution, ipix)
 
     pix = ipix - 1
     if pix < res.ncap
@@ -373,7 +370,7 @@ function pix2locRing(
             (0.0, false)
         end
 
-        phi = (iphi - 0.5) * π/2 / iring
+        phi = (iphi - 0.5) * π / 2 / iring
 
         return (z, phi, sth, have_sth)
     end
@@ -395,7 +392,7 @@ function pix2locRing(
     end
 
     # South polar cap
-    
+
     ip = res.numOfPixels - pix
 
     # Counted from south pole
@@ -411,7 +408,7 @@ function pix2locRing(
         (0.0, false)
     end
 
-    phi = (iphi - 0.5) * π/2 / iring
+    phi = (iphi - 0.5) * π / 2 / iring
 
     (z, phi, sth, have_sth)
 end
@@ -430,10 +427,7 @@ function pix2zphiRing(res::Resolution, pix)
     (z, phi)
 end
 
-function pix2locNest(
-    res::Resolution,
-    pix,
-)
+function pix2locNest(res::Resolution, pix)
 
     z = 0.0
     phi = 0.0
@@ -442,7 +436,7 @@ function pix2locNest(
 
     (ix, iy, face_num) = pix2xyfNest(res, pix)
 
-    jr = (JRLL[face_num + 1] << res.order) - ix - iy - 1
+    jr = (JRLL[face_num+1] << res.order) - ix - iy - 1
 
     nr = 0
 
@@ -460,11 +454,11 @@ function pix2locNest(
         end
     end
 
-    tmp = round(Int, JPLL[face_num + 1]) * nr + ix - iy
+    tmp = round(Int, JPLL[face_num+1]) * nr + ix - iy
 
     (tmp < 0) && (tmp += 8nr)
 
-    phi = (nr == res.nside) ? (3π/8 * tmp * res.fact1) : ((π/4 * tmp) / nr)
+    phi = (nr == res.nside) ? (3π / 8 * tmp * res.fact1) : ((π / 4 * tmp) / nr)
 
     (z, phi, sth, have_sth)
 end

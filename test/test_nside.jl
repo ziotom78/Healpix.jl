@@ -14,4 +14,6 @@
 @test Healpix.npix2nside(192) == 4
 @test_throws DomainError(15, "`NSIDE` is not an integer power of two") Healpix.nside2npix(15)
 @test_throws DomainError(7, "Invalid number of pixels") Healpix.npix2nside(7)
-@test_throws DomainError(12 * 8 * 9, "Invalid number of pixels") Healpix.npix2nside(12 * 8 * 9)
+@test_throws DomainError(12 * 8 * 9, "Invalid number of pixels") Healpix.npix2nside(
+    12 * 8 * 9,
+)

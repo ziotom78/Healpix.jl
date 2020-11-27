@@ -21,27 +21,43 @@ Complex{Float64}.
 - `spin::Integer`: spin of the field, 0 or 2
 """
 function iterate_map2alm!(
-        maps::Array{Array{Float64,1},1}, alms::Array{Array{Complex{Float64},1},1},
-        geom_info::Libsharp.GeomInfo, alm_info::Libsharp.AlmInfo,
-        niter::Integer, spin::Integer)
+    maps::Array{Array{Float64,1},1},
+    alms::Array{Array{Complex{Float64},1},1},
+    geom_info::Libsharp.GeomInfo,
+    alm_info::Libsharp.AlmInfo,
+    niter::Integer,
+    spin::Integer,
+)
 
     ncomp = size(maps, 1)
     residual_maps = [zero(m) for m in maps] # set up buffers
     residual_alms = [zero(a) for a in alms]
-    for iter_index in 1:niter
+    for iter_index = 1:niter
         # synthesize map from the alms
         Libsharp.sharp_execute!(
-            Libsharp.SHARP_ALM2MAP, spin, alms, residual_maps,
-            geom_info, alm_info, Libsharp.SHARP_DP)
-        for i_comp in 1:ncomp
+            Libsharp.SHARP_ALM2MAP,
+            spin,
+            alms,
+            residual_maps,
+            geom_info,
+            alm_info,
+            Libsharp.SHARP_DP,
+        )
+        for i_comp = 1:ncomp
             # subtract synthesized map from original
             residual_maps[i_comp] .= maps[i_comp] .- residual_maps[i_comp]
         end
         # synthesize alms from the residual maps
         Libsharp.sharp_execute!(
-            Libsharp.SHARP_MAP2ALM, spin, residual_alms, residual_maps,
-            geom_info, alm_info, Libsharp.SHARP_DP)
-        for i_comp in 1:ncomp
+            Libsharp.SHARP_MAP2ALM,
+            spin,
+            residual_alms,
+            residual_maps,
+            geom_info,
+            alm_info,
+            Libsharp.SHARP_DP,
+        )
+        for i_comp = 1:ncomp
             # add them to the alms
             alms[i_comp] .= alms[i_comp] .+ residual_alms[i_comp]
         end
@@ -69,23 +85,29 @@ done in-place.
 function map2alm! end
 
 function map2alm!(
-    map::Map{Float64, RingOrder, Array{Float64, 1}},
-    alm::Alm{ComplexF64, Array{ComplexF64, 1}};
+    map::Map{Float64,RingOrder,Array{Float64,1}},
+    alm::Alm{ComplexF64,Array{ComplexF64,1}};
     niter::Integer = 3,
 )
     geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_MAP2ALM, 0, [alm.alm], [map.pixels],
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_MAP2ALM,
+        0,
+        [alm.alm],
+        [map.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
     if niter > 0
         iterate_map2alm!([map.pixels], [alm.alm], geom_info, alm_info, niter, 0)
     end
 end
 
 function map2alm!(
-    map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}},
-    alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1};
+    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}},
+    alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1};
     niter::Integer = 3,
 )
     geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
@@ -96,11 +118,23 @@ function map2alm!(
     alms_0 = [alm[1].alm]
     alms_2 = [alm[2].alm, alm[3].alm]
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_MAP2ALM, 0, alms_0, [map.i.pixels],
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_MAP2ALM,
+        0,
+        alms_0,
+        [map.i.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_MAP2ALM, 2, alms_2, maps_2,
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_MAP2ALM,
+        2,
+        alms_2,
+        maps_2,
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
 
     if niter > 0
         iterate_map2alm!(maps_0, alms_0, geom_info, alm_info, niter, 0)
@@ -139,8 +173,12 @@ types based on Float64.
 """
 function map2alm end
 
-function map2alm(map::Map{Float64, RingOrder, Array{Float64, 1}};
-        lmax=nothing, mmax=nothing, niter::Integer=3)
+function map2alm(
+    map::Map{Float64,RingOrder,Array{Float64,1}};
+    lmax = nothing,
+    mmax = nothing,
+    niter::Integer = 3,
+)
 
     nside = map.resolution.nside
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
@@ -148,48 +186,54 @@ function map2alm(map::Map{Float64, RingOrder, Array{Float64, 1}};
     nalms = numberOfAlms(lmax, mmax)
     alm = Alm(lmax, mmax, zeros(ComplexF64, nalms))
 
-    map2alm!(map, alm; niter=niter)
+    map2alm!(map, alm; niter = niter)
     return alm
 end
 
-function map2alm(map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}};
-        lmax=nothing, mmax=nothing, niter::Integer=3)
+function map2alm(
+    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}};
+    lmax = nothing,
+    mmax = nothing,
+    niter::Integer = 3,
+)
 
     nside = map.i.resolution.nside
     lmax = isnothing(lmax) ? 3 * nside - 1 : lmax
     mmax = isnothing(mmax) ? lmax : mmax
     nalms = numberOfAlms(lmax, mmax)
-    alms = [Alm(lmax, mmax, zeros(ComplexF64, nalms)),
-            Alm(lmax, mmax, zeros(ComplexF64, nalms)),
-            Alm(lmax, mmax, zeros(ComplexF64, nalms))]
+    alms = [
+        Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+        Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+        Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+    ]
 
-    map2alm!(map, alms; niter=niter)
+    map2alm!(map, alms; niter = niter)
     return alms
 end
 
 # convert maps to Float64
 function map2alm(
-    map::Map{T, RingOrder, AA};
+    map::Map{T,RingOrder,AA};
     lmax = nothing,
     mmax = nothing,
-    niter::Integer = 3
-) where { T <: Real, AA <: AbstractArray{T, 1} }
-    map_float = Map{Float64, RingOrder}(convert(Array{Float64,1}, map.pixels))
-    return map2alm(map_float, lmax=lmax, mmax=mmax, niter=niter)
+    niter::Integer = 3,
+) where {T<:Real,AA<:AbstractArray{T,1}}
+    map_float = Map{Float64,RingOrder}(convert(Array{Float64,1}, map.pixels))
+    return map2alm(map_float, lmax = lmax, mmax = mmax, niter = niter)
 end
 
 # convert PolarizedMap to Float64
 function map2alm(
-    map::PolarizedMap{T, RingOrder, AA};
+    map::PolarizedMap{T,RingOrder,AA};
     lmax = nothing,
     mmax = nothing,
     niter::Integer = 3,
-) where { T <: Real, AA <: AbstractArray{T, 1} }
+) where {T<:Real,AA<:AbstractArray{T,1}}
     m_i = convert(Array{Float64,1}, map.i)
     m_q = convert(Array{Float64,1}, map.q)
     m_u = convert(Array{Float64,1}, map.u)
-    pol_map_float = PolarizedMap{Float64, RingOrder}(m_i, m_q, m_u)
-    return map2alm(pol_map_float, lmax=lmax, mmax=mmax, niter=niter)
+    pol_map_float = PolarizedMap{Float64,RingOrder}(m_i, m_q, m_u)
+    return map2alm(pol_map_float, lmax = lmax, mmax = mmax, niter = niter)
 end
 
 
@@ -213,33 +257,49 @@ function alm2map! end
 
 # in-place alm2map for spin-0
 function alm2map!(
-    alm::Alm{ComplexF64, Array{ComplexF64, 1}},
-    map::Map{Float64, RingOrder, Array{Float64, 1}},
+    alm::Alm{ComplexF64,Array{ComplexF64,1}},
+    map::Map{Float64,RingOrder,Array{Float64,1}},
 )
     geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_ALM2MAP, 0, [alm.alm], [map.pixels],
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_ALM2MAP,
+        0,
+        [alm.alm],
+        [map.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
 end
 
 # in-place alm2map for TEB to IQU
 function alm2map!(
-    alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1},
-    map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}},
+    alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1},
+    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}},
 )
     geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm[1].lmax, alm[1].mmax, 1)
 
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_ALM2MAP, 0,
-        [alm[1].alm], [map.i.pixels],
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_ALM2MAP,
+        0,
+        [alm[1].alm],
+        [map.i.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
 
     Libsharp.sharp_execute!(
-        Libsharp.SHARP_ALM2MAP, 2,
-        [alm[2].alm, alm[3].alm],  [map.q.pixels, map.u.pixels],
-        geom_info, alm_info, Libsharp.SHARP_DP)
+        Libsharp.SHARP_ALM2MAP,
+        2,
+        [alm[2].alm, alm[3].alm],
+        [map.q.pixels, map.u.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
 end
 
 
@@ -273,34 +333,40 @@ are converted to types based on Float64.
 function alm2map end
 
 # create a new set of spin-0 maps and project the coefficients to the map
-function alm2map(alm::Alm{ComplexF64, Array{ComplexF64, 1}}, nside::Integer)
+function alm2map(alm::Alm{ComplexF64,Array{ComplexF64,1}}, nside::Integer)
     npix = nside2npix(nside)
-    map = Map{Float64, RingOrder}(zeros(Float64, npix))
+    map = Map{Float64,RingOrder}(zeros(Float64, npix))
     alm2map!(alm, map)
     return map
 end
 
 # create a new set of IQU maps and project the coefficients to the map
-function alm2map(alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1}, nside::Integer)
+function alm2map(alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1}, nside::Integer)
     npix = nside2npix(nside)
-    map = PolarizedMap{Float64, RingOrder}(
-        zeros(Float64, npix), zeros(Float64, npix), zeros(Float64, npix))
+    map = PolarizedMap{Float64,RingOrder}(
+        zeros(Float64, npix),
+        zeros(Float64, npix),
+        zeros(Float64, npix),
+    )
     alm2map!(alm, map)
     return map
 end
 
 # convert to ComplexF64 Alm for spin-0 if passed some other type
-function alm2map(alm::Alm{T}, nside::Integer) where T
-    alm_float = Alm{ComplexF64, Array{ComplexF64, 1}}(
-        alm.lmax, alm.mmax, convert(Array{ComplexF64,1}, alm.alm))
+function alm2map(alm::Alm{T}, nside::Integer) where {T}
+    alm_float = Alm{ComplexF64,Array{ComplexF64,1}}(
+        alm.lmax,
+        alm.mmax,
+        convert(Array{ComplexF64,1}, alm.alm),
+    )
     return alm2map(alm_float, nside)
 end
 
 # convert to ComplexF64 Alm for TEB if passed some other type
 function alm2map(
-    alms::Array{Alm{Complex{T}, Array{Complex{T}, 1}},1},
+    alms::Array{Alm{Complex{T},Array{Complex{T},1}},1},
     nside::Integer,
-) where T <: Real
+) where {T<:Real}
     lmax = alms[1].lmax
     mmax = alms[1].mmax
     alm_t = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[1].alm))

@@ -4,7 +4,10 @@
 @test Healpix.numberOfAlms(12, 12) == 91
 @test_throws DomainError(-1, "`lmax` is not positive or zero") Healpix.numberOfAlms(-1, 1)
 @test_throws DomainError(-1, "`mmax` is not positive or zero") Healpix.numberOfAlms(4, -1)
-@test_throws DomainError((5, 7), "`lmax` and `mmax` are inconsistent") Healpix.numberOfAlms(5, 7)
+@test_throws DomainError((5, 7), "`lmax` and `mmax` are inconsistent") Healpix.numberOfAlms(
+    5,
+    7,
+)
 
 alm = Healpix.Alm(10, 8)
 @test Healpix.almIndex(alm, 4, 2) == 24
@@ -19,15 +22,15 @@ alm = Healpix.Alm{ComplexF32}(10, 8)
 @test Healpix.almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
 
 alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
-@test alm[1]  ≈ (5.443205775735e+03 + 0.000000000000e+00im) atol = eps
-@test alm[2]  ≈ (-3.143659646589e+03 + 0.000000000000e+00im) atol = eps
-@test alm[3]  ≈ (-8.445976910202e-07 + 0.000000000000e+00im) atol = eps
-@test alm[4]  ≈ (3.003475555079e-07 + 0.000000000000e+00im) atol = eps
-@test alm[5]  ≈ (-1.094164444296e-06 + 0.000000000000e+00im) atol = eps
-@test alm[6]  ≈ (3.745732939005e-07 + 0.000000000000e+00im) atol = eps
-@test alm[7]  ≈ (-1.344818023454e-06 + 0.000000000000e+00im) atol = eps
-@test alm[8]  ≈ (6.658742467775e-01 + -3.280201017201e+01im) atol = eps
-@test alm[9]  ≈ (1.200156696497e-15 + -1.483545355539e-15im) atol = eps
+@test alm[1] ≈ (5.443205775735e+03 + 0.000000000000e+00im) atol = eps
+@test alm[2] ≈ (-3.143659646589e+03 + 0.000000000000e+00im) atol = eps
+@test alm[3] ≈ (-8.445976910202e-07 + 0.000000000000e+00im) atol = eps
+@test alm[4] ≈ (3.003475555079e-07 + 0.000000000000e+00im) atol = eps
+@test alm[5] ≈ (-1.094164444296e-06 + 0.000000000000e+00im) atol = eps
+@test alm[6] ≈ (3.745732939005e-07 + 0.000000000000e+00im) atol = eps
+@test alm[7] ≈ (-1.344818023454e-06 + 0.000000000000e+00im) atol = eps
+@test alm[8] ≈ (6.658742467775e-01 + -3.280201017201e+01im) atol = eps
+@test alm[9] ≈ (1.200156696497e-15 + -1.483545355539e-15im) atol = eps
 @test alm[10] ≈ (-1.959362683381e-01 + -3.069662938925e+00im) atol = eps
 @test alm[11] ≈ (-4.068874968688e-15 + -5.766800364761e-16im) atol = eps
 @test alm[12] ≈ (-1.134265758838e-01 + 1.102692148708e+00im) atol = eps
@@ -49,5 +52,5 @@ alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
 @test alm[28] ≈ (-6.698490836781e-01 + 4.661675665246e+00im) atol = eps
 
 ## test alm2cl
-testalm = Healpix.Alm(2,2,ComplexF64.(1:6))
-@test isapprox(Healpix.alm2cl(testalm), [1., 12., 26.2])
+testalm = Healpix.Alm(2, 2, ComplexF64.(1:6))
+@test isapprox(Healpix.alm2cl(testalm), [1.0, 12.0, 26.2])

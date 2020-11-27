@@ -1,11 +1,17 @@
 # Map projections
 
 export UNSEEN,
-    lat2colat, colat2lat,
+    lat2colat,
+    colat2lat,
     project,
-    equiprojinv, mollweideprojinv, orthoinv,
-    equirectangular, mollweide, orthographic,
-    orthographic2, gnomonic
+    equiprojinv,
+    mollweideprojinv,
+    orthoinv,
+    equirectangular,
+    mollweide,
+    orthographic,
+    orthographic2,
+    gnomonic
 
 import RecipesBase
 
@@ -32,8 +38,13 @@ Return a `Array{Union{Missing, Float32}}` containing the intensity of
 each pixel. Pixels falling outside the projection are marked as NaN,
 and unseen pixels are marked as `missing`.
 """
-function project(invprojfn, m::Map{T, O, AA}, bmpwidth, bmpheight,
-                 projparams = Dict()) where {T <: Number, O, AA}
+function project(
+    invprojfn,
+    m::Map{T,O,AA},
+    bmpwidth,
+    bmpheight,
+    projparams = Dict(),
+) where {T<:Number,O,AA}
 
     center = get(projparams, :center, (0, 0))
     unseen = get(projparams, :unseen, UNSEEN)
@@ -43,15 +54,16 @@ function project(invprojfn, m::Map{T, O, AA}, bmpwidth, bmpheight,
     masked = zeros(Bool, bmpheight, bmpwidth)
 
     anymasked = false
-    for j in 1:bmpheight
+    for j = 1:bmpheight
         y = 2 * (j - 1) / (bmpheight - 1) - 1
-        for i in 1:bmpwidth
+        for i = 1:bmpwidth
             x = 2 * (i - 1) / (bmpwidth - 1) - 1
             visible, lat, long = invprojfn(x, y)
             if visible
                 value = m.pixels[Healpix.ang2pix(m, lat2colat(lat), long)]
-                if ismissing(value) || isnan(value) || (
-                    !ismissing(unseen) && unseen == value)
+                if ismissing(value) ||
+                   isnan(value) ||
+                   (!ismissing(unseen) && unseen == value)
                     img[j, i] = NaN
                     masked[j, i] = true
                     anymasked = true
@@ -94,7 +106,10 @@ on the projection plane (both are in the range [−1, 1]).
 """
 function equiproj(lat, lon)
     # We use `rem2pi` because we need angles in the range [-π, +π]
-    x, y = ((rem2pi(lon + π, RoundNearest) - π) / π, 2 * (rem2pi(lat + π, RoundNearest) - π) / π)
+    x, y = (
+        (rem2pi(lon + π, RoundNearest) - π) / π,
+        2 * (rem2pi(lat + π, RoundNearest) - π) / π,
+    )
     (true, x, y)
 end
 
@@ -109,7 +124,7 @@ are the latitude and longitude in radians.
 """
 function equiprojinv(x, y)
     ((-1 ≤ x ≤ 1) && (-1 ≤ y ≤ 1)) || return (false, 0, 0)
-     
+
     (true, π / 2 * y, π * x)
 end
 
@@ -168,23 +183,23 @@ function orthoinv(x, y, ϕ1, λ0)
     # Assume R = 1/√2. The notation ϕ1, λ0 closely follows
     # the book "Map projections — A working manual" by
     # John P. Snyder (page 145 and ff.)
-    
+
     R = 1
     ρ = √(x^2 + y^2)
-        if ρ > R
+    if ρ > R
         return (false, zero(ϕ1), zero(λ0))
     end
-    
+
     c = asin(ρ / R)
     sinc, cosc = sin(c), cos(c)
     if cosc < 0
         return (false, zero(ϕ1), zero(λ0))
     end
-    
+
     if ρ ≈ 0
         return (true, ϕ1, λ0)
     end
-    
+
     ϕ = asin(cosc * sin(ϕ1) + y * sinc * cos(ϕ1) / ρ)
     if ϕ1 ≈ π / 2
         λ = λ0 + atan(x, -y)
@@ -193,7 +208,7 @@ function orthoinv(x, y, ϕ1, λ0)
     else
         λ = λ0 + atan(x * sinc, (ρ * cos(ϕ1) * cosc - y * sin(ϕ1) * sinc))
     end
-    
+
     (true, ϕ, λ)
 end
 
@@ -225,7 +240,7 @@ function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad)
     # We fix a Earth radius such that the field of view of the
     # projection is the one expected. Note that the formula
     # diverges if `fov_rad` is 90° (as expected).
-    R = 1. / tan(fov_rad)
+    R = 1.0 / tan(fov_rad)
 
     # We use basic geometry to cast a 3D ray from the center of
     # the sphere to the tangent plane, and then we compute the
@@ -241,17 +256,23 @@ function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad)
     sin_ϕ1, cos_ϕ1 = sincos(ϕ1)
     sin_λ0, cos_λ0 = sincos(λ0)
     sin_ψ0, cos_ψ0 = sincos(-ψ0) # Change the sign to match Healpy conventions
-    
-    vecxrot = (cos_ϕ1 * cos_λ0 * vecx +
-               (-cos_ψ0 * cos_ϕ1 * sin_λ0 + sin_ψ0 * sin_ϕ1) * vecy + 
-               (-sin_ψ0 * cos_ϕ1 * sin_λ0 + sin_ϕ1 * cos_ψ0) * vecz)
-    vecyrot = ((sin_λ0) * vecx +
-               (cos_ψ0 * cos_λ0 + sin_ψ0 * sin_ϕ1 * sin_λ0) * vecy +
-               (-sin_ψ0 * cos_λ0) * vecz)
-    veczrot = ((-sin_ϕ1 * cos_λ0) * vecx +
-               (sin_ψ0 * sin_ϕ1 * sin_λ0 + cos_ϕ1 * sin_ψ0) * vecy +
-               (-sin_ψ0 * sin_ϕ1 * sin_λ0 + cos_ϕ1 * cos_ψ0) * vecz)
-    
+
+    vecxrot = (
+        cos_ϕ1 * cos_λ0 * vecx +
+        (-cos_ψ0 * cos_ϕ1 * sin_λ0 + sin_ψ0 * sin_ϕ1) * vecy +
+        (-sin_ψ0 * cos_ϕ1 * sin_λ0 + sin_ϕ1 * cos_ψ0) * vecz
+    )
+    vecyrot = (
+        (sin_λ0) * vecx +
+        (cos_ψ0 * cos_λ0 + sin_ψ0 * sin_ϕ1 * sin_λ0) * vecy +
+        (-sin_ψ0 * cos_λ0) * vecz
+    )
+    veczrot = (
+        (-sin_ϕ1 * cos_λ0) * vecx +
+        (sin_ψ0 * sin_ϕ1 * sin_λ0 + cos_ϕ1 * sin_ψ0) * vecy +
+        (-sin_ψ0 * sin_ϕ1 * sin_λ0 + cos_ϕ1 * cos_ψ0) * vecz
+    )
+
     theta, phi = vec2ang(vecxrot, vecyrot, veczrot)
     (true, colat2lat(theta), phi)
 end
@@ -263,7 +284,7 @@ end
 
 High-level wrapper around `project` for equirectangular projections.
 """
-function equirectangular(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+function equirectangular(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     project(equiprojinv, m, width, height, projparams)
@@ -280,7 +301,7 @@ The following parameters can be set in the `projparams` dictionary:
 - `height`: height of the image, in pixels; if not specified, it will be assumed
   to be equal to `width`
 """
-function mollweide(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+function mollweide(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width ÷ 2)
     project(mollweideprojinv, m, width, height, projparams)
@@ -299,7 +320,7 @@ The following parameters can be set in the `projparams` dictionary:
 - `center`: position of the pixel in the middle of the left globe (*latitude* and
   longitude).
 """
-function orthographic(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+function orthographic(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
@@ -321,12 +342,12 @@ The following parameters can be set in the `projparams` dictionary:
 - `center`: position of the pixel in the middle of the left globe (*latitude* and
   longitude). Default is (0, 0).
 """
-function orthographic2(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+function orthographic2(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width ÷ 2)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
     project(m, width, height, projparams) do x, y
-ortho2inv(x, y, ϕ0, λ0)
+        ortho2inv(x, y, ϕ0, λ0)
     end
 end
 
@@ -355,7 +376,7 @@ The following parameters can be set in the `projparams` dictionary:
 plot(m, gnomonic, Dict(:fov_rad = deg2rad(1.5), :center = (0, 0, deg2rad(45))))
 ````
 """
-function gnomonic(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+function gnomonic(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0, ψ0 = get(projparams, :center, (0, 0, 0))
@@ -367,10 +388,12 @@ end
 
 ################################################################################
 
-RecipesBase.@recipe function plot(m::Map{T, O, AA},
-                                  projection = mollweide,
-                                  projparams = Dict()) where {T <: Number, O, AA}
-    
+RecipesBase.@recipe function plot(
+    m::Map{T,O,AA},
+    projection = mollweide,
+    projparams = Dict(),
+) where {T<:Number,O,AA}
+
     img, mask, anymasked = projection(m, projparams)
 
     if anymasked
@@ -383,7 +406,7 @@ RecipesBase.@recipe function plot(m::Map{T, O, AA},
             width, height = size(mask)
             xm = Float64[]
             ym = Float64[]
-            for y in 1:height
+            for y = 1:height
                 curx = 1
                 # Instead of drawing each single masked pixel as a
                 # square, squash together long runs of masked pixels
@@ -395,19 +418,13 @@ RecipesBase.@recipe function plot(m::Map{T, O, AA},
                             curx += 1
                         end
 
-                        append!(xm, [
-                            startx - 0.5,
-                            startx - 0.5,
-                            curx + 0.5,
-                            curx + 0.5, NaN
-                        ])
-                        append!(ym, [
-                            y - 0.5,
-                            y + 0.5,
-                            y + 0.5,
-                    y - 0.5, NaN])
+                        append!(
+                            xm,
+                            [startx - 0.5, startx - 0.5, curx + 0.5, curx + 0.5, NaN],
+                        )
+                        append!(ym, [y - 0.5, y + 0.5, y + 0.5, y - 0.5, NaN])
                     else
-                    curx += 1
+                        curx += 1
                     end
                 end
             end
@@ -420,7 +437,7 @@ RecipesBase.@recipe function plot(m::Map{T, O, AA},
     aspect_ratio --> 1
     colorbar --> :bottom
     framestyle --> :none
-    
+
     img
 end
 
@@ -449,4 +466,3 @@ See also [`equirectangular`](@ref), [`mollweide`](@ref),
 [`gnomonic`](@ref).
 """
 plot
-
