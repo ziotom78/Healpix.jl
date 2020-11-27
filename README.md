@@ -2,8 +2,7 @@
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://ziotom78.github.io/Healpix.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ziotom78.github.io/Healpix.jl/dev)
-[![Build Status](https://travis-ci.com/ziotom78/Healpix.jl.svg?branch=master)](https://travis-ci.com/ziotom78/Healpix.jl)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/ziotom78/Healpix.jl?svg=true)](https://ci.appveyor.com/project/ziotom78/Healpix-jl)
+![Build Status](https://github.com/ziotom78/Healpix.jl/workflows/UnitTests.yml/badge.svg)
 [![Codecov](https://codecov.io/gh/ziotom78/Healpix.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ziotom78/Healpix.jl)
 
 A set of Julia functions that implement the Healpix spherical
