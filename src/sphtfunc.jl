@@ -13,11 +13,17 @@ alms. It repeats this `niter` times. It performs this in-place on arrays of Floa
 Complex{Float64}.
 
 # Arguments
+
 - `maps::Array{Array{Float64,1},1}`: an array where each element is a 1D Healpix map array.
+
 - `alms::Array{Array{Complex{Float64},1},1}`: an array where each element is a array of alms
+
 - `geom_info::Libsharp.GeomInfo`: contains information about the pixelization
+
 - `alm_info::Libsharp.AlmInfo`: contains information about the SHT coefficient ordering
+
 - `niter::Integer`: number of iterations to perform
+
 - `spin::Integer`: spin of the field, 0 or 2
 """
 function iterate_map2alm!(
@@ -75,14 +81,20 @@ in the passed `alm` object. This function requires types derived from Float64, s
 done in-place.
 
 # Arguments
-- `map::Union{Map{Float64, RingOrder}, PolarizedMap{Float64, RingOrder}`: the map that to
-    perform the spherical harmonic transform on.
-- `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic coefficients to be written to.
+
+- `map`: the map that must be decomposed in spherical harmonics. It
+  can either be a `Map{Float64, RingOrder}` type (scalar map) or a
+  `PolarizedMap{Float64, RingOrder}` type (polarized map).
+
+- `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
+  coefficients to be written to.
 
 # Keywords
-- `niter::Integer`: number of iterations of SHTs to perform, to enhance accuracy
+
+- `niter::Integer`: number of iterations of SHTs to perform, to
+  enhance accuracy
 """
-function map2alm! end
+map2alm!
 
 function map2alm!(
     map::Map{Float64,RingOrder,Array{Float64,1}},
@@ -152,17 +164,22 @@ end
 Compute the spherical harmonic coefficients of a map. To enhance
 precision, more iterations of the transforms can be performed by
 passing a nonzero `niter`. The underlying SHT library libsharp
-performs all calculations in Cdouble, so all inputs are converted to
-types based on Float64.
+performs all calculations using `Cdouble` types, so all inputs are
+converted to types based on Float64.
 
 # Arguments
-- `map::Union{Map{T, RingOrder, AA}, PolarizedMap{T, RingOrder, AA}`:
-  the map that to perform the spherical harmonic transform on.
+
+- `map`: the map to decompose in spherical harmonics. It can either be
+  a `Map{T, RingOrder, AA}` type (scalar map) or a `PolarizedMap{T,
+  RingOrder, AA}` type (polarized map).
 
 # Keywords
+
 - `lmax::Integer`: the maximum ℓ coefficient, will default to
   3*nside-1 if not specified.
+
 - `mmax::Integer`: the maximum m coefficient
+
 - `niter::Integer`: number of SHT iterations, to enhance precision.
   Defaults to 3
 
@@ -171,7 +188,7 @@ types based on Float64.
   coefficients corresponding to the map
 
 """
-function map2alm end
+map2alm
 
 function map2alm(
     map::Map{Float64,RingOrder,Array{Float64,1}};
@@ -249,11 +266,14 @@ types derived from Float64, since it is done in-place.
 
 - `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
   coefficients to perform the spherical harmonic transform on.
-- `map::Union{Map{Float64, RingOrder, Array{Float64, 1}},
-  PolarizedMap{Float64, RingOrder, Array{Float64, 1}}`: the map to be written to.
+
+- `map`: the map that will contain the result. It can either be a
+  `Map{Float64, RingOrder, Array{Float64, 1}}` type (scalar map) or a
+  `PolarizedMap{Float64, RingOrder, Array{Float64, 1}}` (polarized
+  map).
 
 """
-function alm2map! end
+alm2map!
 
 # in-place alm2map for spin-0
 function alm2map!(
@@ -330,7 +350,7 @@ are converted to types based on Float64.
   if the input alm is of type `Alm{T, Array{T, 1}}` or `Array{Alm{T,
   Array{T, 1}}}` respectively.
 """
-function alm2map end
+alm2map
 
 # create a new set of spin-0 maps and project the coefficients to the map
 function alm2map(alm::Alm{ComplexF64,Array{ComplexF64,1}}, nside::Integer)

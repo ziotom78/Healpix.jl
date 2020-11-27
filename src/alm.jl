@@ -12,7 +12,7 @@ A `Alm` type contains the following fields:
 - `alm`: the array of harmonic coefficients
 - `lmax`: the maximum value for ``ℓ``
 - `mmax`: the maximum value for ``m``
-- ``tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
+- `tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
 
 
 """
@@ -108,19 +108,6 @@ function readAlmFromFITS(fileName, t::Type{T}) where {T<:Complex}
     end
 end
 
-
-raw"""
-    alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
-
-Compute ``C_{\ell}`` from the spherical harmonic coefficients of two fields.
-
-# Arguments
-- `alm₁::Alm{Complex{T}}`: the spherical harmonic coefficients of the first field
-- `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
-
-# Returns
-- `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
-"""
 function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T<:Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
     (alm₁.mmax != alm₂.mmax) && throw(ArgumentError("Alm mmax do not match."))
@@ -139,4 +126,20 @@ function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T<:Numb
     end
     return cl
 end
+
 alm2cl(alm::Alm{Complex{T}}) where {T<:Number} = alm2cl(alm, alm)
+
+
+"""
+    alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+Compute ``C_{\ell}`` from the spherical harmonic coefficients of two fields.
+
+# Arguments
+- `alm₁::Alm{Complex{T}}`: the spherical harmonic coefficients of the first field
+- `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
+
+# Returns
+- `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
+"""
+alm2cl
