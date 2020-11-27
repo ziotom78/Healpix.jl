@@ -17,7 +17,8 @@ This library implements algorithms for converting directions into pixel indices 
 The documentation was built using [Documenter.jl](https://github.com/JuliaDocs).
 
 ```@example
-println("Documentation built $(now()) with Julia $(VERSION).") # hide
+using Dates # hide
+println("Documentation built on $(now()) using Julia $(VERSION).") # hide
 ```
 
 ## Index

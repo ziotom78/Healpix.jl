@@ -47,7 +47,7 @@ simulation).
 Here is an example:
 
 ```@example map2alm
-using Healpix
+using Healpix # hide
 using Random
 
 # Ensure reproducibility by using a fixed seed
@@ -64,12 +64,19 @@ end
 alm = map2alm(m)
 
 # Go back to pixel space
-newm = alm2map(alm)
+newm = alm2map(alm, nside)
 ```
 
 The variable `newm` is a map that is close enough to `m`, yet it is
 not exactly the same because of the approximations done by both
 `map2alm` and `alm2map`.
+
+```@docs
+map2alm!
+map2alm
+alm2map!
+alm2map
+```
 
 ## From harmonic coefficients to the power spectrum
 
