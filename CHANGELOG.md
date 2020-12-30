@@ -7,6 +7,9 @@
     ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that 
     other array types than plain `Array` can be used for these objects.
 
+-   Documentation for new spherical harmonics functions has been added
+    ([PR#35](https://github.com/ziotom78/Healpix.jl/pull/35)).
+    
 -   Add dependency on [Libsharp.jl](https://github.com/ziotom78/libsharp.jl)
     and implement `map2alm`, `alm2map`, and `alm2cl`
     ([#21](https://github.com/ziotom78/Healpix.jl/pull/21), 

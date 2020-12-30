@@ -1,5 +1,6 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Healpix = "9f4e344d-96bc-545a-84a3-ae6b9e1b672b"
 
 [compat]
-Documenter = "~0.21"
+Documenter = "~0.25"

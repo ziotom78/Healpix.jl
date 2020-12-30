@@ -5,7 +5,7 @@ export Resolution, nside2npix, npix2nside
 export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
 export pix2ringpos
-export Order, RingOrder, NestedOrder, Map, PolarizedMap
+export Order, RingOrder, NestedOrder, GenericMap, Map, PolarizedMap
 export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing
