@@ -112,7 +112,8 @@ end
     alm2cl(alm::Alm{Complex{T}}) where {T <: Number}
     alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-Compute ``C_{\ell}`` from the spherical harmonic coefficients of one or two fields.
+Compute ``C_{\\ell}`` from the spherical harmonic coefficients of one
+or two fields.
 
 # Arguments
 - `alm₁::Alm{Complex{T}}`: the spherical harmonic coefficients of the first field
