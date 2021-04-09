@@ -66,13 +66,24 @@ PolarizedMap
 Healpix.jl distinguishes between `RING` and `NEST` orderings using
 Julia's typesystem. The abstract type `Order` has two descendeants,
 `RingOrder` and `NestedOrder`, which are used to instantiate objects
-of type `Map`.
+of type `Map`. Applying the functions [`nest2ring`](@ref) and 
+[`ring2nest`](@ref) to maps converts those maps to the appropriate orders.
+In-place [`nest2ring!`](@ref) and [`ring2nest!`](@ref) versions are also 
+available.
 
 ```@docs
 Order
 RingOrder
 NestedOrder
+nest2ring(m_nest::Map{T, NestedOrder, AA}) where {T, AA}
+ring2nest(m_ring::Map{T, RingOrder, AA}) where {T, AA}
+nest2ring!(m_ring_dst::Map{T, RingOrder, AAR}, 
+  m_nest_src::Map{T, NestedOrder, AAN}) where {T, AAN, AAR}
+ring2nest!(m_nest_dst::Map{T, NestedOrder, AAN}, 
+  m_ring_src::Map{T, RingOrder, AAR}) where {T, AAR, AAN}
 ```
+
+
 
 ## Pixel functions
 
