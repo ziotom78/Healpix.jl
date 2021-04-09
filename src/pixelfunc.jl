@@ -151,7 +151,7 @@ function ang2vec(theta, phi)
     (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
 
     sintheta = sin(theta)
-    return [sintheta * cos(phi), sintheta * sin(phi), cos(theta)]
+    return (sintheta * cos(phi), sintheta * sin(phi), cos(theta))
 end
 
 ################################################################################
