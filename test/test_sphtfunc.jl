@@ -353,3 +353,26 @@ ref_alm = [
     2.427033869110477e-17 + 0.0im,
 ]
 @test isapprox(alm.alm[1:10], ref_alm)
+
+## test polarized map pixel weights
+nside = 32
+npix = Healpix.nside2npix(nside)
+m = Healpix.PolarizedMap{Float64, Healpix.RingOrder}(
+    1.0 .* collect(1:npix), 
+    1.0 .* collect(1:npix), 
+    1.0 .* collect(1:npix))
+Healpix.applyweights!(m, compressed_weights)
+t, e, b = Healpix.map2alm(m; niter=0)
+
+@test t.alm[1:10] ≈ [ 2.17816852e+04, -1.25746386e+04, -4.78882357e-05,
+    8.06798732e-13,  2.26897086e-04,  7.63539583e-13,
+    -3.55340635e-05,  1.72723033e-12, -2.30114092e-04,
+    7.65480933e-12]
+@test e.alm[1:10] ≈ [     0.        ,      0.        , -19883.86722869,
+    10520.69745406,  -6887.97347407,   4984.74371257,
+    -3832.11490208,   3067.89767865,  -2530.0593288 ,
+    2133.53781326]
+@test b.alm[1:10] ≈ [     0.        ,      0.        , -19883.86722869,
+    10520.69745406,  -6887.97347407,   4984.74371257,
+    -3832.11490208,   3067.89767865,  -2530.0593288 ,
+    2133.53781326]
