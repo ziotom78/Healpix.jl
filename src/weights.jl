@@ -24,16 +24,16 @@ n_fullweights(nside) = ((3*nside+1)*(nside+1))÷4
     readfullweights(filename::String)
 
 The easiest way to the pixel weight files is to run
+
 ```
 git clone --depth 1 https://github.com/healpy/healpy-data
-````
+```
 
 # Arguments:
 - `filename::String`: filename of the full pixel weights
 
 # Returns:
 - `Vector{Float64}`: contains the compressed pixel weights
-```
 """
 function readfullweights(filename::String)
     f = FITS(filename)

@@ -97,13 +97,13 @@ readAlmFromFITS
 The default [`map2alm`](@ref) uses iteration to obtain an accurate transform.
 One can instead apply a pixel weight to compute an accurate transform in a single
 pass, like quadrature. The easiest way to the pixel weight files is to run
+
 ```
 git clone --depth 1 https://github.com/healpy/healpy-data
-````
+```
 
 These weights are in a compressed format that is read with [`readfullweights`](@ref)
-and multiplied into a map with [`applyweights!`](@ref). The subsequent [`map2alm`](@ref)
-only needs `niter=0`.
+and multiplied into a map with [`applyweights!`](@ref). 
 
 ```julia
 nside = 32
@@ -114,7 +114,9 @@ Healpix.applyweights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ```
 
+The subsequent [`map2alm`](@ref) only needs `niter=0`.
+
 ```@docs
-readfullweights
-applyweights!
+Healpix.readfullweights
+Healpix.applyweights!
 ```
