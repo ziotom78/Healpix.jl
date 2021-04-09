@@ -332,3 +332,24 @@ testcl = [
     5.30295132e-34,
 ]
 @test isapprox(Healpix.alm2cl(alm), testcl)
+
+
+## test ringweights
+nside = 32
+compressed_weights = Healpix.readfullweights("healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
+m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+Healpix.applyweights!(m, compressed_weights)
+alm = Healpix.map2alm(m; niter=0)
+ref_alm = [
+    3.5449077018110313 + 0.0im,
+    3.918853962763695e-18 + 0.0im,
+    0.0 + 0.0im,
+    -8.979222460921146e-18 + 0.0im,
+    0.0 + 0.0im,
+    1.4070063807331154e-17 + 0.0im,
+    -4.440892098500626e-16 + 0.0im,
+    -1.916867718201198e-17 + 0.0im,
+    -8.881784197001252e-16 + 0.0im,
+    2.427033869110477e-17 + 0.0im,
+]
+@test isapprox(alm.alm[1:10], ref_alm)
