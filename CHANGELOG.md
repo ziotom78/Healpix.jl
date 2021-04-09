@@ -1,5 +1,7 @@
 # HEAD
 
+-   Implement `ring2nest!` and `nest2ring!` ([PR#40](https://github.com/ziotom78/Healpix.jl/pull/40))
+
 -   Make `ang2vec` return a tuple instead of a list ([PR#38](https://github.com/ziotom78/Healpix.jl/pull/38))
 
 -   Remove `Manifest.toml` ([PR#42](https://github.com/ziotom78/Healpix.jl/pull/42))
