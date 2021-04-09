@@ -1,5 +1,7 @@
 # HEAD
 
+-   README has been updated ([PR#39](https://github.com/ziotom78/Healpix.jl/pull/39))
+
 -   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional
     array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
     
