@@ -1,5 +1,7 @@
 # HEAD
 
+-   Remove `Manifest.toml` ([PR#42](https://github.com/ziotom78/Healpix.jl/pull/42))
+
 -   README has been updated ([PR#39](https://github.com/ziotom78/Healpix.jl/pull/39))
 
 -   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional
