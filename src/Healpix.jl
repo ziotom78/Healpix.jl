@@ -19,6 +19,7 @@ export ring2nest, nest2ring, ring2nest!, nest2ring!
 
 import FITSIO.Libcfitsio
 const FITSIO = Libcfitsio
+import FITSIO: FITS
 
 import Libsharp
 import Base: getindex, setindex!
@@ -34,7 +35,7 @@ include("map.jl")
 include("polarizedmap.jl")
 include("map_io.jl")
 include("conformables.jl")
-include("ringweights.jl")
+include("weights.jl")
 include("pixelwindow.jl")
 include("map_pixelfunc.jl")
 include("projections.jl")
