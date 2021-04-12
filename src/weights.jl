@@ -43,7 +43,9 @@ end
 """
     applyweights!(m::Map{T, RingOrder}, wgt::Vector{T}) where T
 
-Apply a pixel weighting to a map for more accurate SHTs.
+Apply a pixel weighting to a map for more accurate SHTs. Note that 
+this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
+pixel weights may do more harm than good.
 
 # Arguments:
 - `m::Map{T, RingOrder}`: map to modify
