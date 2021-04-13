@@ -1,5 +1,7 @@
 # HEAD
 
+-   Implement `applyweights!` ([PR#41](https://github.com/ziotom78/Healpix.jl/pull/41) and [#44](https://github.com/ziotom78/Healpix.jl/pull/44))
+
 -   Implement `ring2nest!` and `nest2ring!` ([PR#40](https://github.com/ziotom78/Healpix.jl/pull/40))
 
 -   Make `ang2vec` return a tuple instead of a list ([PR#38](https://github.com/ziotom78/Healpix.jl/pull/38))
