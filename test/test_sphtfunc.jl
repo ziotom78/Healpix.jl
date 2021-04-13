@@ -389,3 +389,4 @@ pixT, pixP = Healpix.pixwin(test_nside; pol=true)
 
 @test refT ≈ pixT[1:3test_nside]
 @test refP ≈ pixP[1:3test_nside]
+@test refT ≈ Healpix.pixwin(test_nside)
