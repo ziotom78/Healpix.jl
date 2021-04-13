@@ -81,10 +81,13 @@ alm2map
 ## From harmonic coefficients to the power spectrum
 
 You can use the function `alm2cl` to convert a set of $a_{\ell m}$
-coefficients into the components $C_\ell$ of the power spectrum.
+coefficients into the components $C_\ell$ of the power spectrum. 
+The pixelization also induces a transfer function, which can be obtained from
+`pixwin`.
 
 ```@docs
 alm2cl
+pixwin
 ```
 
 ## Loading and saving harmonic coefficients

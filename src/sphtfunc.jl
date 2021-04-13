@@ -394,3 +394,39 @@ function alm2map(
     alm_b = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[3].alm))
     return alm2map([alm_t, alm_e, alm_b], nside)
 end
+
+
+
+"""
+    pixwin(nside; pol=false)
+
+# Arguments:
+- `nside`: HEALPix resolution parameter
+
+# Keywords
+- `pol::Bool=false`: if true, also return polarization pixel window
+
+# Returns: 
+- `Vector{Float64}` pixel window function. If `pol=true`, returns a Tuple
+    of the temperature and polarization pixel windows.
+
+# Examples
+```julia-repl
+julia> pixwin(4)
+17-element Vector{Float64}:
+ 1.0000000000020606
+ 0.9942340766588788
+ ⋮
+ 0.4222841034207188
+```
+"""
+function pixwin(nside; pol::Bool=false)
+    rootpath = artifact"pixwin"
+    f = FITS(joinpath(rootpath, "pixel_window_n$(lpad(nside,4,'0')).fits"))
+    
+    if pol
+        return read(f[2], "TEMPERATURE"), read(f[2], "POLARIZATION")
+    else
+        return read(f[2], "TEMPERATURE")
+    end
+end

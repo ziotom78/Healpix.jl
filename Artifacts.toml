@@ -1,0 +1,6 @@
+[pixwin]
+git-tree-sha1 = "d11923cfa0b2d87d5bb8898ea574b8a9b2a114fc"
+
+    [[pixwin.download]]
+    url = "https://github.com/xzackli/HEALPix_data/raw/master/pixwin.tar.gz"
+    sha256 = "986792ca52a53d8cf34b2e0fa18d5c1a9aebdfd0167edfb1fc472daf1965ab07"

@@ -11,12 +11,13 @@ export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
-export map2alm, alm2map, map2alm!, alm2map!, alm2cl
+export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
 export ring2nest, nest2ring, ring2nest!, nest2ring!
 
+using Pkg.Artifacts
 import FITSIO.Libcfitsio
 const FITSIO = Libcfitsio
 import FITSIO: FITS
