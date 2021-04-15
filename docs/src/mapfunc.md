@@ -161,6 +161,14 @@ along some direction in the sky:
 interpolate
 ```
 
+## Upgrading and Downgrading
+Changing resolution is done with [`udgrade`](@ref). This is very fast for nested orderings,
+but slow for ring ordering.
+
+```@docs
+udgrade
+```
+
 ## Map-making
 
 Map-making is the process of converting a time series of measurements

@@ -2037,3 +2037,23 @@ end
     @test z ≈ -0.1666666666667
     @test phi ≈ 5.497787143782
 end
+
+
+## Test udgrade
+A = Healpix.Map{Float64, Healpix.NestedOrder}(1.0:Healpix.nside2npix(4))
+nest_ref = [8.5,24.5,40.5,56.5,72.5,88.5,104.5,120.5,136.5,152.5,168.5,184.5]
+@test Healpix.udgrade(A, 1).pixels ≈ nest_ref
+@test Healpix.udgrade(A, 8).pixels ≈ repeat(A.pixels, inner=4)
+
+ring_ref = [30.0625,33.4375,36.8125,40.1875,94.75,92.75,96.75,100.75,153.0625,156.4375,
+    159.8125,163.1875]
+A = Healpix.Map{Float64, Healpix.RingOrder}(1.0:Healpix.nside2npix(4))
+@test Healpix.udgrade(A, 1).pixels ≈ ring_ref
+
+
+unseen_ref = [9.0,24.5,40.5,56.5,72.5,88.5,104.5,120.5,136.5,152.5,168.5,184.5]
+A = Healpix.Map{Float64, Healpix.NestedOrder}(1.0:Healpix.nside2npix(4))
+A[1] = Healpix.UNSEEN
+Healpix.udgrade(A, 1).pixels
+@test Healpix.udgrade(A, 1).pixels ≈ unseen_ref
+@test Healpix.udgrade(A, 1; pess=true) ≈ [Healpix.UNSEEN, unseen_ref[2:end]...]
