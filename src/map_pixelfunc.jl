@@ -220,7 +220,7 @@ end
 
 
 """
-    udgrade(input_map::Map{T,O,AA}, output_nside) where {T,O,AA} -> Map{T,O,AA}
+    udgrade(input_map::Map{T,O,AA}, output_nside; kw...) where {T,O,AA} -> Map{T,O,AA}
 
 Upgrades or downgrades a map to a target nside. Always makes a copy. This is very fast 
 for nested orderings, but slow for ring because one needs to transform to nested ordering 
@@ -229,6 +229,11 @@ first.
 # Arguments:
 - `input_map::Map{T,O,AA}`: the map to upgrade/downgrade
 - `output_nside`: desired nside
+
+# Keywords:
+- `threshold=abs(1e-6UNSEEN)`: absolute tolerance for identifying a bad pixel vs UNSEEN
+- `pess=false`: if false, estimate pixels from remaining good pixels when downgrading. 
+    if true, the entire downgraded pixel is set to UNSEEN.
 
 # Returns: 
 - `Map{T,O,AA}`: upgraded/downgraded map in the same ordering as the input
