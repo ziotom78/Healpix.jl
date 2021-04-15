@@ -231,7 +231,7 @@ first.
 - `output_nside`: desired nside
 
 # Returns: 
-- `Map{T,O,AA}`: upgraded/downgraded map
+- `Map{T,O,AA}`: upgraded/downgraded map in the same ordering as the input
 
 # Examples
 ```julia-repl
