@@ -2057,3 +2057,5 @@ A[1] = Healpix.UNSEEN
 Healpix.udgrade(A, 1).pixels
 @test Healpix.udgrade(A, 1).pixels ≈ unseen_ref
 @test Healpix.udgrade(A, 1; pess=true) ≈ [Healpix.UNSEEN, unseen_ref[2:end]...]
+
+@test A ≈ Healpix.udgrade(A, 4)

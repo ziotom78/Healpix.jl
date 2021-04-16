@@ -260,7 +260,7 @@ function udgrade(map_in::Map{T,O,AA}, nside_out;
     map_out = Map{T,O,AA}(nside_out)
 
     if nside_in == nside_out
-        map_out.pixels .= input_map.pixels
+        map_out.pixels .= map_in.pixels
     elseif nside_out < nside_in  # degrade. loop over input and add them up 
         npratio = nside2npix(nside_in) ÷ nside2npix(nside_out)
         for id = 0:(npix_out-1)
