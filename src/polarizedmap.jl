@@ -66,3 +66,11 @@ end
 function PolarizedMap{T,O}(i::Array{T,1}, q::Array{T,1}, u::Array{T,1}) where {T,O<:Order}
     PolarizedMap{T,O,Array{T,1}}(i, q, u)
 end
+
+function PolarizedMap(
+    i::Map{T,O,AA},
+    q::Map{T,O,AA},
+    u::Map{T,O,AA},
+) where {T,O<:Order,AA<:AbstractArray{T,1}}
+    return PolarizedMap{T,O,AA}(i, q, u)
+end

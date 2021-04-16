@@ -8,6 +8,12 @@ polmap =
 @test polmap.q == pixels_nside1
 @test polmap.u == pixels_nside1
 
+# test the untyped constructor
+polmap_new = Healpix.PolarizedMap(polmap.i, polmap.q, polmap.u)
+@test polmap.i == polmap_new.i
+@test polmap.q == polmap_new.q
+@test polmap.u == polmap_new.u
+
 polmap = Healpix.PolarizedMap{Int8,Healpix.RingOrder}(128)
 
 @test length(polmap.i) == length(polmap.q) == length(polmap.u)
