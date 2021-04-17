@@ -25,6 +25,8 @@ import FITSIO: FITS
 import Libsharp
 import Base: getindex, setindex!
 
+const UNSEEN = -1.6375e+30
+
 include("nside.jl")
 include("math.jl")
 include("datatables.jl")

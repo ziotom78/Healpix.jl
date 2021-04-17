@@ -216,3 +216,88 @@ function ring2nest!(m_nest_dst::Map{T, NestedOrder, AAN}, m_ring_src::Map{T, Rin
         m_nest_dst.pixels[i_nest] = m_ring_src.pixels[i_ring]
     end
 end
+
+
+
+"""
+    udgrade(input_map::Map{T,O,AA}, output_nside; kw...) where {T,O,AA} -> Map{T,O,AA}
+
+Upgrades or downgrades a map to a target nside. Always makes a copy. This is very fast 
+for nested orderings, but slow for ring because one needs to transform to nested ordering 
+first.
+
+# Arguments:
+- `input_map::Map{T,O,AA}`: the map to upgrade/downgrade
+- `output_nside`: desired nside
+
+# Keywords:
+- `threshold=abs(1e-6UNSEEN)`: absolute tolerance for identifying a bad pixel vs UNSEEN
+- `pess=false`: if false, estimate pixels from remaining good pixels when downgrading. 
+    if true, the entire downgraded pixel is set to UNSEEN.
+
+# Returns: 
+- `Map{T,O,AA}`: upgraded/downgraded map in the same ordering as the input
+
+# Examples
+```julia-repl
+julia> A = Map{Float64, NestedOrder}(ones(nside2npix(4)))
+192-element Map{Float64, RingOrder, Vector{Float64}}:
+ 1.0
+ ⋮
+ 1.0
+
+julia> Healpix.udgrade(A, 2)
+48-element Map{Float64, NestedOrder, Vector{Float64}}:
+ 1.0
+ ⋮
+ 1.0
+```
+"""
+function udgrade(map_in::Map{T,O,AA}, nside_out; 
+                 threshold=abs(1e-6UNSEEN), pess=false) where {T,O<:NestedOrder,AA}
+    nside_in = map_in.resolution.nside
+    npix_out = nside2npix(nside_out)
+    map_out = Map{T,O,AA}(nside_out)
+
+    if nside_in == nside_out
+        map_out.pixels .= map_in.pixels
+    elseif nside_out < nside_in  # degrade. loop over input and add them up 
+        npratio = nside2npix(nside_in) ÷ nside2npix(nside_out)
+        for id = 0:(npix_out-1)
+            nobs = 0
+            total = 0.0
+            for ip = 0:(npratio-1)
+                value = map_in[id*npratio + ip + 1]
+                if (abs(value - UNSEEN) > threshold) 
+                    nobs  = nobs  + 1
+                    total = total + value
+                end
+            end
+            map_out[id+1] = UNSEEN
+            if pess
+                if nobs == npratio
+                    map_out[id+1] = total/nobs
+                end
+            else
+                if nobs > 0
+                    map_out[id+1] = total/nobs
+                end
+            end
+        end
+    else  # we are upgrading. loop over output map pixels, and set them to parent pixel
+        npratio = nside2npix(nside_out) ÷ nside2npix(nside_in)
+        for iu = 0:(npix_out - 1)
+            ip = iu ÷ npratio
+            map_out[iu+1] = map_in[ip+1]
+        end
+    end
+
+    return map_out
+end
+# just convert to nest and udgrade if we get a ring
+function udgrade(map_in::Map{T,O,AA}, nside_out; 
+                 threshold=abs(1e-6UNSEEN), pess=true) where {T,O<:RingOrder,AA}
+    map_nest = ring2nest(map_in)
+    map_out = udgrade(map_nest, nside_out; threshold=threshold, pess=pess)
+    return nest2ring(map_out)
+end

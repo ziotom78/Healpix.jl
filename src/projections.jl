@@ -15,7 +15,6 @@ export UNSEEN,
 
 import RecipesBase
 
-const UNSEEN = -1.6375e+30
 
 """
     project(invprojfn, m::Map{T, O, AA}, bmpwidth, bmpheight; kwargs...)
