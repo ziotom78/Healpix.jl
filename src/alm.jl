@@ -16,25 +16,25 @@ A `Alm` type contains the following fields:
 
 
 """
-mutable struct Alm{T<:Number,AA<:AbstractArray{T,1}}
+mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
     alm::AA
     lmax::Int
     mmax::Int
     tval::Int
-
-    Alm{T,AA}(lmax, mmax) where {T<:Number,AA<:AbstractArray{T,1}} =
+    
+    Alm{T,AA}(lmax, mmax) where {T <: Number,AA <: AbstractArray{T,1}} =
         new{T,AA}(zeros(T, numberOfAlms(lmax, mmax)), lmax, mmax, 2lmax + 1)
-
-    function Alm{T,AA}(lmax, mmax, arr::AA) where {T<:Number,AA<:AbstractArray{T,1}}
+    
+    function Alm{T,AA}(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
         new{T,AA}(arr, lmax, mmax, 2lmax + 1)
     end
 end
 
-Alm{T}(lmax, mmax) where {T<:Number} = Alm{T,Array{T,1}}(lmax, mmax)
+Alm{T}(lmax, mmax) where {T <: Number} = Alm{T,Array{T,1}}(lmax, mmax)
 Alm(lmax, mmax) = Alm{ComplexF64}(lmax, mmax)
-Alm(lmax, mmax, arr::AA) where {T<:Number,AA<:AbstractArray{T,1}} =
+Alm(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}} =
     Alm{T,AA}(lmax, mmax, arr)
 
 ################################################################################
@@ -69,26 +69,26 @@ almIndex(alm::Alm{T}, l, m) where {T} = almIndexL0(alm, m) .+ l
 ################################################################################
 
 """
-    readAlmFromFITS{T <: Complex}(f::FITSIO.FITSFile, t::Type{T}) -> Alm{T}
+    readAlmFromFITS{T <: Complex}(f::CFITSIO.FITSFile, t::Type{T}) -> Alm{T}
     readAlmFromFITS{T <: Complex}(fileName::String, t::Type{T}) -> Alm{T}
 
 Read a set of a_ℓm coefficients from a FITS file. If the code fails,
-FITSIO will raise an exception. (Refer to the FITSIO library for more
+CFITSIO will raise an exception. (Refer to the CFITSIO library for more
 information.)
 """
-function readAlmFromFITS(f::FITSIO.FITSFile, t::Type{T}) where {T<:Complex}
-    numOfRows = FITSIO.fits_get_num_rows(f)
+function readAlmFromFITS(f::CFITSIO.FITSFile, t::Type{T}) where {T <: Complex}
+    numOfRows = CFITSIO.fits_get_num_rows(f)
 
     idx = Array{Int64}(undef, numOfRows)
     almReal = Array{Float64}(undef, numOfRows)
     almImag = Array{Float64}(undef, numOfRows)
 
-    FITSIO.fits_read_col(f, 1, 1, 1, idx)
-    FITSIO.fits_read_col(f, 2, 1, 1, almReal)
-    FITSIO.fits_read_col(f, 3, 1, 1, almImag)
+    CFITSIO.fits_read_col(f, 1, 1, 1, idx)
+    CFITSIO.fits_read_col(f, 2, 1, 1, almReal)
+    CFITSIO.fits_read_col(f, 3, 1, 1, almImag)
 
     l = floor.(Int64, sqrt.(idx .- 1))
-    m = idx .- l .^ 2 .- l .- 1
+    m = idx .- l.^2 .- l .- 1
     if count(x -> x < 0, m) > 0
         throw(DomainError())
     end
@@ -98,14 +98,14 @@ function readAlmFromFITS(f::FITSIO.FITSFile, t::Type{T}) where {T<:Complex}
     result.alm = complex.(almReal[i], almImag[i])
 end
 
-function readAlmFromFITS(fileName, t::Type{T}) where {T<:Complex}
-    f = FITSIO.fits_open_table(fileName)
+function readAlmFromFITS(fileName, t::Type{T}) where {T <: Complex}
+    f = CFITSIO.fits_open_table(fileName)
     try
         result = readAlmFromFITS(f, t)
         return result
     finally
-        FITSIO.fits_close_file(f)
-    end
+        CFITSIO.fits_close_file(f)
+end
 end
 
 """
@@ -122,7 +122,7 @@ or two fields.
 # Returns
 - `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
 """
-function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T<:Number}
+function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
     (alm₁.mmax != alm₂.mmax) && throw(ArgumentError("Alm mmax do not match."))
     (alm₁.mmax < alm₂.lmax) && throw(ArgumentError("Alm mmax < lmax."))
@@ -132,14 +132,14 @@ function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T<:Numb
     for l = 0:lmax
         for m = 1:l
             index = almIndex(alm₁, l, m)
-            cl[l+1] += 2 * real(alm₁.alm[index] * conj(alm₂.alm[index]))
+            cl[l + 1] += 2 * real(alm₁.alm[index] * conj(alm₂.alm[index]))
         end
         index0 = almIndex(alm₁, l, 0)
-        cl[l+1] += real(alm₁.alm[index0] * conj(alm₂.alm[index0]))
-        cl[l+1] = cl[l+1] / (2 * l + 1)
+        cl[l + 1] += real(alm₁.alm[index0] * conj(alm₂.alm[index0]))
+        cl[l + 1] = cl[l + 1] / (2 * l + 1)
     end
     return cl
 end
 
-alm2cl(alm::Alm{Complex{T}}) where {T<:Number} = alm2cl(alm, alm)
+alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 
