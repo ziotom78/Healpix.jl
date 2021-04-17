@@ -20,9 +20,6 @@ jobs:
           - x64
 
     steps:
-      - name: "Dump environment variables"
-        run: env
-
       - uses: actions/checkout@v2
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v1
