@@ -14,12 +14,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: ['1.3', '1.5', 'nightly']
+        julia-version: ['1.3', '1.6', 'nightly']
         os: [ubuntu-latest, windows-latest, macOS-latest]
         arch:
           - x64
 
     steps:
+      - name: "Dump environment variables"
+        run: env
+
       - uses: actions/checkout@v2
       - name: "Set up Julia"
         uses: julia-actions/setup-julia@v1
