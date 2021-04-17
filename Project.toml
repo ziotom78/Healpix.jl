@@ -4,7 +4,7 @@ authors = ["Maurizio Tomasi <maurizio.tomasi@unimi.it>"]
 version = "2.3.0"
 
 [deps]
-FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
+CFITSIO = "3b1b4be9-1499-4b22-8d78-7db3344d1961"
 Libsharp = "ac8d63fe-4615-43ae-9860-9cd4a3820532"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -12,7 +12,6 @@ RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-FITSIO = "≥ 0.16"
 Libsharp = "0.1"
 RecipesBase = "1"
 julia = "1.3"
