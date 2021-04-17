@@ -99,7 +99,7 @@ map2alm!
 function map2alm!(
     map::Map{Float64,RingOrder,Array{Float64,1}},
     alm::Alm{ComplexF64,Array{ComplexF64,1}};
-    niter::Integer = 3,
+    niter::Integer=3,
 )
     geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
@@ -120,7 +120,7 @@ end
 function map2alm!(
     map::PolarizedMap{Float64,RingOrder,Array{Float64,1}},
     alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1};
-    niter::Integer = 3,
+    niter::Integer=3,
 )
     geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm[1].lmax, alm[1].mmax, 1)
@@ -192,9 +192,9 @@ map2alm
 
 function map2alm(
     map::Map{Float64,RingOrder,Array{Float64,1}};
-    lmax = nothing,
-    mmax = nothing,
-    niter::Integer = 3,
+    lmax=nothing,
+    mmax=nothing,
+    niter::Integer=3,
 )
 
     nside = map.resolution.nside
@@ -203,15 +203,15 @@ function map2alm(
     nalms = numberOfAlms(lmax, mmax)
     alm = Alm(lmax, mmax, zeros(ComplexF64, nalms))
 
-    map2alm!(map, alm; niter = niter)
+    map2alm!(map, alm; niter=niter)
     return alm
 end
 
 function map2alm(
     map::PolarizedMap{Float64,RingOrder,Array{Float64,1}};
-    lmax = nothing,
-    mmax = nothing,
-    niter::Integer = 3,
+    lmax=nothing,
+    mmax=nothing,
+    niter::Integer=3,
 )
 
     nside = map.i.resolution.nside
@@ -221,36 +221,36 @@ function map2alm(
     alms = [
         Alm(lmax, mmax, zeros(ComplexF64, nalms)),
         Alm(lmax, mmax, zeros(ComplexF64, nalms)),
-        Alm(lmax, mmax, zeros(ComplexF64, nalms)),
+    Alm(lmax, mmax, zeros(ComplexF64, nalms)),
     ]
 
-    map2alm!(map, alms; niter = niter)
+    map2alm!(map, alms; niter=niter)
     return alms
 end
 
 # convert maps to Float64
 function map2alm(
     map::Map{T,RingOrder,AA};
-    lmax = nothing,
-    mmax = nothing,
-    niter::Integer = 3,
-) where {T<:Real,AA<:AbstractArray{T,1}}
+    lmax=nothing,
+    mmax=nothing,
+    niter::Integer=3,
+) where {T <: Real,AA <: AbstractArray{T,1}}
     map_float = Map{Float64,RingOrder}(convert(Array{Float64,1}, map.pixels))
-    return map2alm(map_float, lmax = lmax, mmax = mmax, niter = niter)
+    return map2alm(map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
 # convert PolarizedMap to Float64
 function map2alm(
     map::PolarizedMap{T,RingOrder,AA};
-    lmax = nothing,
-    mmax = nothing,
-    niter::Integer = 3,
-) where {T<:Real,AA<:AbstractArray{T,1}}
+    lmax=nothing,
+    mmax=nothing,
+    niter::Integer=3,
+) where {T <: Real,AA <: AbstractArray{T,1}}
     m_i = convert(Array{Float64,1}, map.i)
     m_q = convert(Array{Float64,1}, map.q)
     m_u = convert(Array{Float64,1}, map.u)
     pol_map_float = PolarizedMap{Float64,RingOrder}(m_i, m_q, m_u)
-    return map2alm(pol_map_float, lmax = lmax, mmax = mmax, niter = niter)
+    return map2alm(pol_map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
 
@@ -386,7 +386,7 @@ end
 function alm2map(
     alms::Array{Alm{Complex{T},Array{Complex{T},1}},1},
     nside::Integer,
-) where {T<:Real}
+) where {T <: Real}
     lmax = alms[1].lmax
     mmax = alms[1].mmax
     alm_t = Alm(lmax, mmax, convert(Array{ComplexF64,1}, alms[1].alm))
@@ -422,11 +422,18 @@ julia> pixwin(4)
 """
 function pixwin(nside; pol::Bool=false)
     rootpath = artifact"pixwin"
-    f = FITS(joinpath(rootpath, "pixel_window_n$(lpad(nside,4,'0')).fits"))
-    
+    f = CFITSIO.fits_open_table(joinpath(rootpath, "pixel_window_n$(lpad(nside, 4, '0')).fits"))
+    nrows = CFITSIO.fits_get_num_rows(f)
+
+    temperature = Vector{Float64}(undef, nrows)
+    temp_col = CFITSIO.fits_get_colnum(f, "TEMPERATURE")
+    CFITSIO.fits_read_col(f, temp_col, 1, 1, temperature)
     if pol
-        return read(f[2], "TEMPERATURE"), read(f[2], "POLARIZATION")
+        polarization = Vector{Float64}(undef, nrows)
+        pol_col = CFITSIO.fits_get_colnum(f, "POLARIZATION")
+        CFITSIO.fits_read_col(f, pol_col, 1, 1, polarization)
+        (temperature, polarization)
     else
-        return read(f[2], "TEMPERATURE")
+        temperature
     end
 end

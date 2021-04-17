@@ -18,9 +18,7 @@ export pix2zphiNest, pix2zphiRing, ringAbove
 export ring2nest, nest2ring, ring2nest!, nest2ring!
 
 using Pkg.Artifacts
-import FITSIO.Libcfitsio
-const FITSIO = Libcfitsio
-import FITSIO: FITS
+import CFITSIO
 
 import Libsharp
 import Base: getindex, setindex!

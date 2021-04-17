@@ -2,23 +2,23 @@
 # Function to read and write maps from/to files
 
 """
-    readMapFromFITS{T <: Number}(f::FITSIO.FITSFILE, column, t::Type{T})
+    readMapFromFITS{T <: Number}(f::CFITSIO.FITSFILE, column, t::Type{T})
     readMapFromFITS{T <: Number}(fileName::String, column, t::Type{T})
 
 Read a Healpix map from the specified (1-base indexed) column in a
 FITS file. The values will be read as numbers of type T. If the code
-fails, FITSIO will raise an exception. (Refer to the FITSIO library
+fails, CFITSIO will raise an exception. (Refer to the CFITSIO library
 for more information.)
 """
-function readMapFromFITS(f::FITSIO.FITSFile, column, t::Type{T}) where {T<:Number}
-    value, comment = FITSIO.fits_read_keyword(f, "NSIDE")
+function readMapFromFITS(f::CFITSIO.FITSFile, column, t::Type{T}) where {T <: Number}
+    value, comment = CFITSIO.fits_read_keyword(f, "NSIDE")
     nside = parse(Int, value)
 
-    value, comment = FITSIO.fits_read_keyword(f, "ORDERING")
-    ringOrdering = uppercase(strip(value[2:end-1])) == "RING"
+    value, comment = CFITSIO.fits_read_keyword(f, "ORDERING")
+    ringOrdering = uppercase(strip(value[2:end - 1])) == "RING"
 
-    repeat = (FITSIO.fits_get_coltype(f, column))[2]
-    nrows = FITSIO.fits_get_num_rows(f)
+    repeat = (CFITSIO.fits_get_coltype(f, column))[2]
+    nrows = CFITSIO.fits_get_num_rows(f)
 
     if repeat * nrows != nside2npix(nside)
         error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
@@ -29,15 +29,15 @@ function readMapFromFITS(f::FITSIO.FITSFile, column, t::Type{T}) where {T<:Numbe
     else
         result = Map{T,NestedOrder}(Array{T}(undef, nside2npix(nside)))
     end
-    FITSIO.fits_read_col(f, column, 1, 1, result.pixels)
+    CFITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
     result
 end
 
-function readMapFromFITS(fileName::AbstractString, column, t::Type{T}) where {T<:Number}
-    f = FITSIO.fits_open_table(fileName)
+function readMapFromFITS(fileName::AbstractString, column, t::Type{T}) where {T <: Number}
+    f = CFITSIO.fits_open_table(fileName)
     result = readMapFromFITS(f, column, t)
-    FITSIO.fits_close_file(f)
+    CFITSIO.fits_close_file(f)
 
     result
 end
@@ -46,7 +46,7 @@ function readPolarizedMapFromFITS(
     fileName::AbstractString,
     column,
     t::Type{T},
-) where {T<:Number}
+) where {T <: Number}
 
     if length(column) == 1
         column_i = 1
@@ -61,9 +61,9 @@ function readPolarizedMapFromFITS(
         ))
     end
 
-    f = FITSIO.fits_open_table(fileName)
+    f = CFITSIO.fits_open_table(fileName)
     i, q, u = (readMapFromFITS(f, colidx, t) for colidx in (column_i, column_q, column_u))
-    FITSIO.fits_close_file(f)
+    CFITSIO.fits_close_file(f)
 
     PolarizedMap(i, q, u)
 end
@@ -71,38 +71,38 @@ end
 ################################################################################
 
 """
-    savePixelsToFITS(map::Map{T}, f::FITSIO.FITSFile, column) where {T <: Number}
+    savePixelsToFITS(map::Map{T}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
 Save the pixels of `map` into the column with index/name `column` in the FITS
 file, which must have been already opened.
 """
 function savePixelsToFITS(
     map::Map{T},
-    f::FITSIO.FITSFile,
+    f::CFITSIO.FITSFile,
     column;
-    write_keywords = true,
-) where {T<:Number}
+    write_keywords=true,
+) where {T <: Number}
 
     if write_keywords
-        FITSIO.fits_update_key(f, "PIXTYPE", "HEALPIX", "HEALPIX pixelisation")
-        FITSIO.fits_update_key(f, "NSIDE", map.resolution.nside, "Value of NSIDE")
-        FITSIO.fits_update_key(f, "FIRSTPIX", 1, "First pixel (1 based)")
-        FITSIO.fits_update_key(
+        CFITSIO.fits_update_key(f, "PIXTYPE", "HEALPIX", "HEALPIX pixelisation")
+        CFITSIO.fits_update_key(f, "NSIDE", map.resolution.nside, "Value of NSIDE")
+        CFITSIO.fits_update_key(f, "FIRSTPIX", 1, "First pixel (1 based)")
+        CFITSIO.fits_update_key(
             f,
             "LASTPIX",
             map.resolution.numOfPixels,
             "Last pixel (1 based)",
         )
-        FITSIO.fits_update_key(f, "INDXSCHM", "IMPLICIT", "Indexing: IMPLICIT or EXPLICIT")
+        CFITSIO.fits_update_key(f, "INDXSCHM", "IMPLICIT", "Indexing: IMPLICIT or EXPLICIT")
     end
 
-    FITSIO.fits_write_col(f, column, 1, 1, map.pixels)
+    CFITSIO.fits_write_col(f, column, 1, 1, map.pixels)
 
 end
 
 """
     saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
-                                        f::FITSIO.FITSFile,
+                                        f::CFITSIO.FITSFile,
                                         column)
     saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
                                         fileName::String,
@@ -111,19 +111,19 @@ end
                                         extname="MAP")
 
 Save a Healpix map in the specified (1-based index) column in a FITS
-file. If the code fails, FITSIO will raise an exception. (Refer to the
-FITSIO library for more information.)
+file. If the code fails, CFITSIO will raise an exception. (Refer to the
+CFITSIO library for more information.)
 """
-function saveToFITS(map::Map{T,RingOrder}, f::FITSIO.FITSFile, column) where {T<:Number}
+function saveToFITS(map::Map{T,RingOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
-    FITSIO.fits_update_key(f, "ORDERING", "RING")
+    CFITSIO.fits_update_key(f, "ORDERING", "RING")
     savePixelsToFITS(map, f, column)
 
 end
 
-function saveToFITS(map::Map{T,NestedOrder}, f::FITSIO.FITSFile, column) where {T<:Number}
+function saveToFITS(map::Map{T,NestedOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
-    FITSIO.fits_update_key(f, "ORDERING", "NEST")
+    CFITSIO.fits_update_key(f, "ORDERING", "NEST")
     savePixelsToFITS(map, f, column)
 
 end
@@ -131,17 +131,17 @@ end
 function saveToFITS(
     map::Map{T,O},
     fileName::AbstractString;
-    typechar = "D",
-    unit = "",
-    extname = "MAP",
-) where {T<:Number,O<:Order}
+    typechar="D",
+    unit="",
+    extname="MAP",
+) where {T <: Number,O <: Order}
 
-    f = FITSIO.fits_create_file(fileName)
+    f = CFITSIO.fits_create_file(fileName)
     try
-        FITSIO.fits_create_binary_tbl(f, 0, [("PIXELS", "1$typechar", unit)], extname)
+        CFITSIO.fits_create_binary_tbl(f, 0, [("PIXELS", "1$typechar", unit)], extname)
         saveToFITS(map, f, 1)
     finally
-        FITSIO.fits_close_file(f)
+        CFITSIO.fits_close_file(f)
     end
 
 end
@@ -149,14 +149,14 @@ end
 function saveToFITS(
     map::PolarizedMap{T,O},
     fileName::AbstractString;
-    typechar = "D",
-    unit = "",
-    extname = "MAP",
-) where {T<:Number,O<:Order}
+    typechar="D",
+    unit="",
+    extname="MAP",
+) where {T <: Number,O <: Order}
 
-    f = FITSIO.fits_create_file(fileName)
+    f = CFITSIO.fits_create_file(fileName)
     try
-        FITSIO.fits_create_binary_tbl(
+        CFITSIO.fits_create_binary_tbl(
             f,
             0,
             [
@@ -167,10 +167,10 @@ function saveToFITS(
             extname,
         )
         saveToFITS(map.i, f, 1)
-        saveToFITS(map.q, f, 2, write_keywords = false)
-        saveToFITS(map.u, f, 3, write_keywords = false)
+        saveToFITS(map.q, f, 2, write_keywords=false)
+        saveToFITS(map.u, f, 3, write_keywords=false)
     finally
-        FITSIO.fits_close_file(f)
+        CFITSIO.fits_close_file(f)
     end
 
 end
@@ -183,7 +183,7 @@ Save a map into a FITS file. The name of the file is specified in
 `filename`; if it begins with `!`, existing files will be overwritten
 without warning. The parameter `typechar` specifies the data type to
 be used in the FITS file: the default (`D`) will save 64-bit
-floating-point values. See the CFITSIO documentation for other
+floating-point values. See the CCFITSIO documentation for other
 values. The keyword `unit` specifies the measure unit used for the
 pixels in the map. The keyword `extname` specifies the name of the HDU
 where the map pixels will be written.
