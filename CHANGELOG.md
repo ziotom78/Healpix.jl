@@ -1,5 +1,7 @@
 # HEAD
 
+-   Implement `udgrade` ([PR#46](https://github.com/ziotom78/Healpix.jl/pull/46))
+
 -   Implement `pixwin` ([PR#45](https://github.com/ziotom78/Healpix.jl/pull/45))
 
 -   Implement `applyweights!` ([PR#41](https://github.com/ziotom78/Healpix.jl/pull/41) and [#44](https://github.com/ziotom78/Healpix.jl/pull/44))
