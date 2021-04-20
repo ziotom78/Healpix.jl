@@ -4,7 +4,7 @@
 
 -   Add untyped constructor for `PolarizedMap` ([PR#49](https://github.com/ziotom78/Healpix.jl/pull/49))
 
--   Implement `udgrade` ([PR#46](https://github.com/ziotom78/Healpix.jl/pull/46))
+-   Implement `udgrade` ([PR#46](https://github.com/ziotom78/Healpix.jl/pull/46), [#51](https://github.com/ziotom78/Healpix.jl/pull/51))
 
 -   Implement `pixwin` ([PR#45](https://github.com/ziotom78/Healpix.jl/pull/45))
 
