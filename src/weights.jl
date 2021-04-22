@@ -101,16 +101,22 @@ end
 
 
 """
-    applyfullweights!(m::PolarizedMap{T, RingOrder}, wgt::Vector{T}) where T
+    applyfullweights!(m::PolarizedMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a polarized map for more accurate SHTs.
 
 # Arguments:
 - `m::PolarizedMap{T, RingOrder}`: map to modify
-- `wgt::Vector{T}`: compressed pixel weights
+- `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, an artifact 
+        will be sought.
 """
 function applyfullweights!(m::PolarizedMap{T,RingOrder}, wgt::Vector{T}) where T
     applyfullweights!(m.i, wgt)
     applyfullweights!(m.q, wgt)
     applyfullweights!(m.u, wgt)
+end
+function applyfullweights!(m::PolarizedMap{T,RingOrder}) where T
+    applyfullweights!(m.i)
+    applyfullweights!(m.q)
+    applyfullweights!(m.u)
 end
