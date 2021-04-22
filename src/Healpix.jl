@@ -17,7 +17,7 @@ export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
 
-using Pkg.Artifacts
+using LazyArtifacts
 import CFITSIO
 
 import Libsharp
