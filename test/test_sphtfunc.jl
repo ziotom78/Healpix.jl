@@ -338,7 +338,7 @@ testcl = [
 nside = 32
 compressed_weights = Healpix.readfullweights("healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
 m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
-Healpix.applyweights!(m, compressed_weights)
+Healpix.applyfullweights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ref_alm = [
     3.5449077018110313 + 0.0im,
@@ -354,6 +354,13 @@ ref_alm = [
 ]
 @test isapprox(alm.alm[1:10], ref_alm)
 
+# test artifact 
+m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+Healpix.applyfullweights!(m)
+alm = Healpix.map2alm(m; niter=0)
+@test isapprox(alm.alm[1:10], ref_alm)
+
+
 ## test polarized map pixel weights
 nside = 32
 npix = Healpix.nside2npix(nside)
@@ -361,7 +368,7 @@ m = Healpix.PolarizedMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))
-Healpix.applyweights!(m, compressed_weights)
+Healpix.applyfullweights!(m, compressed_weights)
 t, e, b = Healpix.map2alm(m; niter=0)
 
 @test t.alm[1:10] ≈ [ 2.17816852e+04, -1.25746386e+04, -4.78882357e-05,
