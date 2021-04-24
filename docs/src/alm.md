@@ -106,14 +106,14 @@ git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 
 These weights are in a compressed format that is read with [`readfullweights`](@ref)
-and multiplied into a map with [`applyweights!`](@ref). 
+and multiplied into a map with [`applyfullweights!`](@ref). 
 
 ```julia
 nside = 32
 compressed_weights = Healpix.readfullweights(
     "healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
 m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
-Healpix.applyweights!(m, compressed_weights)
+Healpix.applyfullweights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ```
 
@@ -121,5 +121,5 @@ The subsequent [`map2alm`](@ref) only needs `niter=0`.
 
 ```@docs
 Healpix.readfullweights
-Healpix.applyweights!
+Healpix.applyfullweights!
 ```

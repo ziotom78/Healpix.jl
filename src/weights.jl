@@ -43,17 +43,20 @@ function readfullweights(filename::String)
 end
 
 """
-    applyweights!(m::Map{T, RingOrder}, wgt::Vector{T}) where T
+    applyfullweights!(m::Map{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a map for more accurate SHTs. Note that 
 this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
 pixel weights may do more harm than good.
 
+Pixel weights are automatically downloaded if not specified. 
+
 # Arguments:
 - `m::Map{T, RingOrder}`: map to modify
-- `wgt::Vector{T}`: compressed pixel weights
+- `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, this routine will
+    look for weights in artifacts.
 """
-function applyweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
+function applyfullweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
     nside = m.resolution.nside
     @assert length(wgt) == n_fullweights(nside)
     pix, vpix = 0, 0
@@ -74,21 +77,46 @@ function applyweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
         end
         pix += qpix << 2;
         vpix += wpix;
+    end
 end
+
+
+function applyfullweights!(m::Map{T,RingOrder}) where T
+    nside = m.resolution.nside
+    
+    if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
+        path = artifact"fullpixelweights_32_2048"
+    elseif nside == 4096
+        path = artifact"fullpixelweights_4096"
+    elseif nside == 8192
+        path = artifact"fullpixelweights_8192"
+    else
+        throw(ArgumentError("Unsupported nside $(nside)"))
+    end
+
+    nside_str = lpad(nside, 4, '0')
+    wgt = readfullweights(joinpath(path, "healpix_full_weights_nside_$(nside_str).fits"))
+    applyfullweights!(m, wgt)
 end
 
 
 """
-    applyweights!(m::PolarizedMap{T, RingOrder}, wgt::Vector{T}) where T
+    applyfullweights!(m::PolarizedMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a polarized map for more accurate SHTs.
 
 # Arguments:
 - `m::PolarizedMap{T, RingOrder}`: map to modify
-- `wgt::Vector{T}`: compressed pixel weights
+- `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, an artifact 
+        will be sought.
 """
-function applyweights!(m::PolarizedMap{T,RingOrder}, wgt::Vector{T}) where T
-    applyweights!(m.i, wgt)
-    applyweights!(m.q, wgt)
-    applyweights!(m.u, wgt)
+function applyfullweights!(m::PolarizedMap{T,RingOrder}, wgt::Vector{T}) where T
+    applyfullweights!(m.i, wgt)
+    applyfullweights!(m.q, wgt)
+    applyfullweights!(m.u, wgt)
+end
+function applyfullweights!(m::PolarizedMap{T,RingOrder}) where T
+    applyfullweights!(m.i)
+    applyfullweights!(m.q)
+    applyfullweights!(m.u)
 end
