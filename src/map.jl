@@ -19,15 +19,15 @@ ordering. (See also `RingOrder`.)
 abstract type NestedOrder <: Order end
 
 """
-    GenericMap{T} <: AbstractArray{T, 1}
+    AbstractHealpixMap{T} <: AbstractArray{T, 1}
 
 An abstract type representing an Healpix map without a specified
 ordering. This can be used to implement multiple dispatch when you
 don't care about the ordering of a map."""
-abstract type GenericMap{T} <: AbstractArray{T,1} end
+abstract type AbstractHealpixMap{T} <: AbstractArray{T,1} end
 
 """
-    struct Map{T, O <: Order, AA <: AbstractArray{T, 1}} <: GenericMap{T}
+    struct Map{T, O <: Order, AA <: AbstractArray{T, 1}} <: AbstractHealpixMap{T}
 
 A Healpix map. The type `T` is used for the value of the pixels in a
 map, and it can be anything (even a string!). The type `O` is used to
@@ -73,7 +73,7 @@ Finally, the following examples show how to use `SharedArray`:
     pixels = SharedArray{Int64, 1}(1:12 |> collect)
     mymap = Healpix.Map{Int64, Healpix.RingOrder, SharedArray{Int64, 1}}(m)
 """
-mutable struct Map{T,O<:Order,AA<:AbstractArray{T,1}} <: GenericMap{T}
+mutable struct Map{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixMap{T}
     pixels::AA
     resolution::Resolution
 

@@ -32,13 +32,13 @@ mollweide(m * m)
 ```
 
 The [`Map{T, O <: Order}`](@ref) is derived from the abstract type
-[`GenericMap{T}`](@ref), which does not encode the ordering. It is useful for
+[`AbstractHealpixMap{T}`](@ref), which does not encode the ordering. It is useful for
 functions that can either work on ring/nested-ordered maps but cannot be
 executed on plain generic arrays:
 
 ```julia
 # Return the number of pixels in the map, regardless of its ordering
-maplength(m::GenericMap{T}) where T = length(m)
+maplength(m::AbstractHealpixMap{T}) where T = length(m)
 
 # This returns 12
 maplength(Map{Float64, RingOrder}(1))
@@ -56,7 +56,7 @@ intensity (I), and the Q and U Stokes parameters. The three maps must
 have the same resolution.
 
 ```@docs
-GenericMap
+AbstractHealpixMap
 Map
 PolarizedMap
 ```
