@@ -355,7 +355,7 @@ ref_alm = [
 @test isapprox(alm.alm[1:10], ref_alm)
 
 # test artifact 
-m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 Healpix.applyfullweights!(m)
 alm = Healpix.map2alm(m; niter=0)
 @test isapprox(alm.alm[1:10], ref_alm)
@@ -387,7 +387,7 @@ ref_b = [     0.        ,      0.        , -19883.86722869,
 @test e.alm[1:10] ≈ ref_e
 @test b.alm[1:10] ≈ ref_b
 
-m = Healpix.PolarizedMap{Float64, Healpix.RingOrder}(
+m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))

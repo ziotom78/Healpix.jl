@@ -81,7 +81,7 @@ function applyfullweights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
 end
 
 
-function applyfullweights!(m::Map{T,RingOrder}) where T
+function applyfullweights!(m::HealpixMap{T,RingOrder}) where T
     nside = m.resolution.nside
     
     if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
