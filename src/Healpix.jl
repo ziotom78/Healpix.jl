@@ -15,9 +15,9 @@ export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove
-export ring2nest, nest2ring, ring2nest!, nest2ring!
+export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
 
-using Pkg.Artifacts
+using LazyArtifacts
 import CFITSIO
 
 import Libsharp

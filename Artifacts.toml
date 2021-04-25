@@ -4,3 +4,29 @@ git-tree-sha1 = "d11923cfa0b2d87d5bb8898ea574b8a9b2a114fc"
     [[pixwin.download]]
     url = "https://github.com/xzackli/HEALPix_data/raw/master/pixwin.tar.gz"
     sha256 = "986792ca52a53d8cf34b2e0fa18d5c1a9aebdfd0167edfb1fc472daf1965ab07"
+
+
+[fullpixelweights_32_2048]
+git-tree-sha1 = "f226f79884e8afcdaf3c42d90aac01db48110e50"
+lazy = true
+
+    [[fullpixelweights_32_2048.download]]
+    url = "https://github.com/xzackli/HEALPix_data/releases/download/0.1/healpix_full_weights_nside_32_2048.tar.gz"
+    sha256 = "f1d8eeb1b575c9684c2fcfd9ff35df086f19f48bb3e9272b1ac3493ed27fd632"
+
+[fullpixelweights_4096]
+git-tree-sha1 = "22994e088fd2b42ecdb891e50a189a4c11ce462d"
+lazy = true
+
+    [[fullpixelweights_4096.download]]
+    url = "https://github.com/xzackli/HEALPix_data/releases/download/0.1/healpix_full_weights_nside_4096.tar.gz"
+    sha256 = "f2d29874de71a7aa2372238e42d4a1446705b2162756d07fc50505292b8da5a2"
+
+
+[fullpixelweights_8192]
+git-tree-sha1 = "c297f7926b934e304936a19bd0f46f9772b9ca8d"
+lazy = true
+
+    [[fullpixelweights_8192.download]]
+    url = "https://github.com/xzackli/HEALPix_data/releases/download/0.1/healpix_full_weights_nside_8192.tar.gz"
+    sha256 = "78fc7426467f314bf498700b803d33dcedde21f67992b03f0ed3e53b1e0ab6cb"
