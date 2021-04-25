@@ -72,8 +72,8 @@ end
 
 
 """
-    map2alm!(map::Map{Float64, RingOrder, Array{Float64, 1}}, alm::Alm{ComplexF64, Array{ComplexF64, 1}}; niter::Integer=3)
-    map2alm!(map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}}, alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1};
+    map2alm!(map::HealpixMap{Float64, RingOrder, Array{Float64, 1}}, alm::Alm{ComplexF64, Array{ComplexF64, 1}}; niter::Integer=3)
+    map2alm!(map::PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}}, alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1};
         niter::Integer=3)
 
 This function performs a spherical harmonic transform on the map and places the results
@@ -83,8 +83,8 @@ done in-place.
 # Arguments
 
 - `map`: the map that must be decomposed in spherical harmonics. It
-  can either be a `Map{Float64, RingOrder}` type (scalar map) or a
-  `PolarizedMap{Float64, RingOrder}` type (polarized map).
+  can either be a `HealpixMap{Float64, RingOrder}` type (scalar map) or a
+  `PolarizedHealpixMap{Float64, RingOrder}` type (polarized map).
 
 - `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
   coefficients to be written to.
@@ -97,7 +97,7 @@ done in-place.
 map2alm!
 
 function map2alm!(
-    map::Map{Float64,RingOrder,Array{Float64,1}},
+    map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
     alm::Alm{ComplexF64,Array{ComplexF64,1}};
     niter::Integer=3,
 )
@@ -118,7 +118,7 @@ function map2alm!(
 end
 
 function map2alm!(
-    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}},
+    map::PolarizedHealpixMap{Float64,RingOrder,Array{Float64,1}},
     alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1};
     niter::Integer=3,
 )
@@ -156,9 +156,9 @@ end
 
 
 """
-    map2alm(map::Map{Float64, RingOrder, AA};
+    map2alm(map::HealpixMap{Float64, RingOrder, AA};
         lmax=nothing, mmax=nothing, niter::Integer=3)
-    map2alm(m::Map{T, RingOrder, AA}; lmax=nothing, mmax=nothing,
+    map2alm(m::HealpixMap{T, RingOrder, AA}; lmax=nothing, mmax=nothing,
         niter::Integer=3) where {T <: Real, AA <: AbstractArray{T, 1} }
 
 Compute the spherical harmonic coefficients of a map. To enhance
@@ -170,7 +170,7 @@ converted to types based on Float64.
 # Arguments
 
 - `map`: the map to decompose in spherical harmonics. It can either be
-  a `Map{T, RingOrder, AA}` type (scalar map) or a `PolarizedMap{T,
+  a `HealpixMap{T, RingOrder, AA}` type (scalar map) or a `PolarizedHealpixMap{T,
   RingOrder, AA}` type (polarized map).
 
 # Keywords
@@ -191,7 +191,7 @@ converted to types based on Float64.
 map2alm
 
 function map2alm(
-    map::Map{Float64,RingOrder,Array{Float64,1}};
+    map::HealpixMap{Float64,RingOrder,Array{Float64,1}};
     lmax=nothing,
     mmax=nothing,
     niter::Integer=3,
@@ -208,7 +208,7 @@ function map2alm(
 end
 
 function map2alm(
-    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}};
+    map::PolarizedHealpixMap{Float64,RingOrder,Array{Float64,1}};
     lmax=nothing,
     mmax=nothing,
     niter::Integer=3,
@@ -230,18 +230,18 @@ end
 
 # convert maps to Float64
 function map2alm(
-    map::Map{T,RingOrder,AA};
+    map::HealpixMap{T,RingOrder,AA};
     lmax=nothing,
     mmax=nothing,
     niter::Integer=3,
 ) where {T <: Real,AA <: AbstractArray{T,1}}
-    map_float = Map{Float64,RingOrder}(convert(Array{Float64,1}, map.pixels))
+    map_float = HealpixMap{Float64,RingOrder}(convert(Array{Float64,1}, map.pixels))
     return map2alm(map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
-# convert PolarizedMap to Float64
+# convert PolarizedHealpixMap to Float64
 function map2alm(
-    map::PolarizedMap{T,RingOrder,AA};
+    map::PolarizedHealpixMap{T,RingOrder,AA};
     lmax=nothing,
     mmax=nothing,
     niter::Integer=3,
@@ -249,14 +249,14 @@ function map2alm(
     m_i = convert(Array{Float64,1}, map.i)
     m_q = convert(Array{Float64,1}, map.q)
     m_u = convert(Array{Float64,1}, map.u)
-    pol_map_float = PolarizedMap{Float64,RingOrder}(m_i, m_q, m_u)
+    pol_map_float = PolarizedHealpixMap{Float64,RingOrder}(m_i, m_q, m_u)
     return map2alm(pol_map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
 
 """
-    alm2map!(alm::Alm{ComplexF64, Array{ComplexF64, 1}}, map::Map{Float64, RingOrder, Array{Float64, 1}})
-    alm2map!(alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1}, map::PolarizedMap{Float64, RingOrder, Array{Float64, 1}})
+    alm2map!(alm::Alm{ComplexF64, Array{ComplexF64, 1}}, map::HealpixMap{Float64, RingOrder, Array{Float64, 1}})
+    alm2map!(alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1}, map::PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}})
 
 This function performs a spherical harmonic transform on the map and
 places the results in the passed `alm` object. This function requires
@@ -268,8 +268,8 @@ types derived from Float64, since it is done in-place.
   coefficients to perform the spherical harmonic transform on.
 
 - `map`: the map that will contain the result. It can either be a
-  `Map{Float64, RingOrder, Array{Float64, 1}}` type (scalar map) or a
-  `PolarizedMap{Float64, RingOrder, Array{Float64, 1}}` (polarized
+  `HealpixMap{Float64, RingOrder, Array{Float64, 1}}` type (scalar map) or a
+  `PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}}` (polarized
   map).
 
 """
@@ -278,7 +278,7 @@ alm2map!
 # in-place alm2map for spin-0
 function alm2map!(
     alm::Alm{ComplexF64,Array{ComplexF64,1}},
-    map::Map{Float64,RingOrder,Array{Float64,1}},
+    map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
 )
     geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
@@ -296,7 +296,7 @@ end
 # in-place alm2map for TEB to IQU
 function alm2map!(
     alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1},
-    map::PolarizedMap{Float64,RingOrder,Array{Float64,1}},
+    map::PolarizedHealpixMap{Float64,RingOrder,Array{Float64,1}},
 )
     geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
     alm_info = Libsharp.make_triangular_alm_info(alm[1].lmax, alm[1].mmax, 1)
@@ -345,8 +345,8 @@ are converted to types based on Float64.
 
 # Returns
 
-- `Map{Float64, RingOrder, Array{Float64, 1}}` or
-  `PolarizedMap{Float64, RingOrder, Array{Float64, 1}}` depending on
+- `HealpixMap{Float64, RingOrder, Array{Float64, 1}}` or
+  `PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}}` depending on
   if the input alm is of type `Alm{T, Array{T, 1}}` or `Array{Alm{T,
   Array{T, 1}}}` respectively.
 """
@@ -355,7 +355,7 @@ alm2map
 # create a new set of spin-0 maps and project the coefficients to the map
 function alm2map(alm::Alm{ComplexF64,Array{ComplexF64,1}}, nside::Integer)
     npix = nside2npix(nside)
-    map = Map{Float64,RingOrder}(zeros(Float64, npix))
+    map = HealpixMap{Float64,RingOrder}(zeros(Float64, npix))
     alm2map!(alm, map)
     return map
 end
@@ -363,7 +363,7 @@ end
 # create a new set of IQU maps and project the coefficients to the map
 function alm2map(alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1}, nside::Integer)
     npix = nside2npix(nside)
-    map = PolarizedMap{Float64,RingOrder}(
+    map = PolarizedHealpixMap{Float64,RingOrder}(
         zeros(Float64, npix),
         zeros(Float64, npix),
         zeros(Float64, npix),

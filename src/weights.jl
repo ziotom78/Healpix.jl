@@ -43,17 +43,17 @@ function readfullweights(filename::String)
 end
 
 """
-    applyweights!(m::Map{T, RingOrder}, wgt::Vector{T}) where T
+    applyweights!(m::HealpixMap{T, RingOrder}, wgt::Vector{T}) where T
 
 Apply a pixel weighting to a map for more accurate SHTs. Note that 
 this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
 pixel weights may do more harm than good.
 
 # Arguments:
-- `m::Map{T, RingOrder}`: map to modify
+- `m::HealpixMap{T, RingOrder}`: map to modify
 - `wgt::Vector{T}`: compressed pixel weights
 """
-function applyweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
+function applyweights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
     nside = m.resolution.nside
     @assert length(wgt) == n_fullweights(nside)
     pix, vpix = 0, 0
@@ -79,15 +79,15 @@ end
 
 
 """
-    applyweights!(m::PolarizedMap{T, RingOrder}, wgt::Vector{T}) where T
+    applyweights!(m::PolarizedHealpixMap{T, RingOrder}, wgt::Vector{T}) where T
 
 Apply a pixel weighting to a polarized map for more accurate SHTs.
 
 # Arguments:
-- `m::PolarizedMap{T, RingOrder}`: map to modify
+- `m::PolarizedHealpixMap{T, RingOrder}`: map to modify
 - `wgt::Vector{T}`: compressed pixel weights
 """
-function applyweights!(m::PolarizedMap{T,RingOrder}, wgt::Vector{T}) where T
+function applyweights!(m::PolarizedHealpixMap{T,RingOrder}, wgt::Vector{T}) where T
     applyweights!(m.i, wgt)
     applyweights!(m.q, wgt)
     applyweights!(m.u, wgt)

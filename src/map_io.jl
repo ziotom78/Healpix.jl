@@ -25,9 +25,9 @@ function readMapFromFITS(f::CFITSIO.FITSFile, column, t::Type{T}) where {T <: Nu
     end
 
     if ringOrdering
-        result = Map{T,RingOrder}(Array{T}(undef, nside2npix(nside)))
+        result = HealpixMap{T,RingOrder}(Array{T}(undef, nside2npix(nside)))
     else
-        result = Map{T,NestedOrder}(Array{T}(undef, nside2npix(nside)))
+        result = HealpixMap{T,NestedOrder}(Array{T}(undef, nside2npix(nside)))
     end
     CFITSIO.fits_read_col(f, column, 1, 1, result.pixels)
 
@@ -65,19 +65,19 @@ function readPolarizedMapFromFITS(
     i, q, u = (readMapFromFITS(f, colidx, t) for colidx in (column_i, column_q, column_u))
     CFITSIO.fits_close_file(f)
 
-    PolarizedMap(i, q, u)
+    PolarizedHealpixMap(i, q, u)
 end
 
 ################################################################################
 
 """
-    savePixelsToFITS(map::Map{T}, f::CFITSIO.FITSFile, column) where {T <: Number}
+    savePixelsToFITS(map::HealpixMap{T}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
 Save the pixels of `map` into the column with index/name `column` in the FITS
 file, which must have been already opened.
 """
 function savePixelsToFITS(
-    map::Map{T},
+    map::HealpixMap{T},
     f::CFITSIO.FITSFile,
     column;
     write_keywords=true,
@@ -101,10 +101,10 @@ function savePixelsToFITS(
 end
 
 """
-    saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
+    saveToFITS{T <: Number, O <: Order}(map::HealpixMap{T, O},
                                         f::CFITSIO.FITSFile,
                                         column)
-    saveToFITS{T <: Number, O <: Order}(map::Map{T, O},
+    saveToFITS{T <: Number, O <: Order}(map::HealpixMap{T, O},
                                         fileName::String,
                                         typechar="D",
                                         unit="",
@@ -114,14 +114,14 @@ Save a Healpix map in the specified (1-based index) column in a FITS
 file. If the code fails, CFITSIO will raise an exception. (Refer to the
 CFITSIO library for more information.)
 """
-function saveToFITS(map::Map{T,RingOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
+function saveToFITS(map::HealpixMap{T,RingOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
     CFITSIO.fits_update_key(f, "ORDERING", "RING")
     savePixelsToFITS(map, f, column)
 
 end
 
-function saveToFITS(map::Map{T,NestedOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
+function saveToFITS(map::HealpixMap{T,NestedOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
     CFITSIO.fits_update_key(f, "ORDERING", "NEST")
     savePixelsToFITS(map, f, column)
@@ -129,7 +129,7 @@ function saveToFITS(map::Map{T,NestedOrder}, f::CFITSIO.FITSFile, column) where 
 end
 
 function saveToFITS(
-    map::Map{T,O},
+    map::HealpixMap{T,O},
     fileName::AbstractString;
     typechar="D",
     unit="",
@@ -147,7 +147,7 @@ function saveToFITS(
 end
 
 function saveToFITS(
-    map::PolarizedMap{T,O},
+    map::PolarizedHealpixMap{T,O},
     fileName::AbstractString;
     typechar="D",
     unit="",
@@ -176,8 +176,8 @@ function saveToFITS(
 end
 
 @doc raw"""
-    saveToFITS(map::Map{T, O}, filename::AbstractString, typechar="D", unit="", extname="MAP") where {T <: Number, O <: Order}
-    saveToFITS(map::PolarizedMap{T, O}, filename::AbstractString, typechar="D", unit="", extname="MAP") where {T <: Number, O <: Order}
+    saveToFITS(map::HealpixMap{T, O}, filename::AbstractString, typechar="D", unit="", extname="MAP") where {T <: Number, O <: Order}
+    saveToFITS(map::PolarizedHealpixMap{T, O}, filename::AbstractString, typechar="D", unit="", extname="MAP") where {T <: Number, O <: Order}
 
 Save a map into a FITS file. The name of the file is specified in
 `filename`; if it begins with `!`, existing files will be overwritten

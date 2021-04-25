@@ -9,8 +9,8 @@ itself and the hit map.
 function tod2map(pixidx, tod::Array{T}; nside = 128, ordering = Healpix.RingOrder) where {T}
     @assert length(pixidx) == length(tod)
 
-    binnedmap = Map{T,ordering}(nside)
-    hitmap = Map{Int,ordering}(nside)
+    binnedmap = HealpixMap{T,ordering}(nside)
+    hitmap = HealpixMap{Int,ordering}(nside)
 
     @inbounds for i in eachindex(pixidx)
         if !ismissing(tod[i])
@@ -29,7 +29,7 @@ function tod2map(pixidx, tod::Array{T}; nside = 128, ordering = Healpix.RingOrde
 end
 
 @doc raw"""
-    combinemaps{T, O, H}(destmap::Map{T, O}, desthitmap::Map{H, O}, othermap::Map{T, O}, otherhitmap::Map{H, O})
+    combinemaps{T, O, H}(destmap::HealpixMap{T, O}, desthitmap::HealpixMap{H, O}, othermap::HealpixMap{T, O}, otherhitmap::HealpixMap{H, O})
 
 Sum "othermap" to "destmap", assuming that both maps have been
 produced by binning TODs. The parameters `desthitmap` and
@@ -37,10 +37,10 @@ produced by binning TODs. The parameters `desthitmap` and
 and `desthitmap` are updated.
 """
 function combinemaps!(
-    destmap::Map{T,O},
-    desthitmap::Map{H,O},
-    othermap::Map{T,O},
-    otherhitmap::Map{H,O},
+    destmap::HealpixMap{T,O},
+    desthitmap::HealpixMap{H,O},
+    othermap::HealpixMap{T,O},
+    otherhitmap::HealpixMap{H,O},
 ) where {T,O,H}
     (
         conformables(destmap, othermap) &&
