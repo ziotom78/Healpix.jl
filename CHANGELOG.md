@@ -4,7 +4,7 @@
 
 -   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
     
--   **Breaking change**: Generalize the definition of `Map` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
+-   **Breaking change**: Generalize the definition of `HealpixMap` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
 
 -   Use [CFITSIO.jl](https://github.com/JuliaAstro/CFITSIO.jl) instead of [FITSIO](https://juliaastro.github.io/FITSIO.jl/stable/) ([PR#50](https://github.com/ziotom78/Healpix.jl/pull/50), it fixes [#47](https://github.com/ziotom78/Healpix.jl/issues/47))
 
