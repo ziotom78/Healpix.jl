@@ -43,7 +43,7 @@ function readfullweights(filename::String)
 end
 
 """
-    applyfullweights!(m::Map{T, RingOrder}, [wgt::Vector{T}]) where T
+    applyfullweights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a map for more accurate SHTs. Note that 
 this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
