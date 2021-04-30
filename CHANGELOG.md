@@ -1,5 +1,11 @@
 # HEAD
 
+-   **Breaking change**: rename `Map` → `HealpixMap`, `PolarizedMap` → `HealpixPolarizedMap`, `GenericMap` → `AbstractHealpixMap` ([PR#53](https://github.com/ziotom78/Healpix.jl/pull/53))
+
+-   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
+    
+-   **Breaking change**: Generalize the definition of `Map` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
+
 -   Use [CFITSIO.jl](https://github.com/JuliaAstro/CFITSIO.jl) instead of [FITSIO](https://juliaastro.github.io/FITSIO.jl/stable/) ([PR#50](https://github.com/ziotom78/Healpix.jl/pull/50), it fixes [#47](https://github.com/ziotom78/Healpix.jl/issues/47))
 
 -   Add untyped constructor for `PolarizedMap` ([PR#49](https://github.com/ziotom78/Healpix.jl/pull/49))
@@ -17,10 +23,6 @@
 -   Remove `Manifest.toml` ([PR#42](https://github.com/ziotom78/Healpix.jl/pull/42))
 
 -   README has been updated ([PR#39](https://github.com/ziotom78/Healpix.jl/pull/39))
-
--   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
-    
--   **Breaking change**: Generalize the definition of `Map` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
 
 -   Documentation for new spherical harmonics functions has been added ([PR#35](https://github.com/ziotom78/Healpix.jl/pull/35)).
     
