@@ -17,7 +17,7 @@ import RecipesBase
 
 
 """
-    project(invprojfn, m::Map{T, O, AA}, bmpwidth, bmpheight; kwargs...)
+    project(invprojfn, m::HealpixMap{T, O, AA}, bmpwidth, bmpheight; kwargs...)
 
 Return a 2D bitmap (array) containing a cartographic projection of the
 map and a 2D bitmap containing a boolean mask. The size of the bitmap
@@ -39,7 +39,7 @@ and unseen pixels are marked as `missing`.
 """
 function project(
     invprojfn,
-    m::Map{T,O,AA},
+    m::HealpixMap{T,O,AA},
     bmpwidth,
     bmpheight,
     projparams = Dict(),
@@ -279,18 +279,18 @@ end
 ################################################################################
 
 """
-    equirectangular(m::Map{T,O,AA}; kwargs...) where {T <: Number, O, AA}
+    equirectangular(m::HealpixMap{T,O,AA}; kwargs...) where {T <: Number, O, AA}
 
 High-level wrapper around `project` for equirectangular projections.
 """
-function equirectangular(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
+function equirectangular(m::HealpixMap{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     project(equiprojinv, m, width, height, projparams)
 end
 
 """
-    mollweide(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+    mollweide(m::HealpixMap{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
 
 High-level wrapper around `project` for Mollweide projections.
 
@@ -300,14 +300,14 @@ The following parameters can be set in the `projparams` dictionary:
 - `height`: height of the image, in pixels; if not specified, it will be assumed
   to be equal to `width`
 """
-function mollweide(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
+function mollweide(m::HealpixMap{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width ÷ 2)
     project(mollweideprojinv, m, width, height, projparams)
 end
 
 """
-    orthographic(m::Map{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
+    orthographic(m::HealpixMap{T,O}, projparams = Dict()) where {T <: Number,O <: Order}
 
 High-level wrapper around `project` for orthographic projections.
 
@@ -319,7 +319,7 @@ The following parameters can be set in the `projparams` dictionary:
 - `center`: position of the pixel in the middle of the left globe (*latitude* and
   longitude).
 """
-function orthographic(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
+function orthographic(m::HealpixMap{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
@@ -329,7 +329,7 @@ function orthographic(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA
 end
 
 """
-    orthographic2(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+    orthographic2(m::HealpixMap{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
 
 High-level wrapper around `project` for stereo orthographic projections.
 
@@ -341,7 +341,7 @@ The following parameters can be set in the `projparams` dictionary:
 - `center`: position of the pixel in the middle of the left globe (*latitude* and
   longitude). Default is (0, 0).
 """
-function orthographic2(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
+function orthographic2(m::HealpixMap{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width ÷ 2)
     ϕ0, λ0 = get(projparams, :center, (0, 0))
@@ -351,7 +351,7 @@ function orthographic2(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,A
 end
 
 """
-    gnomonic(m::Map{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
+    gnomonic(m::HealpixMap{T, O, AA}, projparams = Dict()) where {T <: Number, O, AA}
 
 High-level wrapper around `project` for gnomonic projections.
 
@@ -375,7 +375,7 @@ The following parameters can be set in the `projparams` dictionary:
 plot(m, gnomonic, Dict(:fov_rad = deg2rad(1.5), :center = (0, 0, deg2rad(45))))
 ````
 """
-function gnomonic(m::Map{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
+function gnomonic(m::HealpixMap{T,O,AA}, projparams = Dict()) where {T<:Number,O,AA}
     width = get(projparams, :width, 720)
     height = get(projparams, :height, width)
     ϕ0, λ0, ψ0 = get(projparams, :center, (0, 0, 0))
@@ -388,7 +388,7 @@ end
 ################################################################################
 
 RecipesBase.@recipe function plot(
-    m::Map{T,O,AA},
+    m::HealpixMap{T,O,AA},
     projection = mollweide,
     projparams = Dict(),
 ) where {T<:Number,O,AA}
@@ -441,7 +441,7 @@ RecipesBase.@recipe function plot(
 end
 
 @doc raw"""
-    plot(m::Map{T, O, AA}, projection = mollweide, projparams = Dict())
+    plot(m::HealpixMap{T, O, AA}, projection = mollweide, projparams = Dict())
 
 Draw a representation of the map, using some specific projection. The
 parameter `projection` must be a function returning the

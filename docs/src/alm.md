@@ -15,7 +15,7 @@ computation of convolution operators.
 
 Everything revolves around the [`Alm`](@ref) type, which encodes a set of
 spherical harmonics and is thus conceptually equivalent to the concept
-of a [`Map`](@ref), only living in the harmonic space:
+of a [`HealpixMap`](@ref), only living in the harmonic space:
 
 ```@docs
 Alm
@@ -54,7 +54,7 @@ using Random
 Random.seed!(1234)
 
 nside = 8
-m = Map{Float32,RingOrder}(nside)
+m = HealpixMap{Float32,RingOrder}(nside)
 
 # Initialize the pixels to random values in the 0…1 range
 for i in 1:length(m)
@@ -112,7 +112,7 @@ and multiplied into a map with [`applyfullweights!`](@ref).
 nside = 32
 compressed_weights = Healpix.readfullweights(
     "healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
-m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 Healpix.applyfullweights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ```

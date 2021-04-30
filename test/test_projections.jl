@@ -1,4 +1,4 @@
-m = Healpix.Map{Float64,Healpix.RingOrder}(1)
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(1)
 m.pixels = 1.0:12.0
 
 # Do not run @test here, just check that the function can be ran

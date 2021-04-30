@@ -4,7 +4,7 @@ using Test
 ## spin 0 map2alm
 nside = 4
 lmax = 4
-map = Healpix.Map{Float64,Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
+map = Healpix.HealpixMap{Float64,Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
 alm = Healpix.map2alm(map, lmax = lmax, mmax = lmax, niter = 0)
 
 test_alm_spin0 = [
@@ -33,12 +33,12 @@ test_alm_spin0 = [
 )
 
 ## test type convert
-map_int = Healpix.Map{Int64,Healpix.RingOrder}(2 .* ones(Int64, Healpix.nside2npix(nside)))
+map_int = Healpix.HealpixMap{Int64,Healpix.RingOrder}(2 .* ones(Int64, Healpix.nside2npix(nside)))
 alm = Healpix.map2alm(map_int, lmax = lmax, mmax = lmax, niter = 0)
 @test isapprox(alm.alm, test_alm_spin0)
 
 ## spin 0 map2alm niter=3
-map = Healpix.Map{Float64,Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
+map = Healpix.HealpixMap{Float64,Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
 alm_niter_3 = Healpix.map2alm(map, lmax = lmax, mmax = lmax, niter = 3).alm
 alm_niter_0 = Healpix.map2alm(map, lmax = lmax, mmax = lmax, niter = 0).alm
 reference_Δ = [
@@ -127,7 +127,7 @@ map_bf = Healpix.alm2map(alm, nside)
 ## spin 2 map2alm
 nside = 4
 lmax = 4
-map = Healpix.PolarizedMap{Float64,Healpix.RingOrder}(
+map = Healpix.PolarizedHealpixMap{Float64,Healpix.RingOrder}(
     2 .* ones(Healpix.nside2npix(nside)),
     2 .* ones(Healpix.nside2npix(nside)),
     2 .* ones(Healpix.nside2npix(nside)),
@@ -155,7 +155,7 @@ test_alm_spin2 = [
 @test isapprox(alms[3].alm, test_alm_spin2)
 
 ## test type convert
-map_int = Healpix.PolarizedMap{BigFloat,Healpix.RingOrder}(
+map_int = Healpix.PolarizedHealpixMap{BigFloat,Healpix.RingOrder}(
     2 .* ones(BigFloat, Healpix.nside2npix(nside)),
     2 .* ones(BigFloat, Healpix.nside2npix(nside)),
     2 .* ones(BigFloat, Healpix.nside2npix(nside)),
@@ -315,7 +315,7 @@ maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 
 ## test alm2cl
 nside = 4
-map = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+map = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 alm = Healpix.map2alm(map)
 testcl = [
     1.25640233e+01,
@@ -337,7 +337,7 @@ testcl = [
 ## test ringweights
 nside = 32
 compressed_weights = Healpix.readfullweights("healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
-m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 Healpix.applyfullweights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ref_alm = [
@@ -355,7 +355,7 @@ ref_alm = [
 @test isapprox(alm.alm[1:10], ref_alm)
 
 # test artifact 
-m = Healpix.Map{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 Healpix.applyfullweights!(m)
 alm = Healpix.map2alm(m; niter=0)
 @test isapprox(alm.alm[1:10], ref_alm)
@@ -364,7 +364,7 @@ alm = Healpix.map2alm(m; niter=0)
 ## test polarized map pixel weights
 nside = 32
 npix = Healpix.nside2npix(nside)
-m = Healpix.PolarizedMap{Float64, Healpix.RingOrder}(
+m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))
@@ -387,7 +387,7 @@ ref_b = [     0.        ,      0.        , -19883.86722869,
 @test e.alm[1:10] ≈ ref_e
 @test b.alm[1:10] ≈ ref_b
 
-m = Healpix.PolarizedMap{Float64, Healpix.RingOrder}(
+m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))

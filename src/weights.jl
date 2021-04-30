@@ -43,7 +43,7 @@ function readfullweights(filename::String)
 end
 
 """
-    applyfullweights!(m::Map{T, RingOrder}, [wgt::Vector{T}]) where T
+    applyfullweights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a map for more accurate SHTs. Note that 
 this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
@@ -52,11 +52,11 @@ pixel weights may do more harm than good.
 Pixel weights are automatically downloaded if not specified. 
 
 # Arguments:
-- `m::Map{T, RingOrder}`: map to modify
+- `m::HealpixMap{T, RingOrder}`: map to modify
 - `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, this routine will
     look for weights in artifacts.
 """
-function applyfullweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
+function applyfullweights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
     nside = m.resolution.nside
     @assert length(wgt) == n_fullweights(nside)
     pix, vpix = 0, 0
@@ -81,7 +81,7 @@ function applyfullweights!(m::Map{T,RingOrder}, wgt::Vector{T}) where T
 end
 
 
-function applyfullweights!(m::Map{T,RingOrder}) where T
+function applyfullweights!(m::HealpixMap{T,RingOrder}) where T
     nside = m.resolution.nside
     
     if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
@@ -101,21 +101,22 @@ end
 
 
 """
-    applyfullweights!(m::PolarizedMap{T, RingOrder}, [wgt::Vector{T}]) where T
+    applyfullweights!(m::PolarizedHealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a polarized map for more accurate SHTs.
 
 # Arguments:
-- `m::PolarizedMap{T, RingOrder}`: map to modify
+- `m::PolarizedHealpixMap{T, RingOrder}`: map to modify
 - `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, an artifact 
         will be sought.
 """
-function applyfullweights!(m::PolarizedMap{T,RingOrder}, wgt::Vector{T}) where T
+function applyfullweights!(m::PolarizedHealpixMap{T,RingOrder}, wgt::Vector{T}) where T
     applyfullweights!(m.i, wgt)
     applyfullweights!(m.q, wgt)
     applyfullweights!(m.u, wgt)
 end
-function applyfullweights!(m::PolarizedMap{T,RingOrder}) where T
+
+function applyfullweights!(m::PolarizedHealpixMap{T,RingOrder}) where T
     applyfullweights!(m.i)
     applyfullweights!(m.q)
     applyfullweights!(m.u)

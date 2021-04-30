@@ -13,7 +13,7 @@ using Plots
 gr()  # Use the GR backend
 
 nside = 8
-m = Map{Float64, RingOrder}(nside)
+m = HealpixMap{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
 plot(m)
 savefig(joinpath("images", "mollweide.png")) # hide
@@ -65,7 +65,7 @@ Consider this example:
 ```@example project
 using Healpix
 
-m = Map{Float64, RingOrder}(1)
+m = HealpixMap{Float64, RingOrder}(1)
 # Plot the map on a 20×20 bitmap using an
 # equirectangular projection
 image, mask, maskflag = project(equiprojinv, m, 20, 20)

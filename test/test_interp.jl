@@ -807,7 +807,7 @@ compare(Healpix.getringinfo(resol, 15), Healpix.RingInfo(15, 189, 4, 2.937112455
 ################################################################################
 # Map interpolation
 
-m = Healpix.Map{Float64,Healpix.RingOrder}(1)
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(1)
 m[:] = 0:11
 @test Healpix.interpolate(m, 0.0500000000, 0.0500000000) ≈ 1.4943231172
 @test Healpix.interpolate(m, 0.5735987756, 0.0500000000) ≈ 1.4348749392

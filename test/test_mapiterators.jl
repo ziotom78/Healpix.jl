@@ -1,4 +1,4 @@
-m = Healpix.Map{Int8,Healpix.RingOrder}(1)
+m = Healpix.HealpixMap{Int8,Healpix.RingOrder}(1)
 for i = 1:length(m)
     m[i] = i
 end
