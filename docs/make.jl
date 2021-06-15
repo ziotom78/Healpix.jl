@@ -18,5 +18,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/ziotom78/Healpix.jl.git",
-    versions = ["stable" => "v^", "v#.#", devurl => devurl],
+    versions = ["stable" => "v^", "v#.#", devurl => "master"],
 )
