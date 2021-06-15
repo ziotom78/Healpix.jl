@@ -51,15 +51,30 @@ maplength(HealpixMap{Float64, NestedOrder}(1))
 maplength(zeros(Float64, 12))
 ```
 
-Healpix.jl implements the [`PolarizedHealpixMap{T, O <: Order}`](@ref) type
-as well. This encodes three maps containing the I/Q/U signal: the
-intensity (I), and the Q and U Stokes parameters. The three maps must
-have the same resolution.
+Healpix.jl implements the [`PolarizedHealpixMap{T, O <: Order}`](@ref)
+type as well, which derives from
+[`AbstractPolarizedHealpixMap{T}`](@ref). This encodes three maps
+containing the I/Q/U signal: the intensity (I), and the Q and U Stokes
+parameters. The three maps must have the same resolution.
 
 ```@docs
 AbstractHealpixMap
 HealpixMap
+AbstractPolarizedHealpixMap
 PolarizedHealpixMap
+```
+
+## Unseen pixels
+
+You can use the constant [`UNSEEN`](@ref) to mark unseen pixels, i.e.,
+pixels that lack data associated with them, in a way that is
+compatible with other Healpix libraries.
+
+```@example
+m = HealpixMap{Float32, RingOrder}(32)
+
+# Mark all the pixels in the map as «unseen» (missing)
+m[:] .= UNSEEN
 ```
 
 ## Encoding the order

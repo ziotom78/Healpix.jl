@@ -112,7 +112,11 @@ orthographic2
 gnomonic
 ```
 
-They are based on *inverse* projection functions, i.e., functions that take a 
+They are based on *inverse* projection functions, i.e., functions that
+take a point in the plane ``[-1, 1] \times [-1, 1]`` and return a
+tuple `(Bool, Number, Number)`, where the first Boolean is `true` if
+the point falls within the projection, and the other two numbers are
+the latitude and longitude in radians.
 
 ```@docs
 mollweideprojinv
@@ -120,4 +124,11 @@ equiprojinv
 orthoinv
 ortho2inv
 gnominv
+```
+
+The direct project functions are available too.
+
+```@docs
+equiproj
+mollweideproj
 ```
