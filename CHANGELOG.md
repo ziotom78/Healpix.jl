@@ -14,7 +14,7 @@
 
 -   Implement `pixwin` ([PR#45](https://github.com/ziotom78/Healpix.jl/pull/45))
 
--   Implement `applyfullweights!` ([PR#41](https://github.com/ziotom78/Healpix.jl/pull/41), [#44](https://github.com/ziotom78/Healpix.jl/pull/44)), and [#52](https://github.com/ziotom78/Healpix.jl/pull/52)
+-   Implement `applyFullWeights!` ([PR#41](https://github.com/ziotom78/Healpix.jl/pull/41), [#44](https://github.com/ziotom78/Healpix.jl/pull/44)), and [#52](https://github.com/ziotom78/Healpix.jl/pull/52)
 
 -   Implement `ring2nest!` and `nest2ring!` ([PR#40](https://github.com/ziotom78/Healpix.jl/pull/40))
 

@@ -8,7 +8,7 @@ export pix2ringpos
 export Order, RingOrder, NestedOrder, AbstractHealpixMap, HealpixMap, PolarizedHealpixMap
 export ang2vec, vec2ang, ang2pix, pix2ang
 export readMapFromFITS, savePixelsToFITS, saveToFITS, conformables
-export ringWeightPath, readWeightRing
+export ringWeightPath, readWeightRing, readFullWeights, applyFullWeights!
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin

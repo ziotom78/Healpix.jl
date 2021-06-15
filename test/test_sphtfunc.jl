@@ -336,9 +336,9 @@ testcl = [
 
 ## test ringweights
 nside = 32
-compressed_weights = Healpix.readfullweights("healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
+compressed_weights = Healpix.readFullWeights("healpix_full_weights_nside_$(lpad(nside,4,'0')).fits")
 m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
-Healpix.applyfullweights!(m, compressed_weights)
+Healpix.applyFullWeights!(m, compressed_weights)
 alm = Healpix.map2alm(m; niter=0)
 ref_alm = [
     3.5449077018110313 + 0.0im,
@@ -356,7 +356,7 @@ ref_alm = [
 
 # test artifact 
 m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
-Healpix.applyfullweights!(m)
+Healpix.applyFullWeights!(m)
 alm = Healpix.map2alm(m; niter=0)
 @test isapprox(alm.alm[1:10], ref_alm)
 
@@ -368,7 +368,7 @@ m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))
-Healpix.applyfullweights!(m, compressed_weights)
+Healpix.applyFullWeights!(m, compressed_weights)
 t, e, b = Healpix.map2alm(m; niter=0)
 
 ref_t = [ 2.17816852e+04, -1.25746386e+04, -4.78882357e-05,
@@ -391,7 +391,7 @@ m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix), 
     1.0 .* collect(1:npix))
-Healpix.applyfullweights!(m)
+Healpix.applyFullWeights!(m)
 t, e, b = Healpix.map2alm(m; niter=0)
 @test t.alm[1:10] ≈ ref_t
 @test e.alm[1:10] ≈ ref_e
