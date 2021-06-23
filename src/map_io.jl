@@ -167,8 +167,8 @@ function saveToFITS(
             extname,
         )
         saveToFITS(map.i, f, 1)
-        saveToFITS(map.q, f, 2, write_keywords=false)
-        saveToFITS(map.u, f, 3, write_keywords=false)
+        savePixelsToFITS(map.q, f, 2, write_keywords=false)
+        savePixelsToFITS(map.u, f, 3, write_keywords=false)
     finally
         CFITSIO.fits_close_file(f)
     end
