@@ -130,10 +130,12 @@ manually write the `ORDERING` keyword in the HDU header by itself.
 savePixelsToFITS
 ```
 
-To load a map from a FITS file, you can use `readMapFromFITS`.
+To load a map from a FITS file, you can either use
+[`readMapFromFITS`](@ref) or [`readPolarizedMapFromFITS`](@ref).
 
 ```@docs
 readMapFromFITS
+readPolarizedMapFromFITS
 ```
 
 ## Testing for conformability
