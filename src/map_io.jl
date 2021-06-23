@@ -166,7 +166,7 @@ function saveToFITS(
             ],
             extname,
         )
-        savePixelsToFITS(map.i, f, 1)
+        saveToFITS(map.i, f, 1)
         savePixelsToFITS(map.q, f, 2, write_keywords=false)
         savePixelsToFITS(map.u, f, 3, write_keywords=false)
     finally
