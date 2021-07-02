@@ -1,4 +1,3 @@
-push!(LOAD_PATH, "../src/")
 using Documenter, Healpix
 
 makedocs(
@@ -16,4 +15,6 @@ makedocs(
     ],
 )
 
-deploydocs(repo = "github.com/ziotom78/Healpix.jl.git")
+deploydocs(
+    repo = "github.com/ziotom78/Healpix.jl.git",
+)

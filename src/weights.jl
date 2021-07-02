@@ -21,9 +21,15 @@ end
 n_fullweights(nside) = ((3 * nside + 1) * (nside + 1)) ÷ 4
 
 """
-    readfullweights(filename::String)
+    readFullWeights(filename::String)
 
-The easiest way to the pixel weight files is to run
+Read the set of pixel weights used to compute the generalized Fourier
+transform of a map.
+
+These weights are usually precomputed; you can download the ones
+available in the [Healpy
+repository](https://github.com/healpy/healpy-data) using the following
+command:
 
 ```
 git clone --depth 1 https://github.com/healpy/healpy-data
@@ -35,7 +41,7 @@ git clone --depth 1 https://github.com/healpy/healpy-data
 # Returns:
 - `Vector{Float64}`: contains the compressed pixel weights
 """
-function readfullweights(filename::String)
+function readFullWeights(filename::String)
     f = CFITSIO.fits_open_table(filename)
     result = Vector{Float64}(undef, CFITSIO.fits_get_num_rows(f))
     CFITSIO.fits_read_col(f, 1, 1, 1, result)
@@ -43,7 +49,7 @@ function readfullweights(filename::String)
 end
 
 """
-    applyfullweights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
+    applyFullWeights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a map for more accurate SHTs. Note that 
 this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
@@ -56,7 +62,7 @@ Pixel weights are automatically downloaded if not specified.
 - `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, this routine will
     look for weights in artifacts.
 """
-function applyfullweights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
+function applyFullWeights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
     nside = m.resolution.nside
     @assert length(wgt) == n_fullweights(nside)
     pix, vpix = 0, 0
@@ -81,7 +87,7 @@ function applyfullweights!(m::HealpixMap{T,RingOrder}, wgt::Vector{T}) where T
 end
 
 
-function applyfullweights!(m::HealpixMap{T,RingOrder}) where T
+function applyFullWeights!(m::HealpixMap{T,RingOrder}) where T
     nside = m.resolution.nside
     
     if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
@@ -95,13 +101,13 @@ function applyfullweights!(m::HealpixMap{T,RingOrder}) where T
     end
 
     nside_str = lpad(nside, 4, '0')
-    wgt = readfullweights(joinpath(path, "healpix_full_weights_nside_$(nside_str).fits"))
-    applyfullweights!(m, wgt)
+    wgt = readFullWeights(joinpath(path, "healpix_full_weights_nside_$(nside_str).fits"))
+    applyFullWeights!(m, wgt)
 end
 
 
 """
-    applyfullweights!(m::PolarizedHealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
+    applyFullWeights!(m::PolarizedHealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
 Apply a pixel weighting to a polarized map for more accurate SHTs.
 
@@ -110,14 +116,14 @@ Apply a pixel weighting to a polarized map for more accurate SHTs.
 - `wgt::Vector{T}` (optional): compressed pixel weights. If not specified, an artifact 
         will be sought.
 """
-function applyfullweights!(m::PolarizedHealpixMap{T,RingOrder}, wgt::Vector{T}) where T
-    applyfullweights!(m.i, wgt)
-    applyfullweights!(m.q, wgt)
-    applyfullweights!(m.u, wgt)
+function applyFullWeights!(m::PolarizedHealpixMap{T,RingOrder}, wgt::Vector{T}) where T
+    applyFullWeights!(m.i, wgt)
+    applyFullWeights!(m.q, wgt)
+    applyFullWeights!(m.u, wgt)
 end
 
-function applyfullweights!(m::PolarizedHealpixMap{T,RingOrder}) where T
-    applyfullweights!(m.i)
-    applyfullweights!(m.q)
-    applyfullweights!(m.u)
+function applyFullWeights!(m::PolarizedHealpixMap{T,RingOrder}) where T
+    applyFullWeights!(m.i)
+    applyFullWeights!(m.q)
+    applyFullWeights!(m.u)
 end

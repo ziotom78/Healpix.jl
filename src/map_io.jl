@@ -91,9 +91,9 @@ function readPolarizedMapFromFITS(
 ) where {T}
 
     if length(column) == 1
-        column_i = 1
-        column_q = 2
-        column_u = 3
+        column_i = column
+        column_q = column + 1
+        column_u = column + 2
     elseif length(column) == 3
         column_i, column_q, column_u = column
     else
@@ -227,8 +227,8 @@ function saveToFITS(
             extname,
         )
         saveToFITS(map.i, f, 1)
-        saveToFITS(map.q, f, 2, write_keywords=false)
-        saveToFITS(map.u, f, 3, write_keywords=false)
+        savePixelsToFITS(map.q, f, 2, write_keywords=false)
+        savePixelsToFITS(map.u, f, 3, write_keywords=false)
     finally
         CFITSIO.fits_close_file(f)
     end
