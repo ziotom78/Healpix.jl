@@ -49,9 +49,9 @@ function readPolarizedMapFromFITS(
 ) where {T <: Number}
 
     if length(column) == 1
-        column_i = 1
-        column_q = 2
-        column_u = 3
+        column_i = column
+        column_q = column + 1
+        column_u = column + 2
     elseif length(column) == 3
         column_i, column_q, column_u = column
     else

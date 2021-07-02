@@ -59,3 +59,10 @@ m_reconverted = Healpix.ring2nest(m_converted)
 
 m_converted = Healpix.ring2nest(m_ring)
 @test all(m_converted.pixels .≈ m_nest.pixels)
+
+# Columns (see issue #61, https://github.com/ziotom78/Healpix.jl/issues/61)
+
+map = Healpix.readPolarizedMapFromFITS("many_columns.fits", 2, Float32)
+@test m.i == [Float32(x) for x = 0:11]
+@test m.q == [Float32(x) for x = 12:23]
+@test m.u == [Float32(x) for x = 24:35]
