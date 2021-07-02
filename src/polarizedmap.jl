@@ -2,13 +2,13 @@
 # Implementation of the PolarizedHealpixMap type
 
 """
-    GenericPolarizedHealpixMap{T}
+    AbstractPolarizedHealpixMap{T}
 
 An abstract type representing an Healpix polarized map without a
 specified ordering. This can be used to implement multiple dispatch
 when you don't care about the ordering of a map.
 """
-abstract type GenericPolarizedHealpixMap{T} end
+abstract type AbstractPolarizedHealpixMap{T} end
 
 @doc raw"""
     mutable struct PolarizedHealpixMap{T, O <: Healpix.Order, AA <: AbstractArray{T, 1}}
@@ -27,7 +27,7 @@ You can create an instance of this type using the function
 - `PolarizedHealpixMap{T,O}(nside::Number)`
 
 """
-mutable struct PolarizedHealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: GenericPolarizedHealpixMap{T}
+mutable struct PolarizedHealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractPolarizedHealpixMap{T}
     i::HealpixMap{T,O,AA}
     q::HealpixMap{T,O,AA}
     u::HealpixMap{T,O,AA}

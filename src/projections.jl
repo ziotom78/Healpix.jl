@@ -4,14 +4,18 @@ export UNSEEN,
     lat2colat,
     colat2lat,
     project,
+    equiproj,
     equiprojinv,
+    mollweideproj,
     mollweideprojinv,
     orthoinv,
+    ortho2inv,
     equirectangular,
     mollweide,
     orthographic,
     orthographic2,
-    gnomonic
+    gnomonic,
+    gnominv
 
 import RecipesBase
 
@@ -226,7 +230,7 @@ function ortho2inv(x, y, ϕ1, λ0)
 end
 
 """
-    function gnomonicinv(x, y, ϕ1, λ0, fov_rad)
+    function gnominv(x, y, ϕ1, λ0, fov_rad)
 
 Gnomonic projection centered on (ϕ1, λ0), with a field of view
 equal to `fov_rad` (in radians).  Given a point (x, y) on the plane,

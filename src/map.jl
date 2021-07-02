@@ -76,7 +76,7 @@ Finally, the following examples show how to use `SharedArray`:
 mutable struct HealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixMap{T}
     pixels::AA
     resolution::Resolution
-
+    
     """
         HealpixMap{T, O <: Order}(nside) -> HealpixMap{T, O}
 

@@ -5,18 +5,34 @@
 [![Build Status](https://github.com/ziotom78/Healpix.jl/workflows/Unit%20tests/badge.svg)](https://github.com/ziotom78/Healpix.jl/actions?query=workflow%3A%22Unit+tests%22)
 [![Codecov](https://codecov.io/gh/ziotom78/Healpix.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ziotom78/Healpix.jl)
 
-A set of Julia functions that implement the Healpix spherical
-projection.
+Healpix.jl is a set of Julia functions that implement the
+[HEALPix](https://en.wikipedia.org/wiki/HEALPix) algorithms to
+pixelate a 2-sphere. The HEALPix pixelisation has a number of features
+that make it efficient for the following tasks:
 
-The purpose of this package is to implement a Julia-only library,
+-   All pixels have the same area (*equal-area pixelisation*);
+-   It is efficient to compute the Fourier decomposition in spherical
+    harmonics of a discretized signal on the sphere (using the `RING`
+    ordering scheme);
+-   It is efficient to find neighbour pixels (using the `NESTED`
+    ordering scheme);
+-   The base pixelisation divides the 2-sphere in 12 pixels, but each
+    of these pixels can be divided into four sub-pixels, and the
+    process can be continued; in principle, the size of a pixel can be
+    reduced to arbitrarily small values.
+
+HEALPix is widely used in cosmology to store maps of the CMB
+temperature and polarization anisotropies, which is the field studied
+by the authors of this package.
+
+
+# Supported platforms
+
+The purpose of Healpix.jl, is to implement a Julia-only library,
 instead of providing bindings to the original implementation of the
-[C/C++/Fortran Healpix library](http://healpix.jpl.nasa.gov/). This
-should make the package easier to port to those architecture which are
-not supported by the original implementation (e.g., Windows).
-
-Of course, this mean that implementing new features is generally not
-trivial, as one has to re-implement the algorithm instead of just
-figuring out how to bind some C/C++/Fortran function.
+[C/C++/Fortran/Python Healpix library](http://healpix.jpl.nasa.gov/).
+This means that, unlike the original implementation, Healpix.jl is
+**fully supported on Windows systems**, among with Linux and Mac OS X.
 
 
 ## Installation
@@ -27,6 +43,7 @@ From the Julia REPL, run
 import Pkg
 Pkg.add("Healpix.jl")
 ````
+
 
 ## Usage examples
 
@@ -39,9 +56,10 @@ Refer to the
 [documentation](https://ziotom78.github.io/Healpix.jl/stable) for more
 examples.
 
+
 ### Dealing with resolutions
 
-The resolution of a Healpix map is uniquely determined by the `NSIDE`
+The resolution of a HEALPix map is uniquely determined by the `NSIDE`
 parameter. Healpix.jl precalculates a number of values from `NSIDE` to
 save time during computations; such values are saved in a
 `Healpix.Resolution` object:
@@ -51,6 +69,7 @@ import Healpix
 res = Healpix.Resolution(256)
 print("The pixel index is $(Healpix.ang2pixNest(res, 0.1, 0.2))\n")
 `````
+
 
 ### Reading a map from a FITS file
 
@@ -63,6 +82,11 @@ import Healpix
 m = Healpix.readMapFromFITS("planck_70GHz.fits", 1, Float64)
 print("average: $(mean(m.pixels))\n")
 `````
+
+
+## How to contribute
+
+See the document [CONTRIBUTING.md](https://github.com/ziotom78/Healpix.jl/blob/master/CONTRIBUTING.md).
 
 ## License
 
