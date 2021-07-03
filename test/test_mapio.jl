@@ -75,7 +75,7 @@ for i in length(m_nothing)
     @test isnothing(m_nothing[i])
 end
 
-nothing_name = tempname(; cleanup=false)
+nothing_name = tempname()
 Healpix.saveToFITS(m_nothing, nothing_name)
 
 m_read = Healpix.readMapFromFITS(nothing_name, 1, Union{Float32, Nothing})
@@ -100,7 +100,7 @@ for i in length(m_nothing.i)
     @test isnothing(m_nothing.u[i])
 end
 
-nothing_name = tempname(; cleanup=false)
+nothing_name = tempname()
 Healpix.saveToFITS(m_nothing, nothing_name)
 
 m_read = Healpix.readPolarizedMapFromFITS(nothing_name, 1, Union{Float32, Nothing})
