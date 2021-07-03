@@ -78,9 +78,20 @@ mutable struct HealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixM
     resolution::Resolution
     
     """
+        HealpixMap{Union{T, Nothing}, O <: Order}(nside) -> HealpixMap{Union{T, Nothing}, O}
+
+    Create an empty map with the specified NSIDE. All the pixels in the map
+    are set to `nothing`.
+    """
+    function HealpixMap{Union{T, Nothing},O,AA}(nside::Number) where {T, O <: Order, AA <: AbstractArray{Union{T, Nothing},1}}
+        new(Union{T, Nothing}[nothing for i in 1:nside2npix(nside)], Resolution(nside))
+    end
+
+    """
         HealpixMap{T, O <: Order}(nside) -> HealpixMap{T, O}
 
-    Create an empty map with the specified NSIDE.
+    Create an empty map with the specified NSIDE. All the pixels in the map
+    are set to zero.
     """
     function HealpixMap{T,O,AA}(nside::Number) where {T,O<:Order,AA<:AbstractArray{T,1}}
         new(zeros(T, nside2npix(nside)), Resolution(nside))

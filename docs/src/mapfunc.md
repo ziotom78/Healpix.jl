@@ -64,18 +64,42 @@ AbstractPolarizedHealpixMap
 PolarizedHealpixMap
 ```
 
-## Unseen pixels
+## Unseen pixels and nothingness
 
 You can use the constant [`UNSEEN`](@ref) to mark unseen pixels, i.e.,
 pixels that lack data associated with them, in a way that is
 compatible with other Healpix libraries.
 
 ```@example
-m = HealpixMap{Float32, RingOrder}(32)
+m = Healpix.HealpixMap{Float32, RingOrder}(32)
 
 # Mark all the pixels in the map as «unseen» (missing)
 m[:] .= UNSEEN
 ```
+
+However, Julia provides a sounder way to denote missing pixels through
+the use of `Nothing` (type) and `nothing` (value). Whenever you pass a
+`Union{Nothing, T}` type to a Healpix map, the map will be initialized
+to `nothing`, and you can test if a pixel has been observer or not
+using Julia's function `isnothing`:
+
+```@example
+m = Healpix.HealpixMap{Union{Int32, Nothing}, Healpix.RingOrder}(1)
+m[:] = 1:12
+m[5] = nothing
+@assert isnothing(m[5])
+```
+
+Note that, unlike [`UNSEEN`](@ref), this mechanism permits to signal
+«missing» pixels even for maps that do not use floating-point numbers.
+
+!!! warning "Reading/saving maps with `nothing` values"
+
+    You can use [`saveToFITS`](@ref) or [`readMapFromFITS`](@ref) on
+    maps whose base type is `Union{Nothing, T}` only if `T` is a
+    floating-point number, because for the sake of compatibility with
+    other Healpix libraries the FITS file will use [`UNSEEN`](@ref) to
+    mark missing values.
 
 ## Encoding the order
 

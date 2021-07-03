@@ -1,16 +1,53 @@
 ################################################################################
 # Function to read and write maps from/to files
 
+function readpixelsfromfits(
+    f::CFITSIO.FITSFile,
+    nside,
+    column,
+    orderType::Union{Type{RingOrder}, Type{NestedOrder}},
+    t::Type{T},
+) where {T <: Number}
+    
+    result = HealpixMap{T, orderType}(
+        Array{T}(undef, nside2npix(nside)),
+    )
+
+    CFITSIO.fits_read_col(f, column, 1, 1, result.pixels)
+
+    result
+end
+
+function readpixelsfromfits(
+    f::CFITSIO.FITSFile,
+    nside,
+    column,
+    orderType::Union{Type{RingOrder}, Type{NestedOrder}},
+    t::Type{Union{Nothing, T}}
+) where {T <: Number}
+    
+    result = HealpixMap{Union{Nothing, T}, orderType}(nside)
+    tmparray = Vector{T}(undef, nside2npix(nside))
+
+    CFITSIO.fits_read_col(f, column, 1, 1, tmparray)
+
+    for i in 1:length(tmparray)
+        result.pixels[i] = (tmparray[i] ≈ UNSEEN) ? nothing : tmparray[i]
+    end
+    
+    result
+end
+
 """
-    readMapFromFITS{T <: Number}(f::CFITSIO.FITSFILE, column, t::Type{T})
-    readMapFromFITS{T <: Number}(fileName::String, column, t::Type{T})
+    readMapFromFITS{T}(f::CFITSIO.FITSFILE, column, t::Type{T})
+    readMapFromFITS{T}(fileName::String, column, t::Type{T})
 
 Read a Healpix map from the specified (1-base indexed) column in a
 FITS file. The values will be read as numbers of type T. If the code
 fails, CFITSIO will raise an exception. (Refer to the CFITSIO library
 for more information.)
 """
-function readMapFromFITS(f::CFITSIO.FITSFile, column, t::Type{T}) where {T <: Number}
+function readMapFromFITS(f::CFITSIO.FITSFile, column, t::Type{T}) where {T}
     value, comment = CFITSIO.fits_read_keyword(f, "NSIDE")
     nside = parse(Int, value)
 
@@ -24,17 +61,11 @@ function readMapFromFITS(f::CFITSIO.FITSFile, column, t::Type{T}) where {T <: Nu
         error("Wrong number of pixels in column $column of FITS file (NSIDE=$nside)")
     end
 
-    if ringOrdering
-        result = HealpixMap{T,RingOrder}(Array{T}(undef, nside2npix(nside)))
-    else
-        result = HealpixMap{T,NestedOrder}(Array{T}(undef, nside2npix(nside)))
-    end
-    CFITSIO.fits_read_col(f, column, 1, 1, result.pixels)
-
-    result
+    orderType = ringOrdering ? RingOrder : NestedOrder
+    readpixelsfromfits(f, nside, column, orderType, t)
 end
 
-function readMapFromFITS(fileName::AbstractString, column, t::Type{T}) where {T <: Number}
+function readMapFromFITS(fileName::AbstractString, column, t::Type{T}) where {T}
     f = CFITSIO.fits_open_table(fileName)
     result = readMapFromFITS(f, column, t)
     CFITSIO.fits_close_file(f)
@@ -42,11 +73,22 @@ function readMapFromFITS(fileName::AbstractString, column, t::Type{T}) where {T 
     result
 end
 
+"""
+    readPolarizedMapFromFITS{T}(fileName::AbstractString, column, t::Type{T})
+
+Read a polarized map (I/Q/U) from a FITS file and return a
+[`PolarizedHealpixMap`](@ref) object.
+
+The parameter `column` can be either a number or a 3-element tuple. In the
+first case, three consecutive columns will be read starting from `column`
+(1-based index), otherwise the three column indices will be used.
+
+"""
 function readPolarizedMapFromFITS(
     fileName::AbstractString,
     column,
     t::Type{T},
-) where {T <: Number}
+) where {T}
 
     if length(column) == 1
         column_i = column
@@ -70,6 +112,15 @@ end
 
 ################################################################################
 
+function writepixelstofits(f::CFITSIO.FITSFile, column, arr::Vector{T}) where {T <: Number}
+    CFITSIO.fits_write_col(f, column, 1, 1, arr)
+end
+
+function writepixelstofits(f::CFITSIO.FITSFile, column, arr::Vector{Union{T, Nothing}}) where {T <: Number}
+    converted = T[isnothing(x) ? T(UNSEEN) : x for x in arr]
+    CFITSIO.fits_write_col(f, column, 1, 1, converted)
+end
+
 """
     savePixelsToFITS(map::HealpixMap{T}, f::CFITSIO.FITSFile, column) where {T <: Number}
 
@@ -81,7 +132,7 @@ function savePixelsToFITS(
     f::CFITSIO.FITSFile,
     column;
     write_keywords=true,
-) where {T <: Number}
+) where {T}
 
     if write_keywords
         CFITSIO.fits_update_key(f, "PIXTYPE", "HEALPIX", "HEALPIX pixelisation")
@@ -96,35 +147,44 @@ function savePixelsToFITS(
         CFITSIO.fits_update_key(f, "INDXSCHM", "IMPLICIT", "Indexing: IMPLICIT or EXPLICIT")
     end
 
-    CFITSIO.fits_write_col(f, column, 1, 1, map.pixels)
-
+    writepixelstofits(f, column, map.pixels)
 end
 
 """
-    saveToFITS{T <: Number, O <: Order}(map::HealpixMap{T, O},
-                                        f::CFITSIO.FITSFile,
-                                        column)
-    saveToFITS{T <: Number, O <: Order}(map::HealpixMap{T, O},
-                                        fileName::String,
-                                        typechar="D",
-                                        unit="",
-                                        extname="MAP")
+    saveToFITS{T, O <: Order}(map::HealpixMap{T, O},
+                              f::CFITSIO.FITSFile,
+                              column)
+    saveToFITS{T, O <: Order}(map::HealpixMap{T, O},
+                              fileName::String,
+                              typechar="D",
+                              unit="",
+                              extname="MAP")
 
 Save a Healpix map in the specified (1-based index) column in a FITS
 file. If the code fails, CFITSIO will raise an exception. (Refer to the
 CFITSIO library for more information.)
 """
-function saveToFITS(map::HealpixMap{T,RingOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
+function saveToFITS(
+    map::HealpixMap{T,RingOrder},
+    f::CFITSIO.FITSFile,
+    column;
+    write_keywords=true,
+) where {T}
 
     CFITSIO.fits_update_key(f, "ORDERING", "RING")
-    savePixelsToFITS(map, f, column)
+    savePixelsToFITS(map, f, column, write_keywords=write_keywords)
 
 end
 
-function saveToFITS(map::HealpixMap{T,NestedOrder}, f::CFITSIO.FITSFile, column) where {T <: Number}
+function saveToFITS(
+    map::HealpixMap{T,NestedOrder},
+    f::CFITSIO.FITSFile,
+    column;
+    write_keywords=true,
+) where {T}
 
     CFITSIO.fits_update_key(f, "ORDERING", "NEST")
-    savePixelsToFITS(map, f, column)
+    savePixelsToFITS(map, f, column, write_keywords=write_keywords)
 
 end
 
@@ -134,7 +194,7 @@ function saveToFITS(
     typechar="D",
     unit="",
     extname="MAP",
-) where {T <: Number,O <: Order}
+) where {T, O <: Order}
 
     f = CFITSIO.fits_create_file(fileName)
     try
@@ -152,7 +212,7 @@ function saveToFITS(
     typechar="D",
     unit="",
     extname="MAP",
-) where {T <: Number,O <: Order}
+) where {T, O <: Order}
 
     f = CFITSIO.fits_create_file(fileName)
     try
