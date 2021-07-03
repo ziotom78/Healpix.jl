@@ -6,6 +6,8 @@
     
 -   **Breaking change**: Generalize the definition of `HealpixMap` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
 
+-   Add support for maps whose base type is `Union{Nothing, T}` [PR#63]8https://github.com/ziotom78/Healpix.jl/pull/63)
+
 -   Various documentation improvements [#55](https://github.com/ziotom78/Healpix.jl/pull/55)
 
 -   Fix issue [#61](https://github.com/ziotom78/Healpix.jl/pull/61)
