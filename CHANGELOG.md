@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 3.0.0
+
 -   **Breaking change**: rename `Map` → `HealpixMap`, `PolarizedMap` → `HealpixPolarizedMap`, `GenericMap` → `AbstractHealpixMap` ([PR#53](https://github.com/ziotom78/Healpix.jl/pull/53))
 
 -   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
