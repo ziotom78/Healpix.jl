@@ -4,6 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://ziotom78.github.io/Healpix.jl/dev)
 [![Build Status](https://github.com/ziotom78/Healpix.jl/workflows/Unit%20tests/badge.svg)](https://github.com/ziotom78/Healpix.jl/actions?query=workflow%3A%22Unit+tests%22)
 [![Codecov](https://codecov.io/gh/ziotom78/Healpix.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/ziotom78/Healpix.jl)
+<a href="https://ascl.net/2109.028"><img src="https://img.shields.io/badge/ascl-2109.028-blue.svg?colorB=262255" alt="ascl:2109.028" /></a>
 
 Healpix.jl is a set of Julia functions that implement the
 [HEALPix](https://en.wikipedia.org/wiki/HEALPix) algorithms to
@@ -87,6 +88,31 @@ print("average: $(mean(m.pixels))\n")
 ## How to contribute
 
 See the document [CONTRIBUTING.md](https://github.com/ziotom78/Healpix.jl/blob/master/CONTRIBUTING.md).
+
+## Citing Healpix.jl
+
+The library has been registered in [ASCL](http://ascl.net/code/v/3025) and can be referenced through the code `ascl:2109.028`. Here is a BibTeX entry ready to be used:
+
+```
+@MISC{2021ascl.soft09028T,
+  author = {{Tomasi}, M. and {Li}, Z.},
+  title = "{Healpix.jl: Julia-only port of the HEALPix library}",
+  keywords = {Software},
+  howpublished = {Astrophysics Source Code Library},
+  year = 2021,
+  month = sep,
+  archivePrefix = "ascl",
+  eprint = {2109.28},
+  adsurl = {https://ui.adsabs.harvard.edu/abs/2021ascl.soft09028T},
+  version = {3.0}
+}
+```
+
+If you do not use BibTeX, please cite this library as follows (be sure to change the version number as appropriate):
+
+> Tomasi M., Li Z. 2021 Healpix.jl: Julia-only port of the HEALPix library, 0.30, Astrophysics Source Code Library ascl:2109.028
+
+See the [ASCL guidelines](http://ascl.net/home/getwp/351) for more information.
 
 ## License
 
