@@ -1,5 +1,7 @@
 # HEAD
 
+-   Bump dependency on Libsharp.jl to fix issue [#67](https://github.com/ziotom78/Healpix.jl/issues/67)
+
 # Version 3.0.0
 
 -   **Breaking change**: rename `Map` → `HealpixMap`, `PolarizedMap` → `HealpixPolarizedMap`, `GenericMap` → `AbstractHealpixMap` ([PR#53](https://github.com/ziotom78/Healpix.jl/pull/53))
