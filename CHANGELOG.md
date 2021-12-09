@@ -1,5 +1,9 @@
 # HEAD
 
+# Version 3.0.1
+
+-   Fix the documentation and export `readPolarizedMapFromFITS` [#69](https://github.com/ziotom78/Healpix.jl/issues/67)
+
 -   Bump dependency on Libsharp.jl to fix issue [#67](https://github.com/ziotom78/Healpix.jl/issues/67)
 
 # Version 3.0.0
