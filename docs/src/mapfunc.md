@@ -71,7 +71,8 @@ pixels that lack data associated with them, in a way that is
 compatible with other Healpix libraries.
 
 ```@example
-m = Healpix.HealpixMap{Float32, RingOrder}(32)
+using Healpix  # hide
+m = HealpixMap{Float32, RingOrder}(32)
 
 # Mark all the pixels in the map as «unseen» (missing)
 m[:] .= UNSEEN
@@ -84,7 +85,9 @@ to `nothing`, and you can test if a pixel has been observer or not
 using Julia's function `isnothing`:
 
 ```@example
-m = Healpix.HealpixMap{Union{Int32, Nothing}, Healpix.RingOrder}(1)
+using Healpix  # hide
+m = HealpixMap{Union{Int32, Nothing}, RingOrder}(1)
+
 m[:] = 1:12
 m[5] = nothing
 @assert isnothing(m[5])
