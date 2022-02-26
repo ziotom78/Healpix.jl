@@ -4,7 +4,7 @@
 Maximum allowed value for the NSIDE resolution parameter.
 
 """
-const NSIDE_MAX = 2^(floor(Int, 0.5 * ((sizeof(Int) * 8 - 1) - log2(12))))
+const NSIDE_MAX = 2^floor(Int, 0.5 * log2(typemax(Int32) / 12))
 
 ########################################################################
 
