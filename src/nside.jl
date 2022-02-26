@@ -1,10 +1,10 @@
 @doc raw"""
     NSIDE_MAX
 
-Maximum allowed value for the NSIDE resolution parameter.
+Maximum allowed value for the NSIDE resolution parameter, depending on system Int size
 
 """
-const NSIDE_MAX = 2^floor(Int, 0.5 * log2(typemax(Int32) / 12))
+const NSIDE_MAX = 2^floor(Int, 0.5 * log2(typemax(Int) / 12))
 
 ########################################################################
 
