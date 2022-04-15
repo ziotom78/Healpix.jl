@@ -3,58 +3,57 @@
 
 ################################################################################
 
-function calcNestPosForEquator(z, z_abs, scaled_phi)
-    jp = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi - z * 0.75))
-    jm = floor(Integer, NSIDE_MAX * (0.5 + scaled_phi + z * 0.75))
+function calcNestPosForEquator(resol, z, z_abs, scaled_phi, sintheta, havesintheta)
+    temp1 = resol.nside * (0.5 + scaled_phi)
+    temp2 = resol.nside * (z * 0.75)
+    jp = floor(Int, temp1 - temp2)
+    jm = floor(Int, temp1 + temp2)
 
-    idfp = div(jp, NSIDE_MAX) # in {0,4}
-    idfm = div(jm, NSIDE_MAX)
+    ifp = jp >> resol.order
+    ifm = jm >> resol.order
 
     local face_num
-    if idfp == idfm
-        face_num = (idfp % 4) + 4
-    elseif idfp < idfm
-        face_num = (idfp % 4)
+    face_num = if ifp == ifm
+        ifp | 4
+    elseif ifp < ifm
+        ifp
     else
-        face_num = (idfm % 4) + 8
+        ifm + 8
     end
 
-    ix = mod(jm, NSIDE_MAX)
-    iy = NSIDE_MAX - mod(jp, NSIDE_MAX) - 1
+    ix = mod(jm, resol.nside)
+    iy = resol.nside - mod(jp, resol.nside) - 1
 
-    (ix, iy, face_num)
+    xyf2pixNest(resol, ix, iy, face_num)
 end
 
 ################################################################################
 
-function calcNestPosForPole(z, z_abs, scaled_phi)
-    ntt = floor(Integer, scaled_phi)
+function calcNestPosForPole(resol, z, z_abs, scaled_phi, sintheta, havesintheta)
+    ntt = floor(Int, scaled_phi)
     if ntt >= 4
         ntt = 3
     end
 
     tp = scaled_phi - ntt
-    tmp = sqrt(3 * (1 - z_abs)) # in ]0,1]
-
-    jp = floor(Integer, NSIDE_MAX * tp * tmp)
-    jm = floor(Integer, NSIDE_MAX * (1 - tp) * tmp)
-
-    # Clip jp and jm
-    jp = jp < NSIDE_MAX - 1 ? jp : NSIDE_MAX - 1
-    jm = jm < NSIDE_MAX - 1 ? jm : NSIDE_MAX - 1
-
-    local ix, iy, face_num
-    if z >= 0
-        face_num = ntt # in {0,3}
-        ix = NSIDE_MAX - jm - 1
-        iy = NSIDE_MAX - jp - 1
+    tmp = if (z_abs < 0.99) || (! havesintheta)
+        resol.nside * sqrt(3 * (1 - z_abs)) # in ]0,1]
     else
-        face_num = ntt + 8 # in {8,11} */
-        ix = jp
-        iy = jm
+        resol.nside * sintheta / sqrt((1 + z_abs) / 3)
     end
 
-    (ix, iy, face_num)
+    jp = floor(Int, tp * tmp)
+    jm = floor(Int, (1 - tp) * tmp)
+
+    # Clip jp and jm
+    jp = jp < resol.nside - 1 ? jp : resol.nside - 1
+    jm = jm < resol.nside - 1 ? jm : resol.nside - 1
+
+    if z >= 0
+        xyf2pixNest(resol, resol.nside - jm - 1, resol.nside - jp - 1, ntt)
+    else
+        xyf2pixNest(resol, jp, jm, ntt + 8)
+    end
 end
 
 ################################################################################
@@ -76,22 +75,17 @@ function ang2pixNest(resol::Resolution, theta, phi)
     z_abs = abs(z)
     scaled_phi = mod2pi(phi) / (π / 2) # in [0,4[
 
-    if z_abs ≤ 2 // 3
-        (ix, iy, face_num) = calcNestPosForEquator(z, z_abs, scaled_phi)
+    (sintheta, havesintheta) = if (theta < 0.01) || (theta > 3.14159 - 0.01)
+        (sin(theta), true)
     else
-        (ix, iy, face_num) = calcNestPosForPole(z, z_abs, scaled_phi)
+        (0.0, false)
     end
 
-    (ix_hi, ix_low) = divrem(ix, 128)
-    (iy_hi, iy_low) = divrem(iy, 128)
-
-    ipf =
-        ((x2pix[ix_hi+1] + y2pix[iy_hi+1]) * (128^2) + (x2pix[ix_low+1] + y2pix[iy_low+1]))
-    ipf = floor(Integer, ipf / ((NSIDE_MAX / nside)^2))
-
-    # Add 1 to have a 1-based index
-    ipf + face_num * nside * nside + 1
-
+    if 3z_abs ≤ 2
+        calcNestPosForEquator(resol, z, z_abs, scaled_phi, sintheta, havesintheta)
+    else
+        calcNestPosForPole(resol, z, z_abs, scaled_phi, sintheta, havesintheta)
+    end
 end
 
 ################################################################################
