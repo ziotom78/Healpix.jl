@@ -3,7 +3,7 @@
 import Healpix
 using Test
 
-const eps = 1e-10
+const eps = 1e-12
 
 @testset "Math functions" begin
     include("test_math.jl")
