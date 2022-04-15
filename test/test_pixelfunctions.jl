@@ -95,7 +95,8 @@ theta, phi = Healpix.vec2ang(2.922856075911509, 2.304551510739625, 0.87468748910
 # ang2pixNest
 
 @test_throws DomainError(0) Healpix.Resolution(0)
-@test_throws DomainError(100000000) Healpix.Resolution(100000000)
+@test_throws DomainError(2 * Healpix.NSIDE_MAX) Healpix.Resolution(2 * Healpix.NSIDE_MAX)
+
 lowresol = Healpix.Resolution(2)
 resol = Healpix.Resolution(256)
 
