@@ -92,6 +92,11 @@ theta, phi = Healpix.vec2ang(2.922856075911509, 2.304551510739625, 0.87468748910
 @test theta ≈ 1.339986032596264 atol = eps
 @test phi ≈ 0.667663882320130 atol = eps
 
+# Additional test near the poles
+theta, phi = Healpix.vec2ang(2.2360679458796287e-05, 2.2360679458796287e-05, 0.999999999)
+@test theta ≈ 3.1622776175589035e-05
+@test phi ≈ 0.7853981633974483
+
 # ang2pixNest
 
 @test_throws DomainError(0) Healpix.Resolution(0)
