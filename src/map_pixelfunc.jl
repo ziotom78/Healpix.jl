@@ -329,7 +329,7 @@ function udgrade(map_in::HealpixMap{T,O,AA}, nside_out;
 end
 # just convert to nest and udgrade if we get a ring
 function udgrade(map_in::HealpixMap{T,O,AA}, nside_out; 
-                 threshold=abs(1e-6UNSEEN), pess=true) where {T,O<:RingOrder,AA}
+                 threshold=abs(1e-6UNSEEN), pess=false) where {T,O<:RingOrder,AA}
     map_nest = ring2nest(map_in)
     map_out = udgrade(map_nest, nside_out; threshold=threshold, pess=pess)
     return nest2ring(map_out)
