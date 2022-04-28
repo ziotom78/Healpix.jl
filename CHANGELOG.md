@@ -1,5 +1,7 @@
 # HEAD
 
+-   Use a more accurate algorithm for `vec2ang` [#76][https://github.com/ziotom78/Healpix.jl/pull/76]
+
 -   Make `NSIDE_MAX` dependent on the architecture (32/64 bit) of the system [#75](https://github.com/ziotom78/Healpix.jl/pull/75)
 
 # Version 3.0.1

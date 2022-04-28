@@ -239,14 +239,13 @@ and the longitude `phi` (in radians) of the direction in the sky the vector is
 pointing at.
 """
 function vec2ang(x, y, z)
-    norm = sqrt(x^2 + y^2 + z^2)
-    theta = acos(z / norm)
+    theta = atan(sqrt(x^2 + y^2), z)
     phi = atan(y, x)
     if phi < 0
         phi += 2π
     end
 
-    return (theta, phi)
+    (theta, phi)
 end
 
 ################################################################################
