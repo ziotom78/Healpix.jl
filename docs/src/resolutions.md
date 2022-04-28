@@ -38,7 +38,10 @@ end
 ```
 
 There is an upper limit to the value of the `NSIDE` parameter, which
-is encoded in the constant [`NSIDE_MAX`](@ref).
+is encoded in the constant [`NSIDE_MAX`](@ref). The value is determined
+at runtime according to the size of the `Int` type; on 32-bit machines
+it is 8192 (``2^{13}``), while on 64-bit machines it is
+536870912 (``2^{29}``).
 
 ```@docs
 Resolution
