@@ -37,6 +37,12 @@ for poweroftwo in [0, 1, 2, 3, 4, 5]
 end
 ```
 
+There is an upper limit to the value of the `NSIDE` parameter, which
+is encoded in the constant [`NSIDE_MAX`](@ref). The value is determined
+at runtime according to the size of the `Int` type; on 32-bit machines
+it is 8192 (``2^{13}``), while on 64-bit machines it is
+536870912 (``2^{29}``).
+
 ```@docs
 Resolution
 Resolution(nside::Integer)
@@ -45,4 +51,5 @@ nside2npix(nside::Integer)
 npix2nside(npix::Integer)
 nside2pixarea(nside::Integer)
 nside2resol(nside::Integer)
+NSIDE_MAX
 ```

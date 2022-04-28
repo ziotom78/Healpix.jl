@@ -4,7 +4,7 @@
 Maximum allowed value for the NSIDE resolution parameter.
 
 """
-const NSIDE_MAX = 8192
+const NSIDE_MAX = 2^floor(Int, 0.5 * log2(typemax(Int) / 12))
 
 ########################################################################
 
@@ -28,7 +28,8 @@ function nside2npix(nside::Integer)
     (nside > 0) || throw(DomainError(nside, "`NSIDE` is not a positive number"))
 
     nsidelog2 = round(Int, log2(nside))
-    (2^nsidelog2 == nside) || throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
+    (2^nsidelog2 == nside) ||
+        throw(DomainError(nside, "`NSIDE` is not an integer power of two"))
 
     12(nside^2)
 end

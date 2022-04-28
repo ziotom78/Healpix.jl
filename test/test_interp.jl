@@ -8,21 +8,33 @@ function compare(r1::Healpix.RingInfo, r2::Healpix.RingInfo)
     @test r1.shifted == r2.shifted
 end
 
-compare(Healpix.getringinfo(resol,  1), Healpix.RingInfo(1,    1,  4, 2.044801990e-01, true))
-compare(Healpix.getringinfo(resol,  2), Healpix.RingInfo(2,    5,  8, 4.111378623e-01, true))
-compare(Healpix.getringinfo(resol,  3), Healpix.RingInfo(3,   13, 12, 6.223684886e-01, true))
-compare(Healpix.getringinfo(resol,  4), Healpix.RingInfo(4,   25, 16, 8.410686706e-01, true))
-compare(Healpix.getringinfo(resol,  5), Healpix.RingInfo(5,   41, 16, 1.047197551e+00, false))
-compare(Healpix.getringinfo(resol,  6), Healpix.RingInfo(6,   57, 16, 1.230959417e+00, true))
-compare(Healpix.getringinfo(resol,  7), Healpix.RingInfo(7,   73, 16, 1.403348248e+00, false))
-compare(Healpix.getringinfo(resol,  8), Healpix.RingInfo(8,   89, 16, 1.570796327e+00, true))
-compare(Healpix.getringinfo(resol,  9), Healpix.RingInfo(9,  105, 16, 1.738244406e+00, false))
-compare(Healpix.getringinfo(resol, 10), Healpix.RingInfo(10, 121, 16, 1.910633236e+00, true))
-compare(Healpix.getringinfo(resol, 11), Healpix.RingInfo(11, 137, 16, 2.094395102e+00, false))
-compare(Healpix.getringinfo(resol, 12), Healpix.RingInfo(12, 153, 16, 2.300523983e+00, true))
-compare(Healpix.getringinfo(resol, 13), Healpix.RingInfo(13, 169, 12, 2.519224165e+00, true))
-compare(Healpix.getringinfo(resol, 14), Healpix.RingInfo(14, 181,  8, 2.730454791e+00, true))
-compare(Healpix.getringinfo(resol, 15), Healpix.RingInfo(15, 189,  4, 2.937112455e+00, true))
+compare(Healpix.getringinfo(resol, 1), Healpix.RingInfo(1, 1, 4, 2.044801990e-01, true))
+compare(Healpix.getringinfo(resol, 2), Healpix.RingInfo(2, 5, 8, 4.111378623e-01, true))
+compare(Healpix.getringinfo(resol, 3), Healpix.RingInfo(3, 13, 12, 6.223684886e-01, true))
+compare(Healpix.getringinfo(resol, 4), Healpix.RingInfo(4, 25, 16, 8.410686706e-01, true))
+compare(Healpix.getringinfo(resol, 5), Healpix.RingInfo(5, 41, 16, 1.047197551e+00, false))
+compare(Healpix.getringinfo(resol, 6), Healpix.RingInfo(6, 57, 16, 1.230959417e+00, true))
+compare(Healpix.getringinfo(resol, 7), Healpix.RingInfo(7, 73, 16, 1.403348248e+00, false))
+compare(Healpix.getringinfo(resol, 8), Healpix.RingInfo(8, 89, 16, 1.570796327e+00, true))
+compare(Healpix.getringinfo(resol, 9), Healpix.RingInfo(9, 105, 16, 1.738244406e+00, false))
+compare(
+    Healpix.getringinfo(resol, 10),
+    Healpix.RingInfo(10, 121, 16, 1.910633236e+00, true),
+)
+compare(
+    Healpix.getringinfo(resol, 11),
+    Healpix.RingInfo(11, 137, 16, 2.094395102e+00, false),
+)
+compare(
+    Healpix.getringinfo(resol, 12),
+    Healpix.RingInfo(12, 153, 16, 2.300523983e+00, true),
+)
+compare(
+    Healpix.getringinfo(resol, 13),
+    Healpix.RingInfo(13, 169, 12, 2.519224165e+00, true),
+)
+compare(Healpix.getringinfo(resol, 14), Healpix.RingInfo(14, 181, 8, 2.730454791e+00, true))
+compare(Healpix.getringinfo(resol, 15), Healpix.RingInfo(15, 189, 4, 2.937112455e+00, true))
 
 (idx, w) = Healpix.getinterpolRing(resol, 2.149214549e-01, 7.772156558e-01)
 @test idx == [3, 0, 4, 5] .+ 1
@@ -792,3 +804,68 @@ compare(Healpix.getringinfo(resol, 15), Healpix.RingInfo(15, 189,  4, 2.93711245
 @test idx == [190, 191, 188, 189] .+ 1
 @test w ≈ [1.714477856e-02, 9.524532703e-01, 1.520097559e-02, 1.520097559e-02]
 
+################################################################################
+# Map interpolation
+
+m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(1)
+m[:] = 0:11
+@test Healpix.interpolate(m, 0.0500000000, 0.0500000000) ≈ 1.4943231172
+@test Healpix.interpolate(m, 0.5735987756, 0.0500000000) ≈ 1.4348749392
+@test Healpix.interpolate(m, 1.0971975512, 0.0500000000) ≈ 2.3266778437
+@test Healpix.interpolate(m, 1.6207963268, 0.0500000000) ≈ 4.3999598378
+@test Healpix.interpolate(m, 2.1443951024, 0.0500000000) ≈ 8.2549961313
+@test Healpix.interpolate(m, 2.6679938780, 0.0500000000) ≈ 9.4462287049
+@test Healpix.interpolate(m, 0.0500000000, 0.6783185307) ≈ 1.4229853036
+@test Healpix.interpolate(m, 0.5735987756, 0.6783185307) ≈ 0.6164892891
+@test Healpix.interpolate(m, 1.0971975512, 0.6783185307) ≈ 1.6882657259
+@test Healpix.interpolate(m, 1.6207963268, 0.6783185307) ≈ 4.6903298966
+@test Healpix.interpolate(m, 2.1443951024, 0.6783185307) ≈ 7.3973241311
+@test Healpix.interpolate(m, 2.6679938780, 0.6783185307) ≈ 8.7705186819
+@test Healpix.interpolate(m, 0.0500000000, 1.3066370614) ≈ 1.4305544807
+@test Healpix.interpolate(m, 0.5735987756, 1.3066370614) ≈ 0.7033227035
+@test Healpix.interpolate(m, 1.0971975512, 1.3066370614) ≈ 1.9112969072
+@test Healpix.interpolate(m, 1.6207963268, 1.3066370614) ≈ 5.0716464849
+@test Healpix.interpolate(m, 2.1443951024, 1.3066370614) ≈ 7.5829884889
+@test Healpix.interpolate(m, 2.6679938780, 1.3066370614) ≈ 8.8422137421
+@test Healpix.interpolate(m, 0.0500000000, 1.9349555922) ≈ 1.4543337519
+@test Healpix.interpolate(m, 0.5735987756, 1.9349555922) ≈ 0.9761179202
+@test Healpix.interpolate(m, 1.0971975512, 1.9349555922) ≈ 2.3112969072
+@test Healpix.interpolate(m, 1.6207963268, 1.9349555922) ≈ 5.4716464849
+@test Healpix.interpolate(m, 2.1443951024, 1.9349555922) ≈ 7.9829884889
+@test Healpix.interpolate(m, 2.6679938780, 1.9349555922) ≈ 9.0674504164
+@test Healpix.interpolate(m, 0.0500000000, 2.5632741229) ≈ 1.4781130231
+@test Healpix.interpolate(m, 0.5735987756, 2.5632741229) ≈ 1.2489131369
+@test Healpix.interpolate(m, 1.0971975512, 2.5632741229) ≈ 2.7112969072
+@test Healpix.interpolate(m, 1.6207963268, 2.5632741229) ≈ 5.8716464849
+@test Healpix.interpolate(m, 2.1443951024, 2.5632741229) ≈ 8.3829884889
+@test Healpix.interpolate(m, 2.6679938780, 2.5632741229) ≈ 9.2926870907
+@test Healpix.interpolate(m, 0.0500000000, 3.1915926536) ≈ 1.5018922943
+@test Healpix.interpolate(m, 0.5735987756, 3.1915926536) ≈ 1.5217083536
+@test Healpix.interpolate(m, 1.0971975512, 3.1915926536) ≈ 3.1112969072
+@test Healpix.interpolate(m, 1.6207963268, 3.1915926536) ≈ 6.2716464849
+@test Healpix.interpolate(m, 2.1443951024, 3.1915926536) ≈ 8.7829884889
+@test Healpix.interpolate(m, 2.6679938780, 3.1915926536) ≈ 9.5179237650
+@test Healpix.interpolate(m, 0.0500000000, 3.8199111843) ≈ 1.5256715655
+@test Healpix.interpolate(m, 0.5735987756, 3.8199111843) ≈ 1.7945035703
+@test Healpix.interpolate(m, 1.0971975512, 3.8199111843) ≈ 3.5112969072
+@test Healpix.interpolate(m, 1.6207963268, 3.8199111843) ≈ 6.6716464849
+@test Healpix.interpolate(m, 2.1443951024, 3.8199111843) ≈ 9.1829884889
+@test Healpix.interpolate(m, 2.6679938780, 3.8199111843) ≈ 9.7431604394
+@test Healpix.interpolate(m, 0.0500000000, 4.4482297150) ≈ 1.5494508366
+@test Healpix.interpolate(m, 0.5735987756, 4.4482297150) ≈ 2.0672987870
+@test Healpix.interpolate(m, 1.0971975512, 4.4482297150) ≈ 3.9112969072
+@test Healpix.interpolate(m, 1.6207963268, 4.4482297150) ≈ 7.0716464849
+@test Healpix.interpolate(m, 2.1443951024, 4.4482297150) ≈ 9.5829884889
+@test Healpix.interpolate(m, 2.6679938780, 4.4482297150) ≈ 9.9683971137
+@test Healpix.interpolate(m, 0.0500000000, 5.0765482457) ≈ 1.5732301078
+@test Healpix.interpolate(m, 0.5735987756, 5.0765482457) ≈ 2.3400940037
+@test Healpix.interpolate(m, 1.0971975512, 5.0765482457) ≈ 3.9858132224
+@test Healpix.interpolate(m, 1.6207963268, 5.0765482457) ≈ 6.6078615745
+@test Healpix.interpolate(m, 2.1443951024, 5.0765482457) ≈ 9.7845828923
+@test Healpix.interpolate(m, 2.6679938780, 5.0765482457) ≈ 10.1936337880
+@test Healpix.interpolate(m, 0.0500000000, 5.7048667765) ≈ 1.5656609307
+@test Healpix.interpolate(m, 0.5735987756, 5.7048667765) ≈ 2.2532605893
+@test Healpix.interpolate(m, 1.0971975512, 5.7048667765) ≈ 3.4819881000
+@test Healpix.interpolate(m, 1.6207963268, 5.7048667765) ≈ 5.4813599568
+@test Healpix.interpolate(m, 2.1443951024, 5.7048667765) ≈ 9.4277545346
+@test Healpix.interpolate(m, 2.6679938780, 5.7048667765) ≈ 10.1219387279

@@ -10,10 +10,10 @@ and PyPlot.
 ```@example plotting
 using Healpix
 using Plots
-gr()  # Use the GR backend
+pyplot()  # hide
 
 nside = 8
-m = Map{Float64, RingOrder}(nside)
+m = HealpixMap{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
 plot(m)
 savefig(joinpath("images", "mollweide.png")) # hide
@@ -65,7 +65,7 @@ Consider this example:
 ```@example project
 using Healpix
 
-m = Map{Float64, RingOrder}(1)
+m = HealpixMap{Float64, RingOrder}(1)
 # Plot the map on a 20×20 bitmap using an
 # equirectangular projection
 image, mask, maskflag = project(equiprojinv, m, 20, 20)
@@ -112,7 +112,11 @@ orthographic2
 gnomonic
 ```
 
-They are based on *inverse* projection functions, i.e., functions that take a 
+They are based on *inverse* projection functions, i.e., functions that
+take a point in the plane ``[-1, 1] \times [-1, 1]`` and return a
+tuple `(Bool, Number, Number)`, where the first Boolean is `true` if
+the point falls within the projection, and the other two numbers are
+the latitude and longitude in radians.
 
 ```@docs
 mollweideprojinv
@@ -120,4 +124,11 @@ equiprojinv
 orthoinv
 ortho2inv
 gnominv
+```
+
+The direct project functions are available too.
+
+```@docs
+equiproj
+mollweideproj
 ```

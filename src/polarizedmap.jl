@@ -1,17 +1,17 @@
 ################################################################################
-# Implementation of the PolarizedMap type
+# Implementation of the PolarizedHealpixMap type
 
 """
-    GenericPolarizedMap{T}
+    AbstractPolarizedHealpixMap{T}
 
 An abstract type representing an Healpix polarized map without a
 specified ordering. This can be used to implement multiple dispatch
 when you don't care about the ordering of a map.
 """
-abstract type GenericPolarizedMap{T} end
+abstract type AbstractPolarizedHealpixMap{T} end
 
 @doc raw"""
-    mutable struct PolarizedMap{T, O <: Healpix.Order}
+    mutable struct PolarizedHealpixMap{T, O <: Healpix.Order, AA <: AbstractArray{T, 1}}
 
 A polarized I/Q/U map. It contains three Healpix maps with the same NSIDE:
 
@@ -20,48 +20,57 @@ A polarized I/Q/U map. It contains three Healpix maps with the same NSIDE:
 - `u`
 
 You can create an instance of this type using the function
-[`PolarizedMap{T,O}`](@ref), which comes in three flavours:
+[`PolarizedHealpixMap{T,O}`](@ref), which comes in three flavours:
 
-- `PolarizedMap(i::Map{T,O}, q::Map{T,O}, u::Map{T,O})`
-- `PolarizedMap{T,O}(i::AbstractVector{T}, q::AbstractVector{T}, u::AbstractVector{T})`
-- `PolarizedMap{T,O}(nside::Number)`
+- `PolarizedHealpixMap(i::HealpixMap{T,O,AA}, q::HealpixMap{T,O,AA}, u::HealpixMap{T,O,AA})`
+- `PolarizedHealpixMap{T,O}(i::AbstractVector{T}, q::AbstractVector{T}, u::AbstractVector{T})`
+- `PolarizedHealpixMap{T,O}(nside::Number)`
 
 """
-mutable struct PolarizedMap{T, O <: Order} <: GenericPolarizedMap{T}
-    i::Map{T,O}
-    q::Map{T,O}
-    u::Map{T,O}
+mutable struct PolarizedHealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractPolarizedHealpixMap{T}
+    i::HealpixMap{T,O,AA}
+    q::HealpixMap{T,O,AA}
+    u::HealpixMap{T,O,AA}
 
-    function PolarizedMap{T, O}(
-        i::Map{T, O},
-        q::Map{T, O},
-        u::Map{T, O},
-    ) where {T, O <: Order}
-        ((length(i) != length(q)) || (length(i) != length(q))) && throw(
-            ArgumentError("The three I/Q/U maps must have the same resolution"),
-        )
+    function PolarizedHealpixMap{T,O,AA}(
+        i::HealpixMap{T,O,AA},
+        q::HealpixMap{T,O,AA},
+        u::HealpixMap{T,O,AA},
+    ) where {T,O<:Order,AA<:AbstractArray{T,1}}
+        ((length(i) != length(q)) || (length(i) != length(q))) &&
+            throw(ArgumentError("The three I/Q/U maps must have the same resolution"),)
 
         new(i, q, u)
     end
 
-    function PolarizedMap{T, O}(
-        i::AbstractVector{T},
-        q::AbstractVector{T},
-        u::AbstractVector{T},
-    ) where {T, O <: Order}
+    function PolarizedHealpixMap{T,O,AA}(
+        i::AA,
+        q::AA,
+        u::AA,
+    ) where {T,O<:Order,AA<:AbstractArray{T,1}}
+        ((length(i) != length(q)) || (length(i) != length(q))) &&
+            throw(ArgumentError("The three I/Q/U vectors must have the same resolution"),)
 
-        PolarizedMap{T, O}(
-            Map{T, O}(i),
-            Map{T, O}(q),
-            Map{T, O}(u),
-        )
+        new(HealpixMap{T,O,AA}(i), HealpixMap{T,O,AA}(q), HealpixMap{T,O,AA}(u))
     end
 
-    function PolarizedMap{T, O}(nside::Number) where {T, O <: Order}
-        PolarizedMap{T, O}(
-            Map{T, O}(nside),
-            Map{T, O}(nside),
-            Map{T, O}(nside),
-        )
+    function PolarizedHealpixMap{T,O,AA}(nside::Number) where {T,O<:Order,AA<:AbstractArray{T,1}}
+        new(HealpixMap{T,O,AA}(nside), HealpixMap{T,O,AA}(nside), HealpixMap{T,O,AA}(nside))
     end
+end
+
+function PolarizedHealpixMap{T,O}(nside::Number) where {T,O<:Order}
+    PolarizedHealpixMap{T,O,Array{T,1}}(nside)
+end
+
+function PolarizedHealpixMap{T,O}(i::Array{T,1}, q::Array{T,1}, u::Array{T,1}) where {T,O<:Order}
+    PolarizedHealpixMap{T,O,Array{T,1}}(i, q, u)
+end
+
+function PolarizedHealpixMap(
+    i::HealpixMap{T,O,AA},
+    q::HealpixMap{T,O,AA},
+    u::HealpixMap{T,O,AA},
+) where {T,O<:Order,AA<:AbstractArray{T,1}}
+    return PolarizedHealpixMap{T,O,AA}(i, q, u)
 end
