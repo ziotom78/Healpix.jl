@@ -1,5 +1,7 @@
 # HEAD
 
+-   Implement `Base.parent` for `HealpixMap` which returns the underlying array
+
 -   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
 
 -   Use a more accurate algorithm for `vec2ang` [#76][https://github.com/ziotom78/Healpix.jl/pull/76]
