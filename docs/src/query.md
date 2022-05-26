@@ -15,7 +15,7 @@ The only function that has been implemented so far is `queryDiscRing`,
 which returns a list of the indexes of the pixels that fall within
 some angle from a direction on the sky sphere:
 
-```@repl querydiscexample
+```@example querydiscexample
 using Healpix # hide
 resol = Resolution(32)
 (theta, phi) = (1.3, 0.7)
@@ -25,15 +25,18 @@ pixidx = queryDiscRing(resol, theta, phi, radius)
 
 We can visualize where these pixels are using a Mollweide projection:
 
-```@repl querydiscexample
-using Plots
-m = HealpixMap{Float32, RingOrder}(resol.nside)
-m[pixidx] .= 1
+```@example querydiscexample
+m = HealpixMap{Float32, RingOrder}(resol.nside);
+m[pixidx] .= 1;
 
-# Highlight the pixel at the center
-m[ang2pix(m, theta, phi)] = 2
+m[ang2pix(m, theta, phi)] = 2  # Highlight the pixel at the center
+
+using Plots
+pyplot()  # hide
 plot(m)
+savefig(joinpath("images", "querydisc.png")) # hide
 ```
+![](images/querydisc.png)
 
 The function `queryDiscRing` accepts an optional keyword `fact` that
 specifies the resolution to be used in computing the result; it can be
