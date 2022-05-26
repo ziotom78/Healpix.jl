@@ -50,6 +50,7 @@ getinterpolRing
 ang2vec(theta, phi)
 vec2ang(x, y, z)
 ang2pixNest(resol::Resolution, theta, phi)
+zphi2pixRing(resol::Resolution, theta, phi)
 ang2pixRing(resol::Resolution, theta, phi)
 pix2angNest(resol::Resolution, pixel)
 pix2angRing(resol::Resolution, pixel)

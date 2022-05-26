@@ -251,6 +251,30 @@ end
 ################################################################################
 
 """
+    zphi2pixRing(resol::Resolution, theta, phi) -> Integer
+
+Return the index of the pixel which contains the point with
+coordinates (`theta`, the colatitude, and `phi`, the longitude), in
+radians, for a Healpix map with pixels in ring order. Note that pixel
+indexes are 1-based (this is Julia)!
+"""
+function zphi2pixRing(resol::Resolution, z, phi)
+
+    z_abs = abs(z)
+
+    # We do not used mod2pi because we want 1-1 match with C++ code
+    scaled_phi = mod(phi * 2 / π, 4)
+
+    if 3 * z_abs ≤ 2
+        calcRingPosForEquator(resol, z, z_abs, scaled_phi, 0.0, false)
+    else
+        calcRingPosForPole(resol, z, z_abs, scaled_phi, 0.0, false)
+    end
+end
+
+################################################################################
+
+"""
     ang2pixRing(resol::Resolution, theta, phi) -> Integer
 
 Return the index of the pixel which contains the point with
