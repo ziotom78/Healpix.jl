@@ -1,10 +1,18 @@
 @doc raw"""
+    ORDER_MAX
+
+Maximum order for the resolution of a map supported on this machine.
+The value of `NSIDE_MAX` is equal to `2^ORDER_MAX`.
+"""
+const ORDER_MAX = floor(Int, 0.5 * log2(typemax(Int) / 12))
+
+@doc raw"""
     NSIDE_MAX
 
 Maximum allowed value for the NSIDE resolution parameter.
 
 """
-const NSIDE_MAX = 2^floor(Int, 0.5 * log2(typemax(Int) / 12))
+const NSIDE_MAX = 2^ORDER_MAX
 
 ########################################################################
 
@@ -74,3 +82,15 @@ size.
 nside2resol(nside::Integer) = sqrt(nside2pixarea(nside))
 
 ################################################################################
+
+function nside2order(nside::Integer)
+    nsideok(nside) || throw(DomainError("Invalid value for NSIDE = $nside"))
+
+    round(Int, log2(nside))
+end
+
+function order2nside(order::Integer)
+    ((order >= 0) && (order <= ORDER_MAX)) || throw(DomainError("Invalid order = $order"))
+
+    2^order
+end

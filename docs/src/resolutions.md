@@ -51,5 +51,8 @@ nside2npix(nside::Integer)
 npix2nside(npix::Integer)
 nside2pixarea(nside::Integer)
 nside2resol(nside::Integer)
+nside2order(nside::Integer)
+order2nside(order::Integer)
+ORDER_MAX
 NSIDE_MAX
 ```

@@ -64,4 +64,7 @@ xyf2pixRing(resol::Resolution, ix, iy, facenum)
 pix2zphiRing(res::Resolution, pix)
 pix2zphiNest(res::Resolution, pix)
 ringAbove
+ring2z
+numOfRings
+max_pixrad
 ```
