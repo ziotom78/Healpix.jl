@@ -11,9 +11,15 @@ in a map. Asking for the indices of pixels within a given region of
 the sphere is called a *query*, and this kind of function can be
 implemented efficiently using the Healpix scheme.
 
-The only function that has been implemented so far is `queryDiscRing`,
-which returns a list of the indexes of the pixels that fall within
-some angle from a direction on the sky sphere:
+The functions that query a set of pixels satisfying some proximity criteria are the following:
+
+- [`queryDiscRing`](@ref)
+- [`queryStripRing`](@ref)
+
+
+Let's show an example about how to use `queryDiscRing`, which returns
+a list of the indexes of the pixels that fall within some angle from a
+direction on the sky sphere:
 
 ```@example querydiscexample
 using Healpix # hide
@@ -46,4 +52,5 @@ any positive integer, and the actual resolution is `fact * NSIDE`.
 
 ```@docs
 queryDiscRing
+queryStripRing
 ```

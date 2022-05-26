@@ -425,3 +425,13 @@ radius = 0.0027518068203280068
 @test Healpix.queryDiscRing(resol, theta, phi, radius, fact=0) == [  ]
 @test Healpix.queryDiscRing(resol, theta, phi, radius, fact=1) == [ 4328, 4515, 4516, 4708 ]
 @test Healpix.queryDiscRing(resol, theta, phi, radius, fact=4) == [ 4328, 4516 ]
+
+
+################################################################################
+
+resol = Healpix.Resolution(16)
+@test Healpix.queryStripRing(resol, 0.5, 0.8, inclusive = false) == 181:480
+
+@test Healpix.queryStripRing(resol, 0.5, 0.8, inclusive = true) == 145:544
+
+

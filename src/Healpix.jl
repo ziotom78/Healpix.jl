@@ -19,7 +19,7 @@ export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
 export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
-export queryDiscRing
+export queryDiscRing, queryStripRing
 export ORDER_MAX, NSIDE_MAX
 
 using LinearAlgebra

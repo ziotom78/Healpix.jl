@@ -167,3 +167,43 @@ function queryDiscRing(
 
     result
 end
+
+
+@doc raw"""
+    queryStripRing(resol::Resolution, theta1, theta2; inclusive=true)
+
+Return a range of the indices of pixels that overlap with
+the colatitude range `[theta1, theta2]`. If `inclusive` is set to
+`false`, only those pixels whose *centers* lie within the colatitude
+range are returned.
+
+This function assumes the RING scheme, because in this case, the
+indexes of the pixels cover a range without gaps. Therefore, the
+function returns a *range* instead of a *list*, as it is quicker
+and occupies far less memory.
+
+"""
+function queryStripRing(resol::Resolution, theta1, theta2; inclusive=true)
+
+    if theta1 > theta2
+        throw(DomainError("Call to queryStripRing with theta1 > theta2 ($theta1 > $theta2)"))
+    end
+    
+    maxring = numOfRings(resol)
+    ring1 = max(1, 1 + ringAbove(resol, cos(theta1)))
+    ring2 = min(maxring, ringAbove(resol, cos(theta2)))
+
+    if inclusive
+        ring1 = max(1, ring1 - 1)
+        ring2 = min(maxring, ring2 + 1)
+    end
+
+    ringinfo = getringinfo(resol, ring1, full = false)
+    (sp1, rp1) = (ringinfo.firstPixIdx, ringinfo.numOfPixels)
+    getringinfo!(resol, ring2, ringinfo, full = false)
+    (sp2, rp2) = (ringinfo.firstPixIdx, ringinfo.numOfPixels)
+
+    (pix1, pix2) = (sp1, sp2 + rp2)
+
+    (pix1 <= pix2) ? (pix1:(pix2 - 1)) : Int[]
+end
