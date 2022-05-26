@@ -17,3 +17,6 @@
 @test_throws DomainError(12 * 8 * 9, "Invalid number of pixels") Healpix.npix2nside(
     12 * 8 * 9,
 )
+
+@test Healpix.nside2order(1024) == 10
+@test Healpix.order2nside(10) == 1024

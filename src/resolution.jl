@@ -70,3 +70,10 @@ function Resolution(nside)
     )
 
 end
+
+@doc raw"""
+    numOfRings(resol::Resolution)
+
+Return the number of horizontal rings in a Healpix map.
+"""
+numOfRings(resol::Resolution) = resol.nsideTimesFour - 1

@@ -8,6 +8,7 @@ makedocs(
         "Introduction" => "index.md",
         "Working with resolutions" => "resolutions.md",
         "Pixel functions" => "pixelfunc.md",
+        "Query functions" => "query.md",
         "Map functions" => "mapfunc.md",
         "Spherical harmonics" => "alm.md",
         "Visualization" => "visualization.md",

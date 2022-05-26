@@ -1,10 +1,10 @@
 module Healpix
 ###
-export nsideok, nside2pixarea, nside2resol
-export Resolution, nside2npix, npix2nside
-export ang2pixNest, ang2pixRing, pix2angNest, pix2angRing
+export nsideok, nside2pixarea, nside2resol, nside2order, order2nside
+export Resolution, nside2npix, npix2nside, numOfRings
+export ang2pixNest, zphi2pixRing, ang2pixRing, pix2angNest, pix2angRing
 export vec2pixNest, vec2pixRing, pix2vecNest, pix2vecRing
-export pix2ringpos
+export pix2ringpos, ring2z
 export Order, RingOrder, NestedOrder, AbstractHealpixMap, HealpixMap
 export PolarizedHealpixMap, AbstractPolarizedHealpixMap
 export ang2vec, vec2ang, ang2pix, pix2ang
@@ -16,10 +16,14 @@ export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
-export pix2zphiNest, pix2zphiRing, ringAbove
+export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
 export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
-export NSIDE_MAX
+export queryDiscRing, queryStripRing
+export ORDER_MAX, NSIDE_MAX
+
+using LinearAlgebra
+using StaticArrays
 
 using LazyArtifacts
 import CFITSIO
@@ -54,5 +58,6 @@ include("projections.jl")
 include("alm.jl")
 include("sphtfunc.jl")
 include("mapmaking.jl")
+include("query.jl")
 
 end

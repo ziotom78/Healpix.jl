@@ -251,6 +251,30 @@ end
 ################################################################################
 
 """
+    zphi2pixRing(resol::Resolution, theta, phi) -> Integer
+
+Return the index of the pixel which contains the point with
+coordinates (`theta`, the colatitude, and `phi`, the longitude), in
+radians, for a Healpix map with pixels in ring order. Note that pixel
+indexes are 1-based (this is Julia)!
+"""
+function zphi2pixRing(resol::Resolution, z, phi)
+
+    z_abs = abs(z)
+
+    # We do not used mod2pi because we want 1-1 match with C++ code
+    scaled_phi = mod(phi * 2 / π, 4)
+
+    if 3 * z_abs ≤ 2
+        calcRingPosForEquator(resol, z, z_abs, scaled_phi, 0.0, false)
+    else
+        calcRingPosForPole(resol, z, z_abs, scaled_phi, 0.0, false)
+    end
+end
+
+################################################################################
+
+"""
     ang2pixRing(resol::Resolution, theta, phi) -> Integer
 
 Return the index of the pixel which contains the point with
@@ -410,8 +434,75 @@ If `z` lies north of all rings, the function returns 0.
 """
 function ringAbove(res::Resolution, z)
     az = abs(z)
-    3az <= 2 && return round(Int, res.nside * (4 - 3z) * 0.5)
-    iring = round(Int, res.nside * sqrt(3(1 - az)))
+    3az <= 2 && return floor(Int, res.nside * (4 - 3z) * 0.5)
+    iring = floor(Int, res.nside * sqrt(3(1 - az)))
 
     (z > 0) ? iring : (4 * res.nside - iring - 1)
 end
+
+
+@doc raw"""
+    ring2z(res::Resolution, ring) -> z
+
+Return the value of `z = \cos(\theta)` for the given ring.
+
+"""
+function ring2z(res::Resolution, ring)
+    if ring < res.nside
+        return 1 - ring^2 * res.fact2
+    elseif ring <= 3 * res.nside
+        return (res.nsideTimesTwo - ring) * res.fact1
+    end
+
+    ring = res.nsideTimesFour - ring
+    ring^2 * res.fact2 - 1
+end
+
+
+function set_z_phi(z, phi)
+    sintheta = sqrt((1 - z) * (1 + z))
+    (sintheta * cos(phi), sintheta * sin(phi), z)
+end
+
+
+v_angle(v1, v2) = atan(norm(SVector(v1) × SVector(v2)), SVector(v1) ⋅ SVector(v2))
+
+
+function max_pixrad(res::Resolution)
+    va = set_z_phi(2/3, π / res.nsideTimesFour)
+    t1 = (1 - 1 / res.nside)^2
+    vb = set_z_phi(1 - t1/3, 0)
+    v_angle(va, vb)
+end
+
+function max_pixrad(res::Resolution, ring)
+    (ring >= res.nsideTimesTwo) && (ring = res.nsideTimesFour - ring)
+    z = ring2z(res, ring)
+    z_up = ring2z(res, ring - 1)
+    uppos = set_z_phi(z_up, 0)
+
+    if ring <= res.nside
+        mypos = set_z_phi(z, π / 4ring)
+        v1 = v_angle(mypos, uppos)
+        (ring != 1) && (return v1)
+        uppos = set_z_phi(ring2z(res, ring + 1), π / (4 * min(res.nside, ring + 1)))
+        return max(v1, v_angle(mypos, uppos))
+    end
+
+    mypos = set_z_phi(z, 0)
+    vdist = v_angle(mypos, uppos)
+    hdist = sqrt(1 - z^2) * π / res.nsideTimesFour
+    max(hdist, vdist)
+end
+
+@doc raw"""
+    max_pixrad(res::Resolution, ring)
+    max_pixrad(res::Resolution)
+
+Return the maximum angular distance (in radians) between a pixel
+center and any of its corners. If `ring` is specified, the result
+applies to all the pixels of the given ring; otherwise, all the
+pixels on the sphere are considered.
+
+"""
+max_pixrad

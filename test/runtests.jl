@@ -5,6 +5,10 @@ using Test
 
 const eps = 1e-12
 
+@testset "Resolution" begin
+    include("test_resolution.jl")
+end
+
 @testset "Math functions" begin
     include("test_math.jl")
 end
@@ -57,4 +61,6 @@ end
     include("test_sphtfunc.jl")
 end
 
-# Alm creation
+@testset "Query functions" begin
+    include("test_query.jl")
+end
