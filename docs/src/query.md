@@ -15,12 +15,24 @@ The only function that has been implemented so far is `queryDiscRing`,
 which returns a list of the indexes of the pixels that fall within
 some angle from a direction on the sky sphere:
 
-```@repl pixelexample1
+```@repl querydiscexample
 using Healpix # hide
 resol = Resolution(32)
-(theta, phi) = (0.3, 0.7)
+(theta, phi) = (1.3, 0.7)
 radius = deg2rad(10.0)
-queryDiscRing(resol, theta, phi, radius)
+pixidx = queryDiscRing(resol, theta, phi, radius)
+```
+
+We can visualize where these pixels are using a Mollweide projection:
+
+```@repl querydiscexample
+using Plots
+m = HealpixMap{Float32, RingOrder}(resol.nside)
+m[pixidx] .= 1
+
+# Highlight the pixel at the center
+m[ang2pix(m, theta, phi)] = 2
+plot(m)
 ```
 
 The function `queryDiscRing` accepts an optional keyword `fact` that
