@@ -61,4 +61,8 @@ end
     include("test_sphtfunc.jl")
 end
 
+@testset "Query disc" begin
+    include("test_querydisc.jl")
+end
+
 # Alm creation

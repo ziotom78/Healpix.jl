@@ -19,9 +19,11 @@ export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
 export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
 export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
-export NSIDE_MAX
+export queryDiscRing
 export ORDER_MAX, NSIDE_MAX
 
+using LinearAlgebra
+using StaticArrays
 
 using LazyArtifacts
 import CFITSIO
@@ -56,5 +58,6 @@ include("projections.jl")
 include("alm.jl")
 include("sphtfunc.jl")
 include("mapmaking.jl")
+include("query.jl")
 
 end
