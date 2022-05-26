@@ -441,7 +441,7 @@ function ringAbove(res::Resolution, z)
 end
 
 
-raw"""
+@doc raw"""
     ring2z(res::Resolution, ring) -> z
 
 Return the value of `z = \cos(\theta)` for the given ring.
@@ -495,7 +495,7 @@ function max_pixrad(res::Resolution, ring)
     max(hdist, vdist)
 end
 
-raw"""
+@doc raw"""
     max_pixrad(res::Resolution, ring)
     max_pixrad(res::Resolution)
 

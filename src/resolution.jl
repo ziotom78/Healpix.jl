@@ -71,7 +71,7 @@ function Resolution(nside)
 
 end
 
-raw"""
+@doc raw"""
     numOfRings(resol::Resolution)
 
 Return the number of horizontal rings in a Healpix map.
