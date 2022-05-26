@@ -2,6 +2,8 @@
 
 -   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
 
+-   New constants/functions: `ORDER_MAX`, `nside2order`, `order2nside`, `numOfRings`, `ring2z`, `max_pixrad`, `queryDiscRing`, `queryStripRing` [#80](https://github.com/ziotom78/Healpix.jl/pull/80)
+
 -   Use a more accurate algorithm for `vec2ang` [#76][https://github.com/ziotom78/Healpix.jl/pull/76]
 
 -   Make `NSIDE_MAX` dependent on the architecture (32/64 bit) of the system [#75](https://github.com/ziotom78/Healpix.jl/pull/75)
