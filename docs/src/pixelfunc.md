@@ -44,6 +44,55 @@ getringinfo!
 getinterpolRing
 ```
 
+
+# Pixel boundaries
+
+It is sometimes useful to be able to trace the border of a pixel: this
+can be useful for plotting purposes. Healpix.jl implements the
+`boundariesRing!` and `boundariesRing` functions for this purpose.
+They calculate a set of ``N`` vectors pointing to a number of points
+along the border of a given pixel and return them as a ``N\times 3``
+matrix.
+
+Here is a visual example:
+
+```@example
+using Plots
+pyplot() # hide
+using Healpix # hide
+
+pointsperside = 10
+matr = boundariesRing(Resolution(2), 3, pointsperside, Float32)
+scatter(matr[:, 1], matr[:, 2], matr[:, 3])
+savefig(joinpath("images", "pixelboundaries1.png")) # hide
+```
+![](images/pixelboundaries1.png)
+
+We can cycle this over *all* the pixels in a map; however, using
+`boundariesRing` will require the result matrix to be allocated again
+and again for each pixel. Here `boundariesRing!` comes to the rescue,
+as we can pre-allocate the matrix and then pass it to each call within
+the `for` loop:
+
+```@example
+using Plots
+pyplot() # hide
+using Healpix # hide
+
+pointsperside = 10
+matr = Matrix{Float32}(undef, 4pointsperside, 3)
+resol = Resolution(2)
+
+scatter()
+for pixidx in 1:resol.numOfPixels
+    boundariesRing!(resol, pixidx, pointsperside, matr)
+    scatter!(matr[:, 1], matr[:, 2], matr[:, 3], label="")
+end
+savefig(joinpath("images", "pixelboundariesall.png")) # hide
+```
+![](images/pixelboundariesall.png)
+
+
 # Reference
 
 ```@docs
@@ -67,4 +116,6 @@ ringAbove
 ring2z
 numOfRings
 max_pixrad
+boundariesRing
+boundariesRing!
 ```

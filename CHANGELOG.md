@@ -2,6 +2,8 @@
 
 -   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
 
+-   New functions `boundariesRing!` and `boundariesRing` [#81](https://github.com/ziotom78/Healpix.jl/pull/81)
+
 -   New constants/functions: `ORDER_MAX`, `nside2order`, `order2nside`, `numOfRings`, `ring2z`, `max_pixrad`, `queryDiscRing`, `queryStripRing` [#80](https://github.com/ziotom78/Healpix.jl/pull/80)
 
 -   Use a more accurate algorithm for `vec2ang` [#76][https://github.com/ziotom78/Healpix.jl/pull/76]

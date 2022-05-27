@@ -15,11 +15,12 @@ export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
 export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin
 export getringinfo!, getringinfo, getinterpolRing
-export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest
+export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest, xyf2loc
 export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
 export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
 export queryDiscRing, queryStripRing
+export boundariesRing, boundariesRing!
 export ORDER_MAX, NSIDE_MAX
 
 using LinearAlgebra

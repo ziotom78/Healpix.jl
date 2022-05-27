@@ -210,3 +210,53 @@ ring2nest(resol::Resolution, ipix) = xyf2pixNest(resol, pix2xyfRing(resol, ipix)
 
 Convert the number of a pixel from NESTED to RING scheme."""
 nest2ring(resol::Resolution, ipix) = xyf2pixRing(resol, pix2xyfNest(resol, ipix)...)
+
+
+################################################################################
+
+@doc raw"""
+    xyf2loc(x, y, face) -> (z, phi, sintheta, have_sintheta)
+
+Given a position encoded as XYF, return the tuple containing ``z =
+cos(\theta)``, `\phi`, and optionally an accurate estimate for
+``sin(\theta)`` (if `have_sintheta` is `true`), where ``\theta`` is
+the colatitude and ``\phi`` is the longitude, both expressed in
+radians.
+
+"""
+function xyf2loc(x, y, face)
+    z = zero(x)
+    nr = zero(x)
+    sintheta = zero(x)
+    have_sintheta = false
+
+    jr = JRLL[face + 1] - x - y
+
+    if jr < 1
+        nr = jr
+        tmp = nr^2 / 3
+        z = 1 - tmp
+        if z > 0.99
+            sintheta = sqrt(tmp * (2 - tmp))
+            have_sintheta = true
+        end
+    elseif jr > 3
+        nr = 4 - jr
+        tmp = nr^2 / 3
+        z = tmp - 1
+        if z < -0.99
+            sintheta = sqrt(tmp * (2 - tmp))
+            have_sintheta = true
+        end
+    else
+        nr = 1
+        z = (2 - jr) * 2 / 3
+    end
+
+    tmp = JPLL[face + 1] * nr + x - y
+    (tmp < 0) && (tmp += 8)
+    (tmp >= 8) && (tmp -= 8)
+    phi = (nr < 1e-15) ? zero(nr) : ((π/4 * tmp) / nr)
+
+    (z, phi, sintheta, have_sintheta)
+end
