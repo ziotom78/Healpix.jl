@@ -179,6 +179,10 @@ number, because for the sake of compatibility with other Healpix
 libraries the FITS file will use [`UNSEEN`](@ref) to mark missing
 values.
 
+```@docs
+UNSEEN
+```
+
 ## Encoding the order
 
 Healpix.jl distinguishes between `RING` and `NEST` orderings using
