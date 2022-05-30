@@ -21,7 +21,7 @@ export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
 export queryDiscRing, queryStripRing
 export boundariesRing, boundariesRing!
-export ORDER_MAX, NSIDE_MAX
+export ORDER_MAX, NSIDE_MAX, UNSEEN
 
 using LinearAlgebra
 using StaticArrays

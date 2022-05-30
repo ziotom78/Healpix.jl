@@ -78,7 +78,7 @@ m = HealpixMap{Float32, RingOrder}(32)
 m[:] .= UNSEEN
 ```
 
-However, Julia provides a sounder way to denote missing pixels through
+However, Julia provides a nicer way to denote missing pixels through
 the use of `Nothing` (type) and `nothing` (value). Whenever you pass a
 `Union{Nothing, T}` type to a Healpix map, the map will be initialized
 to `nothing`, and you can test if a pixel has been observer or not
@@ -96,13 +96,92 @@ m[5] = nothing
 Note that, unlike [`UNSEEN`](@ref), this mechanism permits to signal
 «missing» pixels even for maps that do not use floating-point numbers.
 
-!!! warning "Reading/saving maps with `nothing` values"
+!!! warning "Type stability and Nothing"
 
-    You can use [`saveToFITS`](@ref) or [`readMapFromFITS`](@ref) on
-    maps whose base type is `Union{Nothing, T}` only if `T` is a
-    floating-point number, because for the sake of compatibility with
-    other Healpix libraries the FITS file will use [`UNSEEN`](@ref) to
-    mark missing values.
+    Using `Union{Nothing, T}` as the base type of a Healpix map can lead
+    to elegant code, but it is not likely to be efficient!
+    
+    For instance, consider two implementations of the same code, which
+    sums all the pixels in a map that are not marked as `nothing` or
+    `UNSEEN`:
+    
+    ```julia
+    function sumpixels(m::HealpixMap{Union{Nothing, T}, O}) where {T <: Real, O <: Order}
+       cumsum = zero(Float64)
+       @inbounds for i in eachindex(m)
+           (!isnothing(m[i])) && (cumsum += m[i])
+       end
+       cumsum
+    end
+
+    function sumpixels(m::HealpixMap{T, O}) where {T <: Real, O <: Order}
+       cumsum = zero(Float64)
+       @inbounds for i in eachindex(m)
+           (m[i] != UNSEEN) && (cumsum += m[i])
+       end
+       cumsum
+    end
+    ```
+    
+    Let's now create two maps with random values and 50% of their pixels
+    marked either as `nothing` or `UNSEEN`:
+    
+    ```
+    import Random
+    mnothing = HealpixMap{Union{Float64, Nothing}, RingOrder}(1024)
+    mnothing[:] = rand(length(mnothing))
+    @. mnothing[mnothing < 0.5] = nothing
+    
+    # Create a new map identical to `mnothing`, but use UNSEEN instead of nothing
+    m = HealpixMap{Float64, RingOrder}(mnothing.resolution.nside)
+    m[:] = [isnothing(x) ? UNSEEN : x for x in mnothing]
+    ```
+
+    Running `sumpixels` over the two maps shows that the version with `UNSEEN`
+    is three times faster.
+
+    ```
+    julia> @benchmark sumpixels(mnothing)
+    @benchmark sumpixels(m)
+    BenchmarkTools.Trial: 56 samples with 1 evaluation.
+     Range (min … max):  88.233 ms …  91.043 ms  ┊ GC (min … max): 0.00% … 0.00%
+     Time  (median):     89.187 ms               ┊ GC (median):    0.00%
+     Time  (mean ± σ):   89.315 ms ± 502.629 μs  ┊ GC (mean ± σ):  0.00% ± 0.00%
+
+                      █ █  ▂ █▅▅                                    
+      ▅▁▁▁▁▁▁▁▁█▁▁▁▁▁▁█▁█▅██▁███▅█▅██▅█▅▁▅▁▅▁▁▁▁▁▅█▁█▅▁▁▁▁▅▅▁▁▁▁▁▅ ▁
+      88.2 ms         Histogram: frequency by time         90.5 ms <
+
+     Memory estimate: 16 bytes, allocs estimate: 1.
+
+    julia> @benchmark sumpixels(m)
+    BenchmarkTools.Trial: 201 samples with 1 evaluation.
+     Range (min … max):  22.579 ms … 29.701 ms  ┊ GC (min … max): 0.00% … 0.00%
+     Time  (median):     24.213 ms              ┊ GC (median):    0.00%
+     Time  (mean ± σ):   24.906 ms ±  1.939 ms  ┊ GC (mean ± σ):  0.00% ± 0.00%
+
+       ▁ ▃█▁▁▅▁▃▁       ▂                                  ▁       
+      ▅█▆█████████▄▆█▁█▅█▆█▃▄█▄▄▃▁▃▆▁▃▃▁▄▃▃▄▁▄▇█▅▁▁▁▁▆▃▃▄▅▄█▅▃▃▁▃ ▄
+      22.6 ms         Histogram: frequency by time        29.2 ms <
+
+     Memory estimate: 16 bytes, allocs estimate: 1.
+    ```
+
+    This happens because the implementation of `sumpixels` that uses
+    `nothing` values is not
+    [type-stable](https://www.juliabloggers.com/writing-type-stable-julia-code/).
+    You should decide if the elegance of using `nothing` in your code
+    is worth this degradation in performance or not.
+
+You can use [`saveToFITS`](@ref) or [`readMapFromFITS`](@ref) on maps
+whose base type is `Union{Nothing, T}` only if `T` is a floating-point
+number, because for the sake of compatibility with other Healpix
+libraries the FITS file will use [`UNSEEN`](@ref) to mark missing
+values.
+
+```@docs
+UNSEEN
+```
 
 ## Encoding the order
 
