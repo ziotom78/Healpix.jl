@@ -10,6 +10,9 @@
 
 -   Make `NSIDE_MAX` dependent on the architecture (32/64 bit) of the system [#75](https://github.com/ziotom78/Healpix.jl/pull/75)
 
+-   Documentation improvements [#82](https://github.com/ziotom78/Healpix.jl/pull/82)
+
+
 # Version 3.0.1
 
 -   Fix the documentation and export `readPolarizedMapFromFITS` [#69](https://github.com/ziotom78/Healpix.jl/issues/67)
