@@ -141,7 +141,7 @@ import Base: +, -, *, /
 # Iterator interface
 
 Base.size(m::HealpixMap{T,O,AA}) where {T,O,AA} = (m.resolution.numOfPixels,)
-
+Base.parent(m::HealpixMap) = m.pixels
 Base.IndexStyle(::Type{<:HealpixMap{T,O,AA}}) where {T,O,AA} = IndexLinear()
 
 function getindex(m::HealpixMap{T,O,AA}, i::Integer) where {T,O,AA}

@@ -1,5 +1,7 @@
 # HEAD
 
+-   Implement `Base.parent` for `HealpixMap` which returns the underlying array
+
 -   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
 
 -   New functions `boundariesRing!` and `boundariesRing` [#81](https://github.com/ziotom78/Healpix.jl/pull/81)
