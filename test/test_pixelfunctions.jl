@@ -50,6 +50,9 @@ x, y, z = Healpix.ang2vec(0.637907993514304, 4.877925523463614)
 @test y ≈ -0.587375491097860 atol = eps
 @test z ≈ 0.803343338527719 atol = eps
 
+@test_throws DomainError(-1.0, "Invalid value of theta") Healpix.ang2vec(-1.0, 0.0)
+@test_throws DomainError(4.0, "Invalid value of theta") Healpix.ang2vec(4.0, 0.0)
+
 # vec2ang
 
 theta, phi = Healpix.vec2ang(2.479973695958578, 2.540405094768749, 1.360043653263107)
@@ -148,6 +151,8 @@ highresol = Healpix.Resolution(2^29)
 @test Healpix.ang2pixNest(resol, 3.1415926535897931, 5.0265482457436690) == 720897
 @test Healpix.ang2pixNest(resol, 3.1415926535897931, 6.2831853071795862) == 720897
 
+@test_throws DomainError(-1.0, "Invalid value of theta") Healpix.ang2pixNest(resol, -1.0, 0.0)
+@test_throws DomainError(4.0, "Invalid value of theta") Healpix.ang2pixNest(resol, 4.0, 0.0)
 
 @test Healpix.ang2pixNest(highresol, 1.570796325553133199, 0.785398163397448279) == 1
 @test Healpix.ang2pixNest(highresol, 1.570796324311369840, 0.785398164860366288) == 2
@@ -238,6 +243,9 @@ highresol = Healpix.Resolution(2^29)
 @test Healpix.ang2pixRing(resol, 3.1415926535897931, 3.7699111843077517) == 786431
 @test Healpix.ang2pixRing(resol, 3.1415926535897931, 5.0265482457436690) == 786432
 @test Healpix.ang2pixRing(resol, 3.1415926535897931, 6.2831853071795862) == 786429
+
+@test_throws DomainError(-1.0, "Invalid value of theta") Healpix.ang2pixNest(resol, -1.0, 0.0)
+@test_throws DomainError(4.0, "Invalid value of theta") Healpix.ang2pixNest(resol, 4.0, 0.0)
 
 @test Healpix.ang2pixRing(highresol, 0.000000001520843396, 0.785398163397448279) == 1
 @test Healpix.ang2pixRing(highresol, 0.000000001520843396, 2.356194490192344837) == 2

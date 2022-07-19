@@ -150,6 +150,8 @@ pixel indexes are 1-based (this is Julia)!
 """
 function ang2pixNest(resol::Resolution, theta, phi)
 
+    (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
+    
     nside = resol.nside
     local ix, iy, face_num
 
@@ -284,6 +286,8 @@ indexes are 1-based (this is Julia)!
 """
 function ang2pixRing(resol::Resolution, theta, phi)
 
+    (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
+    
     z = cos(theta)
     z_abs = abs(z)
 
