@@ -1,5 +1,7 @@
 # HEAD
 
+-   Add checks for colatitude θ in functions that take angles as input [#84](https://github.com/ziotom78/Healpix.jl/pull/84)
+
 # Version 4.0.0
 
 -   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
