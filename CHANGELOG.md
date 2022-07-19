@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 4.0.1
+
 -   Add checks for colatitude θ in functions that take angles as input [#84](https://github.com/ziotom78/Healpix.jl/pull/84)
 
 # Version 4.0.0
