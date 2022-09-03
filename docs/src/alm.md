@@ -83,11 +83,13 @@ alm2map
 You can use the function [`alm2cl`](@ref) to convert a set of $a_{\ell m}$
 coefficients into the components $C_\ell$ of the power spectrum. 
 The pixelization also induces a transfer function, which can be obtained from
-[`pixwin`](@ref).
+[`pixwin`](@ref). A simple Gaussian beam window function in the asymptotic small-beam
+limit can be computed with [`gaussbeam`](@ref).
 
 ```@docs
 alm2cl
 pixwin
+gaussbeam
 ```
 
 ## Loading and saving harmonic coefficients

@@ -143,3 +143,37 @@ end
 
 alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 
+# eq 54, 55 of https://arxiv.org/abs/astro-ph/0008228
+# these are asymptotic beams for σ² << 1
+
+"""
+    gaussbeam(fwhm::T, lmax::Int; pol=false) where T
+
+Compute the Gaussian beam window function ``B_{\\ell}`` given the FWHM of the beam in radians, where 
+``C_{\\ell, \\mathrm{measured}} = B_{\\ell}^2 C_{\\ell}``. This beam is valid in the limit of 
+``\\sigma^2 \\ll 0``, which is the case for all high-resolution CMB experiments.
+
+# Arguments
+- `fwhm::T`: FWHM of the Gaussian beam in radians
+- `lmax::Int`: maximum multipole ℓ
+- `pol=false`: if false, returns the spin-0 beam for i.e. intensity. if true, returns the spin-2 beam
+
+# Returns
+- `Array{T,1}` containing ``B_{\\ell}``, with the first element referring to ℓ=0.
+"""
+function gaussbeam(fwhm::T, lmax::Int; pol=false) where T
+    Bl = Array{T,1}(undef, lmax+1)
+    fwhm²_to_σ² = 1 / (8log(T(2)))  # constant
+    σ² = fwhm²_to_σ² * fwhm^2
+
+    if pol
+        for l = 0:lmax
+            Bl[l+1] = exp(-(l * (l+1) - 4) * σ² / 2)
+        end
+    else
+        for l = 0:lmax
+            Bl[l+1] = exp(-l * (l+1) * σ² / 2)
+        end
+    end
+    return Bl
+end
