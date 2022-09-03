@@ -59,11 +59,11 @@ testalm = Healpix.Alm(2, 2, ComplexF64.(1:6))
 ## test gaussbeam
 
 # spin-0
-bl_0 = gaussbeam(deg2rad(1), 512; pol=false)
+bl_0 = Healpix.gaussbeam(deg2rad(1), 512; pol=false)
 @test bl_0[50+1] ≈ 0.9323560235080715
 @test bl_0[500+1] ≈ 0.0010276785784086898
 
 # spin-2
-bl_2 = gaussbeam(deg2rad(1), 512; pol=true)
+bl_2 = Healpix.gaussbeam(deg2rad(1), 512; pol=true)
 @test bl_2[50+1] ≈ 0.9324584647703964
 @test bl_2[500+1] ≈ 0.001027791493098124
