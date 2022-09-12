@@ -434,4 +434,10 @@ resol = Healpix.Resolution(16)
 
 @test Healpix.queryStripRing(resol, 0.5, 0.8, inclusive = true) == 145:544
 
-
+# Test for issue #87 https://github.com/ziotom78/Healpix.jl/issues/87
+@test !isempty(Healpix.queryDiscRing(
+    resol,
+    3.065891364714367,
+    2.389732404237873,
+    0.8902989182990876,
+))

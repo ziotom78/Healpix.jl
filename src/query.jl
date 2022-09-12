@@ -160,7 +160,7 @@ function queryDiscRing(
         end
 
         if (rlat2 >= π) && (irmax + 1 < resol.nsideTimesFour)
-            ringinfo = getringinfo(irmax + 1)
+            ringinfo = getringinfo(resol, irmax + 1)
             append!(result, ringinfo.firstPixIdx:(ringinfo.firstPixIdx + ringinfo.numOfPixels - 1))
         end
     end
