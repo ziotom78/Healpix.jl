@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 4.1.1
+
 -   Bugfixes: [#87](https://github.com/ziotom78/Healpix.jl/pull/87)
 
 # Version 4.1.0
