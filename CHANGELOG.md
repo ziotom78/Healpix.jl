@@ -1,5 +1,7 @@
 # HEAD
 
+-   Bugfixes: [#87](https://github.com/ziotom78/Healpix.jl/pull/87)
+
 # Version 4.1.0
 
 - New function `gaussbeam` [#85](https://github.com/ziotom78/Healpix.jl/pull/85)
