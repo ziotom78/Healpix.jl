@@ -21,10 +21,10 @@ mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
     lmax::Int
     mmax::Int
     tval::Int
-    
+
     Alm{T,AA}(lmax, mmax) where {T <: Number,AA <: AbstractArray{T,1}} =
         new{T,AA}(zeros(T, numberOfAlms(lmax, mmax)), lmax, mmax, 2lmax + 1)
-    
+
     function Alm{T,AA}(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
@@ -108,6 +108,44 @@ function readAlmFromFITS(fileName, t::Type{T}) where {T <: Complex}
 end
 end
 
+############################################################################
+
+"""
+    writeAlmToFITS{T <: Complex}(f::CFITSIO.FITSFile, alm::Alm{Complex{T}})
+    writeAlmToFITS{T <: Complex}(fileName::String, alm::Alm{Complex{T}})
+
+Write a set of a_ℓm coefficients into a FITS file. If the code fails,
+CFITSIO will raise an exception. (Refer to the CFITSIO library for more
+information.)
+"""
+function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
+
+    idx = Vector{Int64}(range(1, length(alm.alm)))
+    almReal = real(alm.alm)
+    almImag = imag(alm.alm)
+
+    CFITSIO.fits_write_col(f, 1, 1, 1, idx)
+    CFITSIO.fits_write_col(f, 2, 1, 1, almReal)
+    CFITSIO.fits_write_col(f, 3, 1, 1, almImag)
+
+end
+
+function writeAlmToFITS(fileName, alm::Alm{Complex{T}}, overwrite = true) where {T <: Number}
+    if overwrite
+        f = CFITSIO.fits_clobber_file(fileName)
+    else
+        f = CFITSIO.fits_create_file(fileName)
+    end
+    try
+        CFITSIO.fits_create_binary_tbl(f, 0, [("Index", "1I", ""),("Re[alm]", "1D", ""),("Im[alm]", "1D", "")], "alm")
+        writeAlmToFITS(f, alm)
+    finally
+        CFITSIO.fits_close_file(f)
+end
+end
+
+########################################################################
+
 """
     alm2cl(alm::Alm{Complex{T}}) where {T <: Number}
     alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
@@ -149,8 +187,8 @@ alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 """
     gaussbeam(fwhm::T, lmax::Int; pol=false) where T
 
-Compute the Gaussian beam window function ``B_{\\ell}`` given the FWHM of the beam in radians, where 
-``C_{\\ell, \\mathrm{measured}} = B_{\\ell}^2 C_{\\ell}``. This beam is valid in the limit of 
+Compute the Gaussian beam window function ``B_{\\ell}`` given the FWHM of the beam in radians, where
+``C_{\\ell, \\mathrm{measured}} = B_{\\ell}^2 C_{\\ell}``. This beam is valid in the limit of
 ``\\sigma^2 \\ll 0``, which is the case for all high-resolution CMB experiments.
 
 # Arguments

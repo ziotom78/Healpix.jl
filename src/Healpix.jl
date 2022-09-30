@@ -12,7 +12,7 @@ export readMapFromFITS, readPolarizedMapFromFITS
 export savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing, readFullWeights, applyFullWeights!
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
-export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
+export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS, writeAlmToFITS
 export readClFromFITS, writeClToFITS
 export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin, gaussbeam
 export getringinfo!, getringinfo, getinterpolRing
