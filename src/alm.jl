@@ -184,6 +184,8 @@ alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 # eq 54, 55 of https://arxiv.org/abs/astro-ph/0008228
 # these are asymptotic beams for σ² << 1
 
+###########################################################################
+
 """
     gaussbeam(fwhm::T, lmax::Int; pol=false) where T
 
@@ -217,3 +219,43 @@ function gaussbeam(fwhm::T, lmax::Int; pol=false) where T
 end
 
 ###########################################################################
+
+"""
+Multiply an a_lm by a vector b_l representing an l-dependendt function.
+
+# ARGUMENTS
+- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `fl::Vector{T}`: The array giving the factor f_l by which to multiply a_lm
+
+#RETURNS
+- `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
+    the input alm modified
+"""
+
+function almxfl(alm::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
+
+    lmax = alm.lmax
+    mmax = alm.mmax
+    fl_size = length(fl)
+    alm_new = Alm{Complex{Float64}}(lmax, mmax)
+
+    print(fl_size)
+    for l = 0:lmax
+        if l < fl_size
+            f = fl[l + 1]
+        else
+            f = 0
+        end
+        if l <= mmax
+            maxm = l
+        else
+            maxm = mmax
+        end
+
+        for m = 0:maxm
+            i = almIndex(alm, l, m)
+            alm_new.alm[i] = alm.alm[i]*f
+        end
+    end
+    return alm_new
+end

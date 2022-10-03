@@ -14,7 +14,7 @@ export ringWeightPath, readWeightRing, readFullWeights, applyFullWeights!
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
 export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS, writeAlmToFITS
 export readClFromFITS, writeClToFITS
-export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin, gaussbeam
+export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin, gaussbeam, almxfl
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest, xyf2loc
 export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
