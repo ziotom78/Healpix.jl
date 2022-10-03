@@ -130,7 +130,7 @@ function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: N
 
 end
 
-function writeAlmToFITS(fileName, alm::Alm{Complex{T}}, overwrite = true) where {T <: Number}
+function writeAlmToFITS(fileName, alm::Alm{Complex{T}}; overwrite = true) where {T <: Number}
     if overwrite
         f = CFITSIO.fits_clobber_file(fileName)
     else
@@ -215,3 +215,5 @@ function gaussbeam(fwhm::T, lmax::Int; pol=false) where T
     end
     return Bl
 end
+
+###########################################################################
