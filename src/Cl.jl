@@ -41,7 +41,7 @@ function writeClToFITS(f::CFITSIO.FITSFile, Cl::Vector{T}) where {T <: Real}
 
 end
 
-function writeClToFITS(fileName, Cl::Vector{T}, overwrite = true) where {T <: Real}
+function writeClToFITS(fileName, Cl::Vector{T}; overwrite = true) where {T <: Real}
     if overwrite
         f = CFITSIO.fits_clobber_file(fileName)
     else
