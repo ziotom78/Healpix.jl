@@ -94,11 +94,12 @@ gaussbeam
 
 ## Multiplying a set of Alm by a generic function of $\ell$
 
-You can use the function [`almxfl`](@ref) to multiply a set of $a_{\ell m}$
-coefficients by an $\ell$-dependent generic function $f_\ell$.
+You can use the function [`almxfl`](@ref) (or [`almxfl!`](@ref)) to multiply (in-place)
+ a set of $a_{\ell m}$ coefficients by an $\ell$-dependent generic function $f_\ell$.
 
 ```@docs
 almxfl
+almxfl!
 ```
 
 

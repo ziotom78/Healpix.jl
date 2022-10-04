@@ -224,18 +224,17 @@ end
 Multiply an a_lm by a vector b_l representing an l-dependendt function.
 
 # ARGUMENTS
-- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
 - `fl::Vector{T}`: The array giving the factor f_l by which to multiply a_lm
 
 #RETURNS
 - `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
     the input alm modified
 """
+function almxfl(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
 
-function almxfl(alm::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
-
-    lmax = alm.lmax
-    mmax = alm.mmax
+    lmax = alms.lmax
+    mmax = alms.mmax
     fl_size = length(fl)
     alm_new = Alm{Complex{Float64}}(lmax, mmax)
 
@@ -253,9 +252,45 @@ function almxfl(alm::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
         end
 
         for m = 0:maxm
-            i = almIndex(alm, l, m)
-            alm_new.alm[i] = alm.alm[i]*f
+            i = almIndex(alms, l, m)
+            alm_new.alm[i] = alms.alm[i]*f
         end
     end
     return alm_new
+end
+
+
+"""
+Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependendt function.
+
+# ARGUMENTS
+- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `fl::Vector{T}`: The array giving the factor f_l by which to multiply a_lm
+
+"""
+
+function almxfl!(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
+
+    lmax = alms.lmax
+    mmax = alms.mmax
+    fl_size = length(fl)
+
+    print(fl_size)
+    for l = 0:lmax
+        if l < fl_size
+            f = fl[l + 1]
+        else
+            f = 0
+        end
+        if l <= mmax
+            maxm = l
+        else
+            maxm = mmax
+        end
+
+        for m = 0:maxm
+            i = almIndex(alms, l, m)
+            alms.alm[i] = alms.alm[i]*f
+        end
+    end
 end
