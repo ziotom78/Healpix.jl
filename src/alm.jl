@@ -238,7 +238,6 @@ function almxfl(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
     fl_size = length(fl)
     alm_new = Alm{Complex{Float64}}(lmax, mmax)
 
-    print(fl_size)
     for l = 0:lmax
         if l < fl_size
             f = fl[l + 1]
@@ -275,7 +274,6 @@ function almxfl!(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
     mmax = alms.mmax
     fl_size = length(fl)
 
-    print(fl_size)
     for l = 0:lmax
         if l < fl_size
             f = fl[l + 1]
