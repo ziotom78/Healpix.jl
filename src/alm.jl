@@ -221,7 +221,7 @@ end
 ###########################################################################
 
 """
-Multiply an a_lm by a vector b_l representing an l-dependendt function.
+Multiply an a_lm by a vector b_l representing an l-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
@@ -231,7 +231,7 @@ Multiply an a_lm by a vector b_l representing an l-dependendt function.
 - `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
     the input alm modified
 """
-function almxfl(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
+function almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
     lmax = alms.lmax
     mmax = alms.mmax
@@ -260,7 +260,7 @@ end
 
 
 """
-Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependendt function.
+Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
@@ -268,7 +268,7 @@ Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependendt function.
 
 """
 
-function almxfl!(alms::Alm{Complex{T}}, fl::Vector{T}) where {T <: Number}
+function almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
     lmax = alms.lmax
     mmax = alms.mmax
