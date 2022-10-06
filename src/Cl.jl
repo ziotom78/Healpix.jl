@@ -54,3 +54,61 @@ function writeClToFITS(fileName, Cl::Vector{T}; overwrite = true) where {T <: Re
     end
     CFITSIO.fits_close_file(f)
 end
+
+
+#########################################################################
+
+
+"""
+    dl2cl(dl::Vector{T}, lmin::Int) where {T <: Real}
+
+Convert a set of ``D_{\\ell}`` to ``C_{\\ell}`` power spectrum, where
+``C_{\\ell} = 2\\pi D_{\\ell} / \\ell (\\ell + 1)``. The first components are
+set to zero if not present. The monopole component is set to zero in any case to avoid Inf values.
+
+#ARGUMENTS:
+- `dl::Vector{T}` : Array of Dℓ components
+- `lmin::Int` : minimum l in the representation of the Dℓ power spectrum
+
+#RETURNS:
+- `Vector{T}` : Array of Cℓ power spectrum components
+"""
+
+function dl2cl(dl::Vector{T}, lmin::Int) where {T <: Real}
+    lmax = length(dl)+lmin-1
+    l_s = Vector{Int}(lmin:lmax)
+    cl =  dl .* 2π ./ (l_s .* (l_s .+ 1))
+    #fill the missing initial components (monopole and/or dipole) with zeros
+    head = zeros(lmin)
+    cl = append!(head, cl)
+    if lmin == 0
+        cl[1] = 0
+    end
+    return cl
+end
+
+
+"""
+    cl2dl(dl::Vector{T}, lmin::Int) where {T <: Real}
+
+Convert a set of ``C_{\\ell}`` to ``D_{\\ell}`` power spectrum, where
+``D_{\\ell} = \\ell (\\ell + 1) C_{\\ell} / 2\\pi``.
+The first components are set to zero if not present.
+
+#ARGUMENTS:
+- `dl::Vector{T}` : Array of Cℓ components
+- `lmin::Int` : minimum l in the representation of the Dℓ power spectrum
+
+#RETURNS:
+- `Vector{T}` : Array of Dℓ power spectrum components
+"""
+
+function cl2dl(cl, lmin)
+    lmax = length(cl)+lmin-1
+    l_s = Vector{Int}(lmin:lmax)
+    head = zeros(lmin)
+    #fill the missing initial components (monopole and/or dipole) with zeros
+    cl = append!(head, cl)
+    dl =  cl ./ 2π .* (l_s .* (l_s .+ 1))
+    return dl
+end
