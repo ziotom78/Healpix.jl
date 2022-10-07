@@ -118,7 +118,7 @@ end
     almIndexes(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number}
 
 Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1``, of the full set of
-armonic coefficients passed in input, up to a certain ``ℓ`` and ``m`` if specified.
+armonic coefficients passed in input, up to a certain ``ℓ`` and ``m`` if specified (and non-negative).
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
@@ -139,6 +139,36 @@ function almExplicitIndex(alm::Alm{Complex{T}}; lmax::Integer = -1, mmax::Intege
     if mmax < 0
         mmax = alm.mmax
     end
+    idx = Vector{Int}()
+    for m = 0:mmax
+        for l = m:lmax
+            i = l^2 + l + m + 1
+            append!(idx, i)
+        end
+    end
+    return idx
+end
+
+
+"""
+    almExplicitIndex(lmax::Integer, mmax::Integer)
+
+Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1``, of a set of
+armonic coefficients up to a certain ``ℓ`` and ``m``.
+
+# ARGUMENTS
+- `lmax::Integer`: the maximum value for ``ℓ``
+- `mmax::Integer`: the maximum value for ``m``
+
+# RETURNS
+- `Vector{Int}`: Array of the indexes corresponding to the full set of harmonic coefficients in input
+
+"""
+
+function almExplicitIndex(lmax::Integer, mmax::Integer)
+    (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
+    (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
+
     idx = Vector{Int}()
     for m = 0:mmax
         for l = m:lmax

@@ -81,7 +81,7 @@ alm = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = ℓ + m
 for ℓ in 0:3
     for m in 0:3
-        alm.alm[almIndex(alm,ℓ,m)] = ℓ + m
+        alm.alm[Healpix.almIndex(alm,ℓ,m)] = ℓ + m
     end
 end
 
@@ -89,13 +89,27 @@ alm_test = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = (ℓ + m)*ℓ
 for ℓ in 0:3
     for m in 0:ℓ
-        alm_test.alm[almIndex(alm,ℓ,m)] = (ℓ + m)*ℓ
+        alm_test.alm[Healpix.almIndex(alm,ℓ,m)] = (ℓ + m)*ℓ
     end
 end
 
 #
 C_l = Vector{Float64}(0:5)
 
-alm_xfl = almxfl(alm, C_l)
+alm_xfl = Healpix.almxfl(alm, C_l)
 
-alm_test.alm == alm_xfl.alm
+@test alm_test.alm == alm_xfl.alm
+
+## test almExplicitIndex
+#let's see if the function reproduces the indexing shown on the file "alm.fits"
+alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
+f = CFITSIO.fits_open_table("alm.fits")
+numOfRows = CFITSIO.fits_get_num_rows(f)
+idx = Array{Int64}(undef, numOfRows)
+CFITSIO.fits_read_col(f, 1, 1, 1, idx)
+
+idx_test_1 = almExplicitIndex(alm)
+idx_test_2 = almExplicitIndex(alm.lmax, alm.mmax)
+
+@test idx == idx_test_1
+@test idx == idx_test_2
