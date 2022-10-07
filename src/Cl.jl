@@ -1,6 +1,6 @@
 """
-    readClFromFITS{T <: Real}(f::CFITSIO.FITSFile, t::Type{T}) -> Vector{T}
-    readClFromFITS{T <: Real}(fileName::String, t::Type{T}) -> Vector{T}
+    readClFromFITS{T <: Real}(f::CFITSIO.FITSFile, t::Type{T}; col_num = 2) -> Vector{T}
+    readClFromFITS{T <: Real}(fileName::String, t::Type{T}; col_num = 2) -> Vector{T}
 Read a set of C_ℓ coefficients from a FITS file.
 """
 function readClFromFITS(f::CFITSIO.FITSFile, t::Type{T}; col_num = 2) where {T <: Real}
@@ -75,15 +75,14 @@ set to zero if not present. The monopole component is set to zero in any case to
 """
 
 function dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
+    (lmin >= 0) || throw(DomainError(lmin, "`lmin` is not positive or zero"))
     lmax = length(dl)+lmin-1
-    l_s = Vector{Int}(lmin:lmax)
-    cl =  dl .* 2π ./ (l_s .* (l_s .+ 1))
-    #fill the missing initial components (monopole and/or dipole) with zeros
+    l_s = Vector{Int}(0:lmax)
+    #fill the missing initial components (monopole and/or dipole, ...) with zeros
     head = zeros(lmin)
-    cl = append!(head, cl)
-    if lmin == 0
-        cl[1] = 0
-    end
+    dl = append!(head, dl)
+    cl =  dl .* 2π ./ (l_s .* (l_s .+ 1))
+    cl[1] = 0
     return cl
 end
 
@@ -97,15 +96,16 @@ The first components are set to zero if not present.
 
 #ARGUMENTS:
 - `cl::AbstractVector{T}` : Array of Cℓ components
-- `lmin::Integer` : minimum l in the representation of the Dℓ power spectrum
+- `lmin::Integer` : minimum l in the representation of the Cℓ power spectrum
 
 #RETURNS:
 - `Vector{T}` : Array of Dℓ power spectrum components
 """
 
 function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
+    (lmin >= 0) || throw(DomainError(lmin, "`lmin` is not positive or zero"))
     lmax = length(cl)+lmin-1
-    l_s = Vector{Int}(lmin:lmax)
+    l_s = Vector{Int}(0:lmax)
     head = zeros(lmin)
     #fill the missing initial components (monopole and/or dipole) with zeros
     cl = append!(head, cl)

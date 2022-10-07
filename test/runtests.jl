@@ -64,3 +64,7 @@ end
 @testset "Query functions" begin
     include("test_query.jl")
 end
+
+@testset "Power spectrum functions" begin
+    include("test_Cl.jl")
+end

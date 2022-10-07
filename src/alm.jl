@@ -15,6 +15,9 @@ A `Alm` type contains the following fields:
 - `tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
 
 
+The``a_{\\ell m}`` are stored by ``m``: if ``\\ell_{max}`` is 16, the first 16 elements
+are ``m=0, \ell=0-16``, then the following 15 elements are ``m=1``, ``\\ell=1-16``,
+then ``m=2``, ``\\ell=2-16`` and so on until the last element, the 153th, is ``m=16``, ``\\ell=16``.
 """
 mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
     alm::AA
@@ -96,6 +99,7 @@ function readAlmFromFITS(f::CFITSIO.FITSFile, t::Type{T}) where {T <: Complex}
     result = Alm{T}(maximum(l), maximum(m))
     i = almIndex(result, l, m)
     result.alm = complex.(almReal[i], almImag[i])
+    return result
 end
 
 function readAlmFromFITS(fileName, t::Type{T}) where {T <: Complex}
@@ -108,6 +112,44 @@ function readAlmFromFITS(fileName, t::Type{T}) where {T <: Complex}
 end
 end
 
+###############################################################
+
+"""
+    almIndexes(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number}
+
+Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1``, of the full set of
+armonic coefficients passed in input, up to a certain ``ℓ`` and ``m`` if specified.
+
+# ARGUMENTS
+- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+
+# Keywords
+- `lmax::Integer = -1`: the maximum value for ``ℓ``
+- `mmax::Integer = -1`: the maximum value for ``m``
+
+# RETURNS
+- `Vector{Int}`: Array of the indexes corresponding to the full set of harmonic coefficients in input
+
+"""
+
+function almExplicitIndex(alm::Alm{Complex{T}}; lmax::Integer = -1, mmax::Integer = -1) where {T <: Number}
+    if lmax < 0
+        lmax = alm.lmax
+    end
+    if mmax < 0
+        mmax = alm.mmax
+    end
+    idx = Vector{Int}()
+    for m = 0:mmax
+        for l = m:lmax
+            i = l^2 + l + m + 1
+            append!(idx, i)
+        end
+    end
+    return idx
+end
+
+
 ############################################################################
 
 """
@@ -117,10 +159,12 @@ end
 Write a set of a_ℓm coefficients into a FITS file. If the code fails,
 CFITSIO will raise an exception. (Refer to the CFITSIO library for more
 information.)
+In the fits file the alms are written with explicit index scheme,
+``index = \\ell^2 + \\ell + m + 1``, possibly out of order.
 """
 function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
 
-    idx = Vector{Int64}(range(1, length(alm.alm)))
+    idx = almExplicitIndex(alm)
     almReal = real(alm.alm)
     almImag = imag(alm.alm)
 
@@ -221,11 +265,13 @@ end
 ###########################################################################
 
 """
+    almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
 Multiply an a_lm by a vector b_l representing an l-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::Vector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
 
 #RETURNS
 - `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
@@ -260,11 +306,13 @@ end
 
 
 """
+    almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
 Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::Vector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
 
 """
 
