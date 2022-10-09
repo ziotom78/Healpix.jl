@@ -271,22 +271,21 @@ end
 ###########################################################################
 
 """
-    almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
 Multiply an a_lm by a vector b_l representing an l-dependent function.
 
 # ARGUMENTS
-- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `fl::AbstractVector{T}`: The array giving the factor ``f_{\ell}`` by which to multiply ``a_{\ell m}``
 
 #RETURNS
-- `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
-    the input alm modified
+- `Alm{Complex{T}}`: The result of ``a_{\ell m} * f_{\ell}``.
 """
-function almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+function almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-    lmax = alms.lmax
-    mmax = alms.mmax
+    lmax = alm.lmax
+    mmax = alm.mmax
     fl_size = length(fl)
     alm_new = Alm{Complex{Float64}}(lmax, mmax)
 
@@ -303,8 +302,8 @@ function almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number
         end
 
         for m = 0:maxm
-            i = almIndex(alms, l, m)
-            alm_new.alm[i] = alms.alm[i]*f
+            i = almIndex(alm, l, m)
+            alm_new.alm[i] = alm.alm[i]*f
         end
     end
     return alm_new
@@ -314,11 +313,11 @@ end
 """
     almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependent function.
+Multiply IN-PLACE an ``a_{\ell m}`` by a vector ``b_{\ell}`` representing an l-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `fl::AbstractVector{T}`: The array giving the factor ``f_{\ell}`` by which to multiply ``a_{\ell m}``
 
 """
 
