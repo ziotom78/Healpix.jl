@@ -1,3 +1,6 @@
 *~
 docs/build
 Manifest.toml
+Healpix.jl
+sphtfunc.jl
+tet_sphtfunc.jl

@@ -115,20 +115,11 @@ end
 ###############################################################
 
 """
-    almIndexes(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number}
+    almExplicitIndex(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number} -> Vector{Int}
+    almExplicitIndex(lmax::Integer, mmax::Integer) -> Vector{Int}
 
-Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1``, of the full set of
-armonic coefficients passed in input, up to a certain ``ℓ`` and ``m`` if specified (and non-negative).
-
-# ARGUMENTS
-- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-
-# Keywords
-- `lmax::Integer = -1`: the maximum value for ``ℓ``
-- `mmax::Integer = -1`: the maximum value for ``m``
-
-# RETURNS
-- `Vector{Int}`: Array of the indexes corresponding to the full set of harmonic coefficients in input
+Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1`` up to a
+certain ``ℓ`` and ``m`` if specified (and non-negative).
 
 """
 
@@ -149,21 +140,6 @@ function almExplicitIndex(alm::Alm{Complex{T}}; lmax::Integer = -1, mmax::Intege
     return idx
 end
 
-
-"""
-    almExplicitIndex(lmax::Integer, mmax::Integer)
-
-Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1``, of a set of
-armonic coefficients up to a certain ``ℓ`` and ``m``.
-
-# ARGUMENTS
-- `lmax::Integer`: the maximum value for ``ℓ``
-- `mmax::Integer`: the maximum value for ``m``
-
-# RETURNS
-- `Vector{Int}`: Array of the indexes corresponding to the full set of harmonic coefficients in input
-
-"""
 
 function almExplicitIndex(lmax::Integer, mmax::Integer)
     (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
@@ -190,7 +166,7 @@ Write a set of a_ℓm coefficients into a FITS file. If the code fails,
 CFITSIO will raise an exception. (Refer to the CFITSIO library for more
 information.)
 In the fits file the alms are written with explicit index scheme,
-``index = \\ell^2 + \\ell + m + 1``, possibly out of order.
+``index = \\ell^2 + \\ell + m + 1``, possibly out of order (check `almExplicitIndex`).
 """
 function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
 

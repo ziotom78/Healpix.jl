@@ -110,6 +110,12 @@ readAlmFromFITS
 writeAlmToFITS
 ```
 
+## Explicit indexing
+
+```@docs
+almExplicitIndex
+```
+
 ## Full Pixel Weights
 
 The default [`map2alm`](@ref) uses iteration to obtain an accurate transform.
