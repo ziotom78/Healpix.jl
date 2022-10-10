@@ -99,14 +99,14 @@ function readAlmFromFITS(f::CFITSIO.FITSFile, t::Type{T}) where {T <: Complex}
     result = Alm{T}(maximum(l), maximum(m))
     i = almIndex(result, l, m)
     result.alm = complex.(almReal[i], almImag[i])
-    return result
+    result
 end
 
 function readAlmFromFITS(fileName, t::Type{T}) where {T <: Complex}
     f = CFITSIO.fits_open_table(fileName)
     try
         result = readAlmFromFITS(f, t)
-        return result
+        result
     finally
         CFITSIO.fits_close_file(f)
 end
@@ -123,37 +123,31 @@ certain ``ℓ`` and ``m`` if specified (and non-negative).
 
 """
 
-function almExplicitIndex(alm::Alm{Complex{T}}; lmax::Integer = -1, mmax::Integer = -1) where {T <: Number}
-    if lmax < 0
-        lmax = alm.lmax
+# No need to specify the type for `lmax` and `mmax`
+function almExplicitIndex(lmax, mmax) where {T <: Number}
+    # Step 1: count the number of elements in the output
+    count = 0
+    for m = 0:mmax
+        (lmax ≥ m) && (count += (lmax - m) + 1)
     end
-    if mmax < 0
-        mmax = alm.mmax
-    end
-    idx = Vector{Int}()
+
+    # Step 2: allocate the vector for the output in one batch
+    idx = Vector{Int}(undef, count)
+
+    # Step 3: fill the output
+    i = 1
     for m = 0:mmax
         for l = m:lmax
-            i = l^2 + l + m + 1
-            append!(idx, i)
+            idx[i] = l^2 + l + m + 1
+            i += 1
         end
     end
-    return idx
+
+    idx  # In Julia it's preferable to avoid "return" at the end of functions
 end
 
 
-function almExplicitIndex(lmax::Integer, mmax::Integer)
-    (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
-    (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
-
-    idx = Vector{Int}()
-    for m = 0:mmax
-        for l = m:lmax
-            i = l^2 + l + m + 1
-            append!(idx, i)
-        end
-    end
-    return idx
-end
+almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 
 
 ############################################################################
@@ -226,7 +220,7 @@ function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Nu
         cl[l + 1] += real(alm₁.alm[index0] * conj(alm₂.alm[index0]))
         cl[l + 1] = cl[l + 1] / (2 * l + 1)
     end
-    return cl
+    cl
 end
 
 alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
@@ -307,7 +301,7 @@ function almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number
             alm_new.alm[i] = alms.alm[i]*f
         end
     end
-    return alm_new
+    alm_new
 end
 
 

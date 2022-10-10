@@ -108,8 +108,8 @@ numOfRows = CFITSIO.fits_get_num_rows(f)
 idx = Array{Int64}(undef, numOfRows)
 CFITSIO.fits_read_col(f, 1, 1, 1, idx)
 
-idx_test_1 = almExplicitIndex(alm)
-idx_test_2 = almExplicitIndex(alm.lmax, alm.mmax)
+idx_test_1 = Healpix.almExplicitIndex(alm)
+idx_test_2 = Healpix.almExplicitIndex(alm.lmax, alm.mmax)
 
 @test idx == idx_test_1
 @test idx == idx_test_2
