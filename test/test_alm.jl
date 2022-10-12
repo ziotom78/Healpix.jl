@@ -80,7 +80,7 @@ almread = Healpix.readAlmFromFITS("testalm.fits", ComplexF64)
 alm = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = ℓ + m
 for ℓ in 0:3
-    for m in 0:3
+    for m in 0:ℓ
         alm.alm[Healpix.almIndex(alm,ℓ,m)] = ℓ + m
     end
 end
@@ -93,12 +93,9 @@ for ℓ in 0:3
     end
 end
 
-#
 C_l = Vector{Float64}(0:5)
-
-alm_xfl = Healpix.almxfl(alm, C_l)
-
-@test alm_test.alm == alm_xfl.alm
+Healpix.almxfl!(alm, C_l)
+@test alm_test.alm == alm.alm
 
 ## test almExplicitIndex
 #let's see if the function reproduces the indexing shown on the file "alm.fits"

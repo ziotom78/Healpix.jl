@@ -265,47 +265,6 @@ end
 ###########################################################################
 
 """
-    almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
-
-Multiply an a_lm by a vector b_l representing an l-dependent function.
-
-# ARGUMENTS
-- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
-
-#RETURNS
-- `Alm{Complex{T}}`: The result of a_lm * f_l. If *inplace* is True, returns
-    the input alm modified
-"""
-function almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
-
-    lmax = alms.lmax
-    mmax = alms.mmax
-    fl_size = length(fl)
-    alm_new = Alm{Complex{Float64}}(lmax, mmax)
-
-    for l = 0:lmax
-        if l < fl_size
-            f = fl[l + 1]
-        else
-            f = 0
-        end
-        if l <= mmax
-            maxm = l
-        else
-            maxm = mmax
-        end
-
-        for m = 0:maxm
-            i = almIndex(alms, l, m)
-            alm_new.alm[i] = alms.alm[i]*f
-        end
-    end
-    alm_new
-end
-
-
-"""
     almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
 Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependent function.
@@ -339,4 +298,25 @@ function almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Numbe
             alms.alm[i] = alms.alm[i]*f
         end
     end
+end
+
+"""
+    almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
+Multiply an a_lm by a vector b_l representing an l-dependent function.
+
+# ARGUMENTS
+- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
+
+#RETURNS
+- `Alm{Complex{T}}`: The result of a_lm * f_l.
+"""
+function almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    lmax = alm.lmax
+    mmax = alm.mmax
+    alm_new = Alm{Complex{Float64}}(lmax, mmax)
+    alm_new.alm = alm.alm
+    almxfl!(alm_new, fl)
+    alm_new
 end
