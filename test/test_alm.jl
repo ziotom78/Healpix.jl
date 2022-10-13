@@ -89,13 +89,14 @@ alm_test = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = (ℓ + m)*ℓ
 for ℓ in 0:3
     for m in 0:ℓ
-        alm_test.alm[Healpix.almIndex(alm,ℓ,m)] = (ℓ + m)*ℓ
+        alm_test.alm[Healpix.almIndex(alm_test,ℓ,m)] = (ℓ + m)*ℓ
     end
 end
 
 C_l = Vector{Float64}(0:5)
-Healpix.almxfl!(alm, C_l)
-@test alm_test.alm == alm.alm
+almnew = Healpix.almxfl(alm, C_l)
+@test alm_test.alm == almnew.alm
+@test alm_test.alm != alm.alm
 
 ## test almExplicitIndex
 #let's see if the function reproduces the indexing shown on the file "alm.fits"

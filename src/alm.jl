@@ -47,7 +47,7 @@ Alm(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}} =
     numberOfAlms(lmax::Integer) -> Integer
 
 Return the size of the array of complex numbers needed to store the
-a_lm coefficients in the range of ℓ and m specified by `lmax` and
+a_ℓm coefficients in the range of ℓ and m specified by `lmax` and
 `mmax`. If `mmax` is not specified, it is assumed to be equal to
 `lmax`. If `lmax` and `mmax` are inconsistent or negative, a
 `DomainError` exception is thrown.
@@ -267,11 +267,11 @@ end
 """
     almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-Multiply IN-PLACE an a_lm by a vector b_l representing an l-dependent function.
+Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent function.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `fl::AbstractVector{T}`: The array giving the factor f_ℓ by which to multiply a_ℓm
 
 """
 
@@ -303,20 +303,20 @@ end
 """
     almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-Multiply an a_lm by a vector b_l representing an l-dependent function.
+Multiply an a_ℓm by a vector b_ℓ representing an ℓ-dependent function, without changing
+the a_ℓm passed in input.
 
 # ARGUMENTS
 - `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
-- `fl::AbstractVector{T}`: The array giving the factor f_l by which to multiply a_lm
+- `fl::AbstractVector{T}`: The array giving the factor f_ℓ by which to multiply a_ℓm
 
 #RETURNS
-- `Alm{Complex{T}}`: The result of a_lm * f_l.
+- `Alm{Complex{T}}`: The result of a_ℓm * f_ℓ.
 """
 function almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
     lmax = alm.lmax
     mmax = alm.mmax
-    alm_new = Alm{Complex{Float64}}(lmax, mmax)
-    alm_new.alm = alm.alm
+    alm_new = deepcopy(alm)
     almxfl!(alm_new, fl)
     alm_new
 end
