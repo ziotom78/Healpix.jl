@@ -15,8 +15,8 @@ A `Alm` type contains the following fields:
 - `tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
 
 
-The``a_{\\ell m}`` are stored by ``m``: if ``\\ell_{max}`` is 16, the first 16 elements
-are ``m=0, \ell=0-16``, then the following 15 elements are ``m=1``, ``\\ell=1-16``,
+The ``a_{\\ell m}`` are stored by ``m``: if ``\\ell_{max}`` is 16, the first 16 elements
+are ``m=0``, ``\\ell=0-16``, then the following 15 elements are ``m=1``, ``\\ell=1-16``,
 then ``m=2``, ``\\ell=2-16`` and so on until the last element, the 153th, is ``m=16``, ``\\ell=16``.
 """
 mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
@@ -118,7 +118,7 @@ end
     almExplicitIndex(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number} -> Vector{Int}
     almExplicitIndex(lmax::Integer, mmax::Integer) -> Vector{Int}
 
-Compute the explicit index scheme, i.e. ``index = \\ell^2 + \\ell + m + 1`` up to a
+Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m + 1`` up to a
 certain ``ℓ`` and ``m`` if specified (and non-negative).
 
 """
@@ -160,7 +160,7 @@ Write a set of a_ℓm coefficients into a FITS file. If the code fails,
 CFITSIO will raise an exception. (Refer to the CFITSIO library for more
 information.)
 In the fits file the alms are written with explicit index scheme,
-``index = \\ell^2 + \\ell + m + 1``, possibly out of order (check `almExplicitIndex`).
+``\\mathrm{index} = \\ell^2 + \\ell + m + 1``, possibly out of order (check `almExplicitIndex`).
 """
 function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
 
