@@ -115,15 +115,23 @@ end
 ###############################################################
 
 """
+    almExplicitIndex(lmax) -> Vector{Int}
     almExplicitIndex(lmax, mmax) -> Vector{Int}
     almExplicitIndex(alm::Alm{T}) where {T} -> Vector{Int}
 
-Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m + 1`` up to a
-certain ``ℓ`` and ``m`` if specified (and non-negative).
+Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m + 1``
+up to a certain ``ℓ`` and ``m`` if specified, or taken from the `Alm` passed.
+If not passed, `mmax` is defaulted to `lmax`. If `lmax` and `mmax` are inconsistent
+or negative, a `DomainError` exception is thrown.
 
 """
 
 function almExplicitIndex(lmax, mmax)
+    lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
+    (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
+    (0 ≤ mmax ≤ lmax) ||
+        throw(DomainError((lmax, mmax), "`lmax` and `mmax` are inconsistent"))
+
     # Step 1: count the number of elements in the output
     count = 0
     for m = 0:mmax
@@ -142,9 +150,10 @@ function almExplicitIndex(lmax, mmax)
         end
     end
 
-    idx 
+    idx
 end
 
+almExplicitIndex(lmax) = almExplicitIndex(lmax, lmax)
 
 almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 
