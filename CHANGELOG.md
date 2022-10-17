@@ -1,5 +1,7 @@
 # HEAD
 
+-   Use double precision in `ang2pixRing` and `zphi2pixRing` [#94](https://github.com/ziotom78/Healpix.jl/pull/94)
+
 -   Improve CI builds [#89](https://github.com/ziotom78/Healpix.jl/pull/89)
 
 # Version 4.1.1
