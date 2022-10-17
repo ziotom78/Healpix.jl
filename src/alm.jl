@@ -115,16 +115,15 @@ end
 ###############################################################
 
 """
-    almExplicitIndex(alms::Alm{Complex{T}}; lmax::Integer = -1, nmax::Integer = -1) where {T <: Number} -> Vector{Int}
-    almExplicitIndex(lmax::Integer, mmax::Integer) -> Vector{Int}
+    almExplicitIndex(lmax, mmax) -> Vector{Int}
+    almExplicitIndex(alm::Alm{T}) where {T} -> Vector{Int}
 
 Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m + 1`` up to a
 certain ``ℓ`` and ``m`` if specified (and non-negative).
 
 """
 
-# No need to specify the type for `lmax` and `mmax`
-function almExplicitIndex(lmax, mmax) where {T <: Number}
+function almExplicitIndex(lmax, mmax)
     # Step 1: count the number of elements in the output
     count = 0
     for m = 0:mmax
@@ -143,7 +142,7 @@ function almExplicitIndex(lmax, mmax) where {T <: Number}
         end
     end
 
-    idx  # In Julia it's preferable to avoid "return" at the end of functions
+    idx 
 end
 
 
