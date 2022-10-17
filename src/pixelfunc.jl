@@ -265,7 +265,7 @@ function zphi2pixRing(resol::Resolution, z, phi)
     z_abs = abs(z)
 
     # We do not used mod2pi because we want 1-1 match with C++ code
-    scaled_phi = mod(phi * 2 / π, 4)
+    scaled_phi = mod(phi * 2 / π, 4.0e0)
 
     if 3 * z_abs ≤ 2
         calcRingPosForEquator(resol, z, z_abs, scaled_phi, 0.0, false)
@@ -291,8 +291,8 @@ function ang2pixRing(resol::Resolution, theta, phi)
     z = cos(theta)
     z_abs = abs(z)
 
-    # We do not used mod2pi because we want 1-1 match with C++ code
-    scaled_phi = mod(phi * 2 / π, 4)
+    # We do not use mod2pi because we want 1-1 match with C++ code
+    scaled_phi = mod(phi * 2 / π, 4.0e0)
 
     (sintheta, havesintheta) = cachesintheta(theta)
 
