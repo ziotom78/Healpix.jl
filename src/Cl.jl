@@ -67,11 +67,11 @@ Convert a set of ``D_{\\ell}`` to ``C_{\\ell}`` power spectrum, where
 set to zero if not present. The monopole component is set to zero in any case to avoid Inf values.
 
 #ARGUMENTS:
-- `dl::AbstractVector{T}` : Array of Dℓ components
+- `dl::AbstractVector{T}` : Array of D_ℓ components
 - `lmin::Integer` : minimum l in the representation of the Dℓ power spectrum
 
 #RETURNS:
-- `Vector{T}` : Array of Cℓ power spectrum components
+- `Vector{T}` : Array of C_ℓ power spectrum components
 """
 
 function dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
@@ -95,11 +95,11 @@ Convert a set of ``C_{\\ell}`` to ``D_{\\ell}`` power spectrum, where
 The first components are set to zero if not present.
 
 #ARGUMENTS:
-- `cl::AbstractVector{T}` : Array of Cℓ components
-- `lmin::Integer` : minimum l in the representation of the Cℓ power spectrum
+- `cl::AbstractVector{T}` : Array of C_ℓ components
+- `lmin::Integer` : minimum l in the representation of the C_ℓ power spectrum
 
 #RETURNS:
-- `Vector{T}` : Array of Dℓ power spectrum components
+- `Vector{T}` : Array of D_ℓ power spectrum components
 """
 
 function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}

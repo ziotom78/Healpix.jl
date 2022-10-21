@@ -14,7 +14,6 @@ A `Alm` type contains the following fields:
 - `mmax`: the maximum value for ``m``
 - `tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
 
-
 The ``a_{\\ell m}`` are stored by ``m``: if ``\\ell_{max}`` is 16, the first 16 elements
 are ``m=0``, ``\\ell=0-16``, then the following 15 elements are ``m=1``, ``\\ell=1-16``,
 then ``m=2``, ``\\ell=2-16`` and so on until the last element, the 153th, is ``m=16``, ``\\ell=16``.
@@ -210,7 +209,7 @@ or two fields.
 - `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
 
 # Returns
-- `Array{T}` containing C_{\ell}, with the first element referring to ℓ=0.
+- `Array{T}` containing C_{\\ell}, with the first element referring to ℓ=0.
 """
 function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
