@@ -272,7 +272,7 @@ end
 ###########################################################################
 
 """
-    almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
 Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent function.
 
@@ -282,10 +282,10 @@ Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent func
 
 """
 
-function almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+function almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-    lmax = alms.lmax
-    mmax = alms.mmax
+    lmax = alm.lmax
+    mmax = alm.mmax
     fl_size = length(fl)
 
     for l = 0:lmax
@@ -301,20 +301,20 @@ function almxfl!(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Numbe
         end
 
         for m = 0:maxm
-            i = almIndex(alms, l, m)
-            alms.alm[i] = alms.alm[i]*f
+            i = almIndex(alm, l, m)
+            alm.alm[i] = alm.alm[i]*f
         end
     end
 end
 
 """
-    almxfl(alms::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
 Multiply an a_ℓm by a vector b_ℓ representing an ℓ-dependent function, without changing
 the a_ℓm passed in input.
 
 # ARGUMENTS
-- `alms::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
+- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients
 - `fl::AbstractVector{T}`: The array giving the factor f_ℓ by which to multiply a_ℓm
 
 #RETURNS
