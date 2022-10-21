@@ -209,7 +209,7 @@ or two fields.
 - `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
 
 # Returns
-- `Array{T}` containing C_{\\ell}, with the first element referring to ℓ=0.
+- `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
 """
 function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
