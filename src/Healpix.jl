@@ -12,8 +12,9 @@ export readMapFromFITS, readPolarizedMapFromFITS
 export savePixelsToFITS, saveToFITS, conformables
 export ringWeightPath, readWeightRing, readFullWeights, applyFullWeights!
 export pixelWindowPath, readPixelWindowT, readPixelWindowP
-export Alm, numberOfAlms, almIndexL0, almIndex, readAlmFromFITS
-export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin, gaussbeam
+export Alm, numberOfAlms, almIndexL0, almIndex, almExplicitIndex, readAlmFromFITS, writeAlmToFITS
+export readClFromFITS, writeClToFITS, cl2dl, dl2cl
+export map2alm, alm2map, map2alm!, alm2map!, alm2cl, pixwin, gaussbeam, almxfl, almxfl!
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest, xyf2loc
 export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad
@@ -57,6 +58,7 @@ include("pixelwindow.jl")
 include("map_pixelfunc.jl")
 include("projections.jl")
 include("alm.jl")
+include("Cl.jl")
 include("sphtfunc.jl")
 include("mapmaking.jl")
 include("query.jl")

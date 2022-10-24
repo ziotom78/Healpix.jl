@@ -11,6 +11,7 @@ makedocs(
         "Query functions" => "query.md",
         "Map functions" => "mapfunc.md",
         "Spherical harmonics" => "alm.md",
+        "Power Spectrum" => "Cl.md",
         "Visualization" => "visualization.md",
         "Miscellanea" => "misc.md",
     ],

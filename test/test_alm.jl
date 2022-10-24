@@ -21,7 +21,7 @@ alm = Healpix.Alm{ComplexF32}(10, 8)
 @test Healpix.almIndex(alm, 5, 3) == 33
 @test Healpix.almIndex(alm, [4, 6, 5], [3, 4, 5]) == [32, 41, 46]
 
-alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
+alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64).alm
 @test alm[1] ≈ (5.443205775735018e+03 + 0.000000000000e+00im) atol = eps
 @test alm[2] ≈ (-3.143659646588944e+03 + 0.000000000000e+00im) atol = eps
 @test alm[3] ≈ (-8.445976910202e-07 + 0.000000000000e+00im) atol = eps
@@ -67,3 +67,47 @@ bl_0 = Healpix.gaussbeam(deg2rad(1), 512; pol=false)
 bl_2 = Healpix.gaussbeam(deg2rad(1), 512; pol=true)
 @test bl_2[50+1] ≈ 0.9324584647703964
 @test bl_2[500+1] ≈ 0.001027791493098124
+
+## test writeAlmToFITS & readAlmFromFITS:
+testalm = Healpix.Alm(2, 2, ComplexF64.(1:6))
+Healpix.writeAlmToFITS("testalm.fits", testalm)
+almread = Healpix.readAlmFromFITS("testalm.fits", ComplexF64)
+
+@test almread.alm == testalm.alm
+
+## test almxfl & almxfl!
+
+alm = Healpix.Alm(3,3)
+#let's fill the alms as a_ℓm = ℓ + m
+for ℓ in 0:3
+    for m in 0:ℓ
+        alm.alm[Healpix.almIndex(alm,ℓ,m)] = ℓ + m
+    end
+end
+
+alm_test = Healpix.Alm(3,3)
+#let's fill the alms as a_ℓm = (ℓ + m)*ℓ
+for ℓ in 0:3
+    for m in 0:ℓ
+        alm_test.alm[Healpix.almIndex(alm_test,ℓ,m)] = (ℓ + m)*ℓ
+    end
+end
+
+C_l = Vector{Float64}(0:5)
+almnew = Healpix.almxfl(alm, C_l)
+@test alm_test.alm == almnew.alm
+@test alm_test.alm != alm.alm
+
+## test almExplicitIndex
+#let's see if the function reproduces the indexing shown on the file "alm.fits"
+alm = Healpix.readAlmFromFITS("alm.fits", ComplexF64)
+f = CFITSIO.fits_open_table("alm.fits")
+numOfRows = CFITSIO.fits_get_num_rows(f)
+idx = Array{Int64}(undef, numOfRows)
+CFITSIO.fits_read_col(f, 1, 1, 1, idx)
+
+idx_test_1 = Healpix.almExplicitIndex(alm)
+idx_test_2 = Healpix.almExplicitIndex(alm.lmax, alm.mmax)
+
+@test idx == idx_test_1
+@test idx == idx_test_2

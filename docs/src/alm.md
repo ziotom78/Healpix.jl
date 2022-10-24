@@ -81,7 +81,7 @@ alm2map
 ## From harmonic coefficients to the power spectrum
 
 You can use the function [`alm2cl`](@ref) to convert a set of $a_{\ell m}$
-coefficients into the components $C_\ell$ of the power spectrum. 
+coefficients into the components $C_\ell$ of the power spectrum.
 The pixelization also induces a transfer function, which can be obtained from
 [`pixwin`](@ref). A simple Gaussian beam window function in the asymptotic small-beam
 limit can be computed with [`gaussbeam`](@ref).
@@ -92,10 +92,28 @@ pixwin
 gaussbeam
 ```
 
+## Multiplying a set of Alm by a generic function of $\ell$
+
+You can use the function [`almxfl`](@ref) (or [`almxfl!`](@ref)) to multiply (in-place)
+ a set of $a_{\ell m}$ coefficients by an $\ell$-dependent generic function $f_\ell$.
+
+```@docs
+almxfl
+almxfl!
+```
+
+
 ## Loading and saving harmonic coefficients
 
 ```@docs
 readAlmFromFITS
+writeAlmToFITS
+```
+
+## Explicit indexing
+
+```@docs
+almExplicitIndex
 ```
 
 ## Full Pixel Weights
@@ -109,7 +127,7 @@ git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 
 These weights are in a compressed format that is read with [`readFullWeights`](@ref)
-and multiplied into a map with [`applyFullWeights!`](@ref). 
+and multiplied into a map with [`applyFullWeights!`](@ref).
 
 ```julia
 nside = 32
