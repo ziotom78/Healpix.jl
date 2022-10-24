@@ -1,5 +1,11 @@
 # HEAD
 
+-   Add functions `readClFromFITS`, `writeClToFITS`, `cl2dl`, `dl2cl`, `almxfl`, `almxfl!`, `almExplicitIndex` [#91](https://github.com/ziotom78/Healpix.jl/pull/91)
+
+# Version 4.1.2
+
+-   Use double precision in `ang2pixRing` and `zphi2pixRing` [#94](https://github.com/ziotom78/Healpix.jl/pull/94)
+
 -   Improve CI builds [#89](https://github.com/ziotom78/Healpix.jl/pull/89)
 
 # Version 4.1.1
@@ -16,7 +22,7 @@
 
 # Version 4.0.0
 
--   **Breaking change**: `udgrade` now always assumes `pess = false` [#72](https://github.com/ziotom78/Healpix.jl/pull/72)
+-   **Breaking change**: `udgrade` now always assumes `pess = false` [#72]()
 
 -   Implement `Base.parent` for `HealpixMap` which returns the underlying array
 

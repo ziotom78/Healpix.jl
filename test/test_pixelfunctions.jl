@@ -2924,3 +2924,11 @@ vectors = Healpix.boundariesRing(Healpix.Resolution(32), 614, 5, Float64)
 @test vectors[18, :] ≈ Float64[4.3315213476e-01, 6.2277874976e-02, 8.9916666667e-01]
 @test vectors[19, :] ≈ Float64[4.2944021251e-01, 5.4566037512e-02, 9.0144531250e-01]
 @test vectors[20, :] ≈ Float64[4.2560200872e-01, 4.6829537537e-02, 9.0369791667e-01]
+
+################################################################################
+# Issue https://github.com/ziotom78/Healpix.jl/issues/93
+
+let res = Healpix.Resolution(1)
+    @test Healpix.ang2pixRing(res, 2.529, -1.74f-7) == 12
+    @test Healpix.ang2pixRing(res, 2.529, -1.74e-7) == 12
+end
