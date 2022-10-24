@@ -34,7 +34,7 @@ Write a set of C_ℓ coefficients to a FITS file.
 
 function writeClToFITS(f::CFITSIO.FITSFile, Cl::Vector{T}) where {T <: Real}
 
-    idx = Vector{Int64}(range(1, length(Cl)))
+    idx = Vector{Int64}(1:length(Cl))
 
     CFITSIO.fits_write_col(f, 1, 1, 1, idx)
     CFITSIO.fits_write_col(f, 2, 1, 1, Cl)
