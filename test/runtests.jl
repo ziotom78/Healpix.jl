@@ -66,5 +66,5 @@ end
 end
 
 @testset "Power spectrum functions" begin
-    include("test_Cl.jl")
+    include("test_cl.jl")
 end
