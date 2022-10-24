@@ -1,8 +1,9 @@
 ##test readClFromFITS/writeClToFITS
 
 C_l_test = Vector{Float64}(0:20)
-Healpix.writeClToFITS("Cltest.fits", C_l_test)
-C_l_read = Healpix.readClFromFITS("Cltest.fits", Float64)
+file_name = tempname() * ".fits"
+Healpix.writeClToFITS(file_name, C_l_test)
+C_l_read = Healpix.readClFromFITS(file_name, Float64)
 
 @test C_l_test == C_l_read
 

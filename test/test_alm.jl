@@ -1,3 +1,5 @@
+import CFITSIO
+
 @test Healpix.numberOfAlms(10, 5) == 51
 @test Healpix.numberOfAlms(10, 7) == 60
 @test Healpix.numberOfAlms(12, 7) == 76
@@ -70,8 +72,9 @@ bl_2 = Healpix.gaussbeam(deg2rad(1), 512; pol=true)
 
 ## test writeAlmToFITS & readAlmFromFITS:
 testalm = Healpix.Alm(2, 2, ComplexF64.(1:6))
-Healpix.writeAlmToFITS("testalm.fits", testalm)
-almread = Healpix.readAlmFromFITS("testalm.fits", ComplexF64)
+file_name = tempname() * "testalm.fits"
+Healpix.writeAlmToFITS(file_name, testalm)
+almread = Healpix.readAlmFromFITS(file_name, ComplexF64)
 
 @test almread.alm == testalm.alm
 
