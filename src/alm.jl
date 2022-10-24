@@ -126,7 +126,7 @@ or negative, a `DomainError` exception is thrown.
 """
 
 function almExplicitIndex(lmax, mmax)
-    lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
+    (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
     (mmax >= 0) || throw(DomainError(mmax, "`mmax` is not positive or zero"))
     (0 ≤ mmax ≤ lmax) ||
         throw(DomainError((lmax, mmax), "`lmax` and `mmax` are inconsistent"))
