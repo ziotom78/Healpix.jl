@@ -33,7 +33,7 @@ test_alm_spin0 = [
 )
 
 ## spin-0 adjoint_alm2map
-W = 4*π/nside2npix(nside)
+W = 4*π/Healpix.nside2npix(nside)
 test_alm_spin0_adj = test_alm_spin0 ./ W
 Healpix.adjoint_alm2map!(map, alm)
 @test isapprox(alm.alm, test_alm_spin0_adj)
@@ -131,7 +131,7 @@ map_bf = Healpix.alm2map(alm, nside)
 @test isapprox(map_bf.pixels, test_map_spin0)
 
 ## spin-0 adjoint_map2alm
-W = 4*π/nside2npix(nside)
+W = 4*π/Healpix.nside2npix(nside)
 test_map_spin0_adj = test_map_spin0 .* W
 Healpix.adjoint_map2alm!(alm, map)
 @test isapprox(map, test_map_spin0_adj)
@@ -178,7 +178,7 @@ alms_int = Healpix.map2alm(map_int, lmax = lmax, mmax = lmax, niter = 0)
 @test isapprox(alms_int[3].alm, test_alm_spin2)
 
 ## spin-2 adjoint_alm2map
-W = 4*π/nside2npix(nside)
+W = 4*π/Healpix.nside2npix(nside)
 test_alm_spin2_adj = test_alm_spin2 ./ W
 Healpix.adjoint_alm2map!(map, alms)
 @test isapprox(alms[1].alm, test_alm_spin0_adj)
@@ -334,7 +334,7 @@ maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 @test isapprox(maps_float.u, test_map_spin2_u)
 
 ## spin-2 adjoint_map2alm
-W = 4*π/nside2npix(nside)
+W = 4*π/Healpix.nside2npix(nside)
 test_map_spin2_q_adj = test_map_spin2_q .* W
 test_map_spin2_u_adj = test_map_spin2_u .* W
 Healpix.adjoint_map2alm!(Vector([alm_t, alm_e, alm_b]), maps)
