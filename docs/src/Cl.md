@@ -27,3 +27,13 @@ a power spectrum from/to such a representation.
 cl2dl
 dl2cl
 ```
+
+## Synthetizing harmonic coefficients from a given power spectrum
+Random generate a set of [`Alm`](@ref) from a given power spectrum $C_{\ell}$.
+Each harmonic coefficient $a_{\ell m}$ is a realization of a gaussian distribution
+with zero mean and $C_{\ell}$ variance.
+
+```@docs
+synalm!
+synalm
+```
