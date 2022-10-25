@@ -32,6 +32,12 @@ test_alm_spin0 = [
     [7.08915321e+00 + 0.0im, -3.33069318e-17 + 0.0im],
 )
 
+## spin-0 adjoint_alm2map
+W = 4*π/nside2npix(nside)
+test_alm_spin0_adj = test_alm_spin0 ./ W
+Healpix.adjoint_alm2map!(map, alm)
+@test isapprox(alm.alm, test_alm_spin0_adj)
+
 ## test type convert
 map_int = Healpix.HealpixMap{Int64,Healpix.RingOrder}(2 .* ones(Int64, Healpix.nside2npix(nside)))
 alm = Healpix.map2alm(map_int, lmax = lmax, mmax = lmax, niter = 0)
@@ -124,6 +130,12 @@ alm_bf = Healpix.Alm(lmax, lmax, 2 .* ones(BigFloat, nalms))
 map_bf = Healpix.alm2map(alm, nside)
 @test isapprox(map_bf.pixels, test_map_spin0)
 
+## spin-0 adjoint_map2alm
+W = 4*π/nside2npix(nside)
+test_map_spin0_adj = test_map_spin0 .* W
+Healpix.adjoint_map2alm!(alm, map)
+@test isapprox(map, test_map_spin0_adj)
+
 ## spin 2 map2alm
 nside = 4
 lmax = 4
@@ -164,6 +176,14 @@ alms_int = Healpix.map2alm(map_int, lmax = lmax, mmax = lmax, niter = 0)
 @test isapprox(alms_int[1].alm, test_alm_spin0)
 @test isapprox(alms_int[2].alm, test_alm_spin2)
 @test isapprox(alms_int[3].alm, test_alm_spin2)
+
+## spin-2 adjoint_alm2map
+W = 4*π/nside2npix(nside)
+test_alm_spin2_adj = test_alm_spin2 ./ W
+Healpix.adjoint_alm2map!(map, alms)
+@test isapprox(alms[1].alm, test_alm_spin0_adj)
+@test isapprox(alms[2].alm, test_alm_spin2_adj)
+@test isapprox(alms[3].alm, test_alm_spin2_adj)
 
 ## spin 2 map2alm niter=3
 alm_niter_3 = Healpix.map2alm(map, lmax = lmax, mmax = lmax, niter = 3)[2].alm
@@ -313,6 +333,15 @@ maps_float = Healpix.alm2map([alm_t, alm_e, alm_b], nside)
 @test isapprox(maps_float.q, test_map_spin2_q)
 @test isapprox(maps_float.u, test_map_spin2_u)
 
+## spin-2 adjoint_map2alm
+W = 4*π/nside2npix(nside)
+test_map_spin2_q_adj = test_map_spin2_q .* W
+test_map_spin2_u_adj = test_map_spin2_u .* W
+Healpix.adjoint_map2alm!(Vector([alm_t, alm_e, alm_b]), maps)
+@test isapprox(maps.i, test_map_spin0_adj)
+@test isapprox(maps.q, test_map_spin2_q_adj)
+@test isapprox(maps.u, test_map_spin2_u_adj)
+
 ## test alm2cl
 nside = 4
 map = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
@@ -354,7 +383,7 @@ ref_alm = [
 ]
 @test isapprox(alm.alm[1:10], ref_alm)
 
-# test artifact 
+# test artifact
 m = Healpix.HealpixMap{Float64,Healpix.RingOrder}(ones(Healpix.nside2npix(nside)))
 Healpix.applyFullWeights!(m)
 alm = Healpix.map2alm(m; niter=0)
@@ -365,8 +394,8 @@ alm = Healpix.map2alm(m; niter=0)
 nside = 32
 npix = Healpix.nside2npix(nside)
 m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
-    1.0 .* collect(1:npix), 
-    1.0 .* collect(1:npix), 
+    1.0 .* collect(1:npix),
+    1.0 .* collect(1:npix),
     1.0 .* collect(1:npix))
 Healpix.applyFullWeights!(m, compressed_weights)
 t, e, b = Healpix.map2alm(m; niter=0)
@@ -388,8 +417,8 @@ ref_b = [     0.        ,      0.        , -19883.86722869,
 @test b.alm[1:10] ≈ ref_b
 
 m = Healpix.PolarizedHealpixMap{Float64, Healpix.RingOrder}(
-    1.0 .* collect(1:npix), 
-    1.0 .* collect(1:npix), 
+    1.0 .* collect(1:npix),
+    1.0 .* collect(1:npix),
     1.0 .* collect(1:npix))
 Healpix.applyFullWeights!(m)
 t, e, b = Healpix.map2alm(m; niter=0)
@@ -400,10 +429,10 @@ t, e, b = Healpix.map2alm(m; niter=0)
 
 ## test pixel window function
 test_nside = 4
-refT, refP = [1.0000000000020606, 0.9942340766588788, 0.9827825997075873, 0.9658046338514134, 0.9435346401732488, 
-    0.9162776541108094, 0.8844030869086636, 0.8483373398742199, 0.8085554581861708, 0.7655720830279383, 
-    0.719931987719618, 0.6722005065651119], [0.0, 0.0, 0.9942489979784339, 0.9771113097187576, 0.9546314571240129, 
-    0.9271170494521022, 0.8949406088083163, 0.8585321169404025, 0.8183705913014748, 0.7749749505311476, 0.7288944562833874, 
+refT, refP = [1.0000000000020606, 0.9942340766588788, 0.9827825997075873, 0.9658046338514134, 0.9435346401732488,
+    0.9162776541108094, 0.8844030869086636, 0.8483373398742199, 0.8085554581861708, 0.7655720830279383,
+    0.719931987719618, 0.6722005065651119], [0.0, 0.0, 0.9942489979784339, 0.9771113097187576, 0.9546314571240129,
+    0.9271170494521022, 0.8949406088083163, 0.8585321169404025, 0.8183705913014748, 0.7749749505311476, 0.7288944562833874,
     0.6806990410222555]
 pixT, pixP = Healpix.pixwin(test_nside; pol=true)
 

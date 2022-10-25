@@ -28,7 +28,7 @@ end
 
 """
     writeClToFITS{T <: Real}(f::CFITSIO.FITSFile, Cl::Vector{T})
-    writeClFromFITS{T <: Real}(fileName::String, Cl::Vector{T})
+    writeClToFITS{T <: Real}(fileName::String, Cl::Vector{T})
 Write a set of C_ℓ coefficients to a FITS file.
 """
 
