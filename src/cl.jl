@@ -114,7 +114,6 @@ function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
 end
 
 ##########################################################################
-
 """
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real}
@@ -198,3 +197,4 @@ synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real} =
 
 synalm(cl::Vector{T}) where {T <: Real} =
     synalm(cl, length(cl) - 1, length(cl) - 1, Random.seed!(1234))
+#########################################################################
