@@ -112,3 +112,89 @@ function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
     dl =  cl ./ 2π .* (l_s .* (l_s .+ 1))
     return dl
 end
+
+##########################################################################
+
+"""
+    synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
+    synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real}
+
+Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
+The output is written into the `Alm` object passed in input.
+
+# ARGUMENTS
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\ell}``,
+starting from `` \\ell = 0 ``.
+- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{\\ell m}``
+we want to write the result into.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+to set the seed beforehand guaranteeing the reproducibility of the process.
+
+"""
+
+function synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
+    cl_size = length(cl)
+    lmax = alm.lmax
+    mmax = alm.mmax
+    (cl_size - 1 >= lmax) || throw(DomainError(cl_size, "not enough C_l's to generate Alm"))
+
+    for l = 0:lmax
+        if l <= mmax
+            maxm = l
+        else
+            maxm = mmax
+        end
+        for m = 0:maxm
+            i = almIndex(alm, l, m)
+            #for m=0 the alm must be real, since alm^R_l,0 = alm^C_l,0, if the field is real!
+            alm.alm[i] = randn(rng, ifelse(m > 0, ComplexF64, Float64))*sqrt(cl[l+1]) #sqrt bc it's the variance
+        end
+    end
+end
+
+synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real} =
+    synalm!(cl, alm, Random.seed!(1234))
+
+"""
+    synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) where {T <: Real}
+    synalm(cl::Vector{T}, lmax::Integer, mmax::Integer) where {T <: Real}
+    synalm(cl::Vector{T}, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    synalm(cl::Vector{T}, lmax::Integer) where {T <: Real}
+    synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real}
+    synalm(cl::Vector{T}) where {T <: Real}
+
+Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
+The output is written into a new `Alm` object of given lmax.
+
+# ARGUMENTS
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\ell}``,
+starting from `` \\ell = 0 ``.
+- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
+- `mmax::Integer`: the maximum ``m`` coefficient, will default to `lmax` if not specified.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+to set the seed beforehand guaranteeing the reproducibility of the process.
+
+"""
+
+function synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) where {T <: Real}
+    cl_size = length(cl)
+    (cl_size - 1 >= lmax) || throw(DomainError(cl_size, "not enough C_l's to generate Alm"))
+    alm = Alm{ComplexF64, Vector{ComplexF64}}(lmax, mmax)
+    synalm!(cl, alm, rng)
+    alm
+end
+
+synalm(cl::Vector{T}, lmax::Integer, mmax::Integer) where {T <: Real} =
+    synalm(cl, lmax, mmax, Random.seed!(1234))
+
+synalm(cl::Vector{T}, lmax::Integer, rng::AbstractRNG) where {T <: Real} =
+    synalm(cl, lmax, lmax, rng)
+
+synalm(cl::Vector{T}, lmax::Integer) where {T <: Real} =
+    synalm(cl, lmax, lmax, Random.seed!(1234))
+
+synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real} =
+    synalm(cl, length(cl) - 1, length(cl) - 1, rng)
+
+synalm(cl::Vector{T}) where {T <: Real} =
+    synalm(cl, length(cl) - 1, length(cl) - 1, Random.seed!(1234))

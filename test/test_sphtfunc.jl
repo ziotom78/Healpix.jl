@@ -327,7 +327,7 @@ test_map_spin2_u = [
 W = 4*π/Healpix.nside2npix(nside)
 test_map_spin2_q_adj = test_map_spin2_q .* W
 test_map_spin2_u_adj = test_map_spin2_u .* W
-[alm_t; alm_e; alm_b]
+
 Healpix.adjoint_map2alm!([alm_t; alm_e; alm_b], maps)
 @test isapprox(maps.i, test_map_spin0_adj)
 @test isapprox(maps.q, test_map_spin2_q_adj)

@@ -46,3 +46,29 @@ D_l_conv_4 = Healpix.cl2dl(C_l_test_4, 0) #here the PS has been 'completed' by c
 @test isapprox(D_l_conv_4[1], 0.0)
 @test isapprox(D_l_conv_4[2], 0.0)
 @test isapprox(D_l_conv_4[3:end], D_l_test_4)
+
+## test synalm
+import Random
+rng = Random.seed!(1234) #we set the seed to guarantee reproducibility
+cl = Vector(0:4)
+alm = Healpix.synalm(cl, 4, rng)
+
+ref_alm = [
+    -0.0 + 0.0im,
+    1.0872084924285859 + 0.0im,
+    0.5943192583849796 + 0.0im,
+    0.7996791530503793 + 0.0im,
+    -1.8728302820268359 + 0.0im,
+    -0.29669466345292583 + 0.5083460918445625im,
+    -0.6856709022761192 + 2.054763056064037im,
+    -1.034857629674229 + 1.0859956426035118im,
+    -0.8736960340524973 + 0.21500322847968445im,
+    0.3248927294469158 - 0.3049012551964323im,
+    0.016624443835621037 + 0.1293962624603848im,
+    -1.2719064982797272 + 1.151859436947903im,
+    -0.662762592300875 - 0.8453680298536129im,
+    0.4221137801332629 - 2.790353436891747im,
+    0.4550092269865841 + 0.38238373487493016im
+]
+
+@test isapprox(alm.alm, ref_alm)
