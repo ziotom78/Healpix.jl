@@ -56,3 +56,34 @@ alm = Healpix.synalm(cl, 4)
 @test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
 @test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
 @test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0 # "
+
+#other methods of the function
+alm = Healpix.synalm(cl)
+
+@test alm.alm[1] == 0.0 + 0.0im #\ell=0 should be 0 because of our cl's
+@test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
+@test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
+@test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0
+
+import Random
+rng = Random.seed!(1234)
+alm = Healpix.synalm(cl, rng)
+
+@test alm.alm[1] == 0.0 + 0.0im #\ell=0 should be 0 because of our cl's
+@test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
+@test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
+@test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0
+
+alm = Healpix.synalm(cl, 4, rng)
+
+@test alm.alm[1] == 0.0 + 0.0im #\ell=0 should be 0 because of our cl's
+@test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
+@test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
+@test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0
+
+alm = Healpix.synalm(cl, 4, 4, rng)
+
+@test alm.alm[1] == 0.0 + 0.0im #\ell=0 should be 0 because of our cl's
+@test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
+@test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
+@test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0
