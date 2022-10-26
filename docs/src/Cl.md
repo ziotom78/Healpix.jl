@@ -37,3 +37,10 @@ with zero mean and $C_{\ell}$ variance.
 synalm!
 synalm
 ```
+
+## Computing the power spectrum from a map
+Compute the (cross-) power spectrum of one (or two) ['HealpixMap'](@ref).
+
+```@docs
+anafast
+```

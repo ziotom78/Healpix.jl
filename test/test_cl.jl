@@ -87,3 +87,48 @@ alm = Healpix.synalm(cl, 4, 4, rng)
 @test imag.(alm.alm[1:5]) == zeros(Float64, 5) #field should be always real
 @test count(i->(i==0.00000000000e+00), real.(alm.alm[2:end])) == 0 #none of the other alms should be exactly 0.
 @test count(i->(i==0.00000000000e+00), imag.(alm.alm[6:end])) == 0
+
+## test spin-0 anafast
+
+nside = 4
+map = Healpix.HealpixMap{Float64,Healpix.RingOrder}(2 .* ones(Healpix.nside2npix(nside)))
+test_cl = Healpix.anafast(map)
+
+test_cl_ref = [
+    50.25609318985963,
+    2.083026679225843e-34,
+    4.7018489094583055e-7,
+    4.066000172958629e-34,
+    4.606958743985832e-7,
+    7.050822195517214e-34,
+    4.302032807806699e-7,
+    1.0729590299934532e-33,
+    5.800538451198812e-7,
+    5.8544687237680685e-34,
+    8.960148278384837e-7,
+    1.763468998685261e-33,
+]
+
+@test isapprox(test_cl, test_cl_ref)
+
+## test anafast cross spectrum
+
+map2 = Healpix.HealpixMap{Float64,Healpix.RingOrder}(3 .* ones(Healpix.nside2npix(nside)))
+test_ccl = Healpix.anafast(map, map2)
+
+test_ccl_ref = [
+    75.38413978478945
+    3.890609325797566e-34
+    7.052773364188918e-7
+    6.508566039307384e-34
+    6.910438115978033e-7
+    4.127231154504506e-34
+    6.453049211709552e-7
+    1.8179780948330372e-34
+    8.700807676800265e-7
+    -5.07503235735685e-35
+    1.344022241757911e-6
+    1.0083830113062526e-33
+]
+
+@test isapprox(test_ccl, test_ccl_ref)

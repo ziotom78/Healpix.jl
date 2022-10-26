@@ -122,7 +122,7 @@ Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into the `Alm` object passed in input.
 
 # ARGUMENTS
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\ell}``,
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{\\ell m}``
 we want to write the result into.
@@ -166,7 +166,7 @@ Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into a new `Alm` object of given lmax.
 
 # ARGUMENTS
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\ell}``,
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
 - `mmax::Integer`: the maximum ``m`` coefficient, will default to `lmax` if not specified.
@@ -198,3 +198,32 @@ synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real} =
 synalm(cl::Vector{T}) where {T <: Real} =
     synalm(cl, length(cl) - 1, length(cl) - 1, Random.seed!(1234))
 #########################################################################
+
+"""
+    anafast(map::HealpixMap{Float64, RingOrder, AA};  niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
+    anafast(map₁::HealpixMap{Float64, RingOrder, AA}, map₂::HealpixMap{Float64, RingOrder, AA}; niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
+
+Computes the power spectrum of a Healpix map, or the cross-spectrum between two maps if `map₂` is given.
+No removal of monopole or dipole is performed. The input maps must be in ring-ordering.
+
+# Arguments
+- `map₁::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the first field
+- `map₂::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the second field
+
+# Returns
+- `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
+"""
+
+#spin 0
+function anafast(map::HealpixMap{Float64, RingOrder, AA};  niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
+    alm2cl(map2alm(map; niter=niter))
+end
+
+function anafast(
+    map₁::HealpixMap{Float64, RingOrder, AA},
+    map₂::HealpixMap{Float64, RingOrder, AA};
+    niter::Integer = 3
+    ) where {T <: Real,AA <: AbstractArray{T,1}}
+
+    alm2cl(map2alm(map₁; niter=niter), map2alm(map₂; niter=niter))
+end
