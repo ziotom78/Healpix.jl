@@ -132,3 +132,15 @@ test_ccl_ref = [
 ]
 
 @test isapprox(test_ccl, test_ccl_ref)
+
+## test synfast
+
+test_cl = [1.;0.;0.;0.;0.] #only the monopole
+map = Healpix.synfast(test_cl, nside)
+@test count(i->(i!=map.pixels[1]), map.pixels) == 0 #we test that the map is constant
+
+map = Healpix.synfast(test_cl, nside, 3)
+@test count(i->(i!=map.pixels[1]), map.pixels) == 0
+
+map = Healpix.synfast(test_cl, nside, rng)
+@test count(i->(i!=map.pixels[1]), map.pixels) == 0

@@ -197,6 +197,78 @@ synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real} =
 
 synalm(cl::Vector{T}) where {T <: Real} =
     synalm(cl, length(cl) - 1, length(cl) - 1, Random.seed!(1234))
+
+#########################################################################
+
+"""
+    synfast!(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    synfast!(cl::Vector{T}, nside::Integer, lmax::Integer) where {T <: Real}
+    synfast!(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real}
+    synfast!(cl::Vector{T}, nside::Integer) where {T <: Real}
+
+Generate a map from a given power spectra ``C_{\\ell}``. The result is saved into
+the `HealpixMap` passed in input.
+
+# ARGUMENTS
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
+- `map::HealpixMap{T, RingOrder}`: the map that will contain the result.
+- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+to set the seed beforehand guaranteeing the reproducibility of the process.
+
+"""
+
+function synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    cl_size = length(cl)
+    (cl_size - 1 >= lmax) || throw(DomainError(cl_size, "not enough C_l's to generate Alm"))
+    alm = Alm{ComplexF64, Vector{ComplexF64}}(lmax, lmax)
+    synalm!(cl, alm)
+    alm2map!(alm, map)
+end
+
+synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer) where {T <: Real} =
+    synfast!(cl, map, lmax, Random.seed!(1234))
+
+synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, rng::AbstractRNG) where {T <: Real} =
+    synfast!(cl, map, length(cl) - 1, rng)
+
+synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real} =
+    synfast!(cl, map, length(cl) - 1, Random.seed!(1234))
+
+#########################################################################
+
+"""
+    synfast(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    synfast(cl::Vector{T}, nside::Integer, lmax::Integer) where {T <: Real}
+    synfast(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real}
+    synfast(cl::Vector{T}, nside::Integer) where {T <: Real}
+
+Generate a `HealpixMap` with given Nside, from a given power spectra ``C_{\\ell}``.
+
+# ARGUMENTS
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
+- `nside::Integer`: nside of the map that will contain the result.
+- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+to set the seed beforehand guaranteeing the reproducibility of the process.
+
+"""
+
+function synfast(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    map=HealpixMap{T, RingOrder}(nside)
+    synfast!(cl, map, lmax, rng)
+    map
+end
+
+synfast(cl::Vector{T}, nside::Integer, lmax::Integer) where {T <: Real} =
+    synfast(cl, nside, lmax, Random.seed!(1234))
+
+synfast(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real} =
+    synfast(cl, nside, length(cl) - 1, rng)
+
+synfast(cl::Vector{T}, nside::Integer) where {T <: Real} =
+    synfast(cl, nside, length(cl) - 1, Random.seed!(1234))
+
 #########################################################################
 
 """
