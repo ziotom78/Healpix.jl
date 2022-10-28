@@ -31,7 +31,6 @@ end
     writeClToFITS(fileName, Cl::Vector{T}; overwrite = true) where {T <: Real}
 Write a set of C_ℓ coefficients to a FITS file.
 """
-
 function writeClToFITS(f::CFITSIO.FITSFile, Cl::Vector{T}) where {T <: Real}
 
     idx = Vector{Int64}(1:length(Cl))
@@ -58,7 +57,6 @@ end
 
 #########################################################################
 
-
 """
     dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
 
@@ -73,7 +71,6 @@ set to zero if not present. The monopole component is set to zero in any case to
 #RETURNS:
 - `Vector{T}` : Array of C_ℓ power spectrum components
 """
-
 function dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
     (lmin >= 0) || throw(DomainError(lmin, "`lmin` is not positive or zero"))
     lmax = length(dl)+lmin-1
@@ -101,7 +98,6 @@ The first components are set to zero if not present.
 #RETURNS:
 - `Vector{T}` : Array of D_ℓ power spectrum components
 """
-
 function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
     (lmin >= 0) || throw(DomainError(lmin, "`lmin` is not positive or zero"))
     lmax = length(cl)+lmin-1
@@ -114,6 +110,7 @@ function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
 end
 
 ##########################################################################
+
 """
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real}
@@ -128,9 +125,7 @@ starting from `` \\ell = 0 ``.
 we want to write the result into.
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
-
 """
-
 function synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
     cl_size = length(cl)
     lmax = alm.lmax
@@ -172,9 +167,7 @@ starting from `` \\ell = 0 ``.
 - `mmax::Integer`: the maximum ``m`` coefficient, will default to `lmax` if not specified.
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
-
 """
-
 function synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) where {T <: Real}
     cl_size = length(cl)
     (cl_size - 1 >= lmax) || throw(DomainError(cl_size, "not enough C_l's to generate Alm"))
@@ -201,10 +194,10 @@ synalm(cl::Vector{T}) where {T <: Real} =
 #########################################################################
 
 """
-    synfast!(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
-    synfast!(cl::Vector{T}, nside::Integer, lmax::Integer) where {T <: Real}
-    synfast!(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real}
-    synfast!(cl::Vector{T}, nside::Integer) where {T <: Real}
+    synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer, rng::AbstractRNG) where {T <: Real}
+    synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer) where {T <: Real}
+    synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, rng::AbstractRNG) where {T <: Real}
+    synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real}
 
 Generate a map from a given power spectra ``C_{\\ell}``. The result is saved into
 the `HealpixMap` passed in input.
@@ -215,9 +208,7 @@ the `HealpixMap` passed in input.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
-
 """
-
 function synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer, rng::AbstractRNG) where {T <: Real}
     cl_size = length(cl)
     (cl_size - 1 >= lmax) || throw(DomainError(cl_size, "not enough C_l's to generate Alm"))
@@ -251,9 +242,7 @@ Generate a `HealpixMap` with given Nside, from a given power spectra ``C_{\\ell}
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
-
 """
-
 function synfast(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
     map=HealpixMap{T, RingOrder}(nside)
     synfast!(cl, map, lmax, rng)
@@ -285,8 +274,6 @@ No removal of monopole or dipole is performed. The input maps must be in ring-or
 # Returns
 - `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
 """
-
-#spin 0
 function anafast(map::HealpixMap{Float64, RingOrder, AA};  niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
     alm2cl(map2alm(map; niter=niter))
 end

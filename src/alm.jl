@@ -122,7 +122,6 @@ Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m 
 up to a certain ``ℓ`` and ``m`` if specified, or taken from the `Alm` passed.
 If not passed, `mmax` is defaulted to `lmax`. If `lmax` and `mmax` are inconsistent
 or negative, a `DomainError` exception is thrown.
-
 """
 function almExplicitIndex(lmax, mmax)
     (lmax >= 0) || throw(DomainError(lmax, "`lmax` is not positive or zero"))
@@ -159,8 +158,8 @@ almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 ############################################################################
 
 """
-    writeAlmToFITS{T <: Complex}(f::CFITSIO.FITSFile, alm::Alm{Complex{T}})
-    writeAlmToFITS{T <: Complex}(fileName::String, alm::Alm{Complex{T}})
+    writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
+    writeAlmToFITS(fileName, alm::Alm{Complex{T}}; overwrite = true) where {T <: Number}
 
 Write a set of a_ℓm coefficients into a FITS file. If the code fails,
 CFITSIO will raise an exception. (Refer to the CFITSIO library for more
@@ -231,10 +230,10 @@ end
 
 alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 
+###########################################################################
+
 # eq 54, 55 of https://arxiv.org/abs/astro-ph/0008228
 # these are asymptotic beams for σ² << 1
-
-###########################################################################
 
 """
     gaussbeam(fwhm::T, lmax::Int; pol=false) where T
@@ -280,7 +279,6 @@ Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent func
 - `fl::AbstractVector{T}`: The array giving the factor f_ℓ by which to multiply a_ℓm
 
 """
-
 function almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
     lmax = alm.lmax

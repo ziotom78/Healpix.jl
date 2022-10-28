@@ -274,8 +274,6 @@ types derived from Float64, since it is done in-place.
   map).
 
 """
-
-# in-place adjoint_map2alm for spin-0
 function adjoint_map2alm!(
     alm::Alm{ComplexF64,Array{ComplexF64,1}},
     map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
@@ -484,7 +482,6 @@ done in-place.
 - `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
   coefficients to be written to.
 """
-
 function adjoint_alm2map!(
     map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
     alm::Alm{ComplexF64,Array{ComplexF64,1}}
