@@ -197,8 +197,8 @@ end
 ########################################################################
 
 """
-    alm2cl(alm::Alm{Complex{T}}) where {T <: Number}
-    alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    alm2cl(alm::Alm{Complex{T}}) where {T <: Number} -> Vector{T}
+    alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number} -> Vector{T}
 
 Compute ``C_{\\ell}`` from the spherical harmonic coefficients of one
 or two fields.
@@ -307,7 +307,7 @@ function almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number
 end
 
 """
-    almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number} -> Alm{T}
 
 Multiply an a_ℓm by a vector b_ℓ representing an ℓ-dependent function, without changing
 the a_ℓm passed in input.
