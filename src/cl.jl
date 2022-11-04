@@ -261,10 +261,10 @@ synfast(cl::Vector{T}, nside::Integer) where {T <: Real} =
 #########################################################################
 
 """
-    anafast(map::HealpixMap{Float64, RingOrder, AA};  niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
-    anafast(map₁::HealpixMap{Float64, RingOrder, AA}, map₂::HealpixMap{Float64, RingOrder, AA}; niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
+    anafast(map::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
+    anafast(map₁::HealpixMap{Float64, RingOrder, AA}, map₂::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}} -> Vector{Float64}
 
-Computes the power spectrum of a Healpix map, or the cross-spectrum between two maps if `map₂` is given.
+Computes the power spectrum of a Healpix map, or the cross-spectrum between two maps if `map2` is given.
 No removal of monopole or dipole is performed. The input maps must be in ring-ordering.
 
 # Arguments
@@ -274,15 +274,17 @@ No removal of monopole or dipole is performed. The input maps must be in ring-or
 # Returns
 - `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
 """
-function anafast(map::HealpixMap{Float64, RingOrder, AA};  niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
-    alm2cl(map2alm(map; niter=niter))
+function anafast(map::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
+    alm2cl(map2alm(map; lmax = lmax, mmax = mmax, niter=niter))
 end
 
 function anafast(
     map₁::HealpixMap{Float64, RingOrder, AA},
     map₂::HealpixMap{Float64, RingOrder, AA};
+    lmax=nothing,
+    mmax=nothing,
     niter::Integer = 3
     ) where {T <: Real,AA <: AbstractArray{T,1}}
 
-    alm2cl(map2alm(map₁; niter=niter), map2alm(map₂; niter=niter))
+    alm2cl(map2alm(map₁; lmax = lmax, mmax = mmax, niter=niter), map2alm(map₂; lmax = lmax, mmax = mmax, niter=niter))
 end
