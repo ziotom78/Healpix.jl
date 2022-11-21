@@ -9,6 +9,7 @@ Power spectrum components $C_{\ell}$ are encoded as Vector{T}.
 Healpix.jl implements functions to perform sht operations on power spectra,
 e.g. to obtain a map or a set of ['Alm'](@ref), as well as writing/reading a
 power spectrum from a FITS file.
+
 The functions ending with `!` are *mutating* functions, which means that they
 assume that the result must be saved in a preallocated variable; they are
 space- and time-efficient and should be used when you want your code to be performant,
@@ -35,9 +36,9 @@ dl2cl
 ```
 
 ## Synthesizing harmonic coefficients from power spectrum
-Random generate a set of [`Alm`](@ref) from a given power spectrum $C_{\ell}$.
-Each harmonic coefficient $a_{\ell m}$ is a realization of a gaussian distribution
-with zero mean and $C_{\ell}$ variance.
+Generate a [`Alm`](@ref) instance with a random set of $a_{\ell m}$ coefficients.
+Each harmonic coefficient $a_{\ell m}$ is a realization of a gaussian
+distribution with zero mean and $C_{\ell}$ variance.
 
 ```@docs
 synalm!

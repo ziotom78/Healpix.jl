@@ -147,7 +147,7 @@ function synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::A
 end
 
 synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real} =
-    synalm!(cl, alm, Random.seed!(1234))
+    synalm!(cl, alm, Random.GLOBAL_RNG)
 
 """
     synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) where {T <: Real}
@@ -177,19 +177,19 @@ function synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) w
 end
 
 synalm(cl::Vector{T}, lmax::Integer, mmax::Integer) where {T <: Real} =
-    synalm(cl, lmax, mmax, Random.seed!(1234))
+    synalm(cl, lmax, mmax, Random.GLOBAL_RNG)
 
 synalm(cl::Vector{T}, lmax::Integer, rng::AbstractRNG) where {T <: Real} =
     synalm(cl, lmax, lmax, rng)
 
 synalm(cl::Vector{T}, lmax::Integer) where {T <: Real} =
-    synalm(cl, lmax, lmax, Random.seed!(1234))
+    synalm(cl, lmax, lmax, Random.GLOBAL_RNG)
 
 synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real} =
     synalm(cl, length(cl) - 1, length(cl) - 1, rng)
 
 synalm(cl::Vector{T}) where {T <: Real} =
-    synalm(cl, length(cl) - 1, length(cl) - 1, Random.seed!(1234))
+    synalm(cl, length(cl) - 1, length(cl) - 1, Random.GLOBAL_RNG)
 
 #########################################################################
 
@@ -218,13 +218,13 @@ function synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer, r
 end
 
 synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer) where {T <: Real} =
-    synfast!(cl, map, lmax, Random.seed!(1234))
+    synfast!(cl, map, lmax, Random.GLOBAL_RNG)
 
 synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, rng::AbstractRNG) where {T <: Real} =
     synfast!(cl, map, length(cl) - 1, rng)
 
 synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real} =
-    synfast!(cl, map, length(cl) - 1, Random.seed!(1234))
+    synfast!(cl, map, length(cl) - 1, Random.GLOBAL_RNG)
 
 #########################################################################
 
@@ -250,13 +250,13 @@ function synfast(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG)
 end
 
 synfast(cl::Vector{T}, nside::Integer, lmax::Integer) where {T <: Real} =
-    synfast(cl, nside, lmax, Random.seed!(1234))
+    synfast(cl, nside, lmax, Random.GLOBAL_RNG)
 
 synfast(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real} =
     synfast(cl, nside, length(cl) - 1, rng)
 
 synfast(cl::Vector{T}, nside::Integer) where {T <: Real} =
-    synfast(cl, nside, length(cl) - 1, Random.seed!(1234))
+    synfast(cl, nside, length(cl) - 1, Random.GLOBAL_RNG)
 
 #########################################################################
 
