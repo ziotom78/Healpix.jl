@@ -1,6 +1,8 @@
 # HEAD
 
--   Add functions `readClFromFITS`, `writeClToFITS`, `cl2dl`, `dl2cl`, `almxfl`, `almxfl!`, `almExplicitIndex` [#91](https://github.com/ziotom78/Healpix.jl/pull/91)
+-   Add `synalm`, `synfast`, `anafast`, `adjoint_alm2map`, `adjoint_map2alm` [#96](https://github.com/ziotom78/Healpix.jl/pull/96), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
+
+-   Add functions `readClFromFITS`, `writeClToFITS`, `cl2dl`, `dl2cl`, `almxfl`, `almxfl!`, `almExplicitIndex` [#91](https://github.com/ziotom78/Healpix.jl/pull/91), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
 
 # Version 4.1.2
 
