@@ -253,6 +253,74 @@ function map2alm(
     return map2alm(pol_map_float, lmax=lmax, mmax=mmax, niter=niter)
 end
 
+###########################################################################
+
+"""
+    adjoint_map2alm!(alm::Alm{ComplexF64, Array{ComplexF64, 1}}, map::HealpixMap{Float64, RingOrder, Array{Float64, 1}})
+    adjoint_map2alm!(alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1}, map::PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}})
+
+This function performs the spherical harmonic transform (Y^-1)^t = W^t Y = W Y on
+the map and places the results in the passed `alm` object. This function requires
+types derived from Float64, since it is done in-place.
+
+# Arguments
+
+- `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
+  coefficients to perform the spherical harmonic transform on.
+
+- `map`: the map that will contain the result. It can either be a
+  `HealpixMap{Float64, RingOrder, Array{Float64, 1}}` type (scalar map) or a
+  `PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}}` (polarized
+  map).
+
+"""
+function adjoint_map2alm!(
+    alm::Alm{ComplexF64,Array{ComplexF64,1}},
+    map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
+)
+    geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
+    alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_WY,
+        0,
+        [alm.alm],
+        [map.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+end
+
+# in-place adjoint_map2alm for TEB to IQU
+function adjoint_map2alm!(
+    alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1},
+    map::PolarizedHealpixMap{Float64,RingOrder,Array{Float64,1}},
+)
+    geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
+    alm_info = Libsharp.make_triangular_alm_info(alm[1].lmax, alm[1].mmax, 1)
+
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_WY,
+        0,
+        [alm[1].alm],
+        [map.i.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_WY,
+        2,
+        [alm[2].alm, alm[3].alm],
+        [map.q.pixels, map.u.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+end
+
+#########################################################################
 
 """
     alm2map!(alm::Alm{ComplexF64, Array{ComplexF64, 1}}, map::HealpixMap{Float64, RingOrder, Array{Float64, 1}})
@@ -395,6 +463,74 @@ function alm2map(
     return alm2map([alm_t, alm_e, alm_b], nside)
 end
 
+#########################################################################
+
+"""
+    adjoint_alm2map!(map::HealpixMap{Float64, RingOrder, Array{Float64, 1}}, alm::Alm{ComplexF64, Array{ComplexF64, 1}})
+    adjoint_alm2map!(map::PolarizedHealpixMap{Float64, RingOrder, Array{Float64, 1}}, alm::Array{Alm{ComplexF64, Array{ComplexF64, 1}},1})
+
+This function performs a spherical harmonic transform Yᵀ on the map and places the results
+in the passed `alm` object. This function requires types derived from Float64, since it is
+done in-place.
+
+# Arguments
+
+- `map`: the map that must be decomposed in spherical harmonics. It
+  can either be a `HealpixMap{Float64, RingOrder}` type (scalar map) or a
+  `PolarizedHealpixMap{Float64, RingOrder}` type (polarized map).
+
+- `alm::Alm{ComplexF64, Array{ComplexF64, 1}}`: the spherical harmonic
+  coefficients to be written to.
+"""
+function adjoint_alm2map!(
+    map::HealpixMap{Float64,RingOrder,Array{Float64,1}},
+    alm::Alm{ComplexF64,Array{ComplexF64,1}}
+)
+    geom_info = Libsharp.make_healpix_geom_info(map.resolution.nside, 1)
+    alm_info = Libsharp.make_triangular_alm_info(alm.lmax, alm.mmax, 1)
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_Yt,
+        0,
+        [alm.alm],
+        [map.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+end
+
+function adjoint_alm2map!(
+    map::PolarizedHealpixMap{Float64,RingOrder,Array{Float64,1}},
+    alm::Array{Alm{ComplexF64,Array{ComplexF64,1}},1}
+)
+    geom_info = Libsharp.make_healpix_geom_info(map.i.resolution.nside, 1)
+    alm_info = Libsharp.make_triangular_alm_info(alm[1].lmax, alm[1].mmax, 1)
+
+    maps_0 = [map.i.pixels]
+    maps_2 = [map.q.pixels, map.u.pixels]
+    alms_0 = [alm[1].alm]
+    alms_2 = [alm[2].alm, alm[3].alm]
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_Yt,
+        0,
+        alms_0,
+        [map.i.pixels],
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+    Libsharp.sharp_execute!(
+        Libsharp.SHARP_Yt,
+        2,
+        alms_2,
+        maps_2,
+        geom_info,
+        alm_info,
+        Libsharp.SHARP_DP,
+    )
+end
+
+###########################################################################
 
 
 """
@@ -406,7 +542,7 @@ end
 # Keywords
 - `pol::Bool=false`: if true, also return polarization pixel window
 
-# Returns: 
+# Returns:
 - `Vector{Float64}` pixel window function. If `pol=true`, returns a Tuple
     of the temperature and polarization pixel windows.
 

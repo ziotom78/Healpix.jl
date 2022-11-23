@@ -6,8 +6,15 @@ end
 
 # Power Spectrum
 Power spectrum components $C_{\ell}$ are encoded as Vector{T}.
-You can use the function [`alm2cl`](@ref) to convert a set of $a_{\ell m}$
-coefficients into the components $C_\ell$ of the power spectrum.
+Healpix.jl implements functions to perform sht operations on power spectra,
+e.g. to obtain a map or a set of ['Alm'](@ref), as well as writing/reading a
+power spectrum from a FITS file.
+
+The functions ending with `!` are *mutating* functions, which means that they
+assume that the result must be saved in a preallocated variable; they are
+space- and time-efficient and should be used when you want your code to be performant,
+or when you plan to apply the same operation several times (e.g., in a Monte Carlo
+simulation).
 
 ## Loading and saving power spectrum components
 Healpix.jl implements functions to read/write the components $C_{\ell}$
@@ -26,4 +33,30 @@ a power spectrum from/to such a representation.
 ```@docs
 cl2dl
 dl2cl
+```
+
+## Synthesizing harmonic coefficients from power spectrum
+Generate a [`Alm`](@ref) instance with a random set of $a_{\ell m}$ coefficients.
+Each harmonic coefficient $a_{\ell m}$ is a realization of a gaussian
+distribution with zero mean and $C_{\ell}$ variance.
+
+```@docs
+synalm!
+synalm
+```
+
+## Generating a map from power spectrum
+Synthesize a set of [`Alm`](@ref) through ['synalm'](@ref) and generates a map
+from it through ['alm2map'](@ref).
+
+```@docs
+synfast!
+synfast
+```
+
+## Computing the power spectrum from a map
+Compute the (cross-) power spectrum of one (or two) ['HealpixMap'](@ref).
+
+```@docs
+anafast
 ```

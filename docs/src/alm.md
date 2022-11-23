@@ -43,6 +43,30 @@ in a preallocated variable; they are space- and time-efficient and
 should be used when you want your code to be performant, or when you
 plan to apply the same operation several times (e.g., in a Monte Carlo
 simulation).
+The synthesis operation ([`alm2map`](@ref)) is generally referred to
+with the matrix operator $\mathrm{Y}$, while his inverse ([`map2alm`](@ref))
+with $\mathrm{Y}^{-1}$.
+
+Healpix.jl also implements the two adjoint functions
+[`adjoint_alm2map!`](@ref) and [`adjoint_map2alm!`](@ref), represented by
+$\mathrm{Y}^{\mathrm{T}}$ and $(\mathrm{Y}^{-1})^\mathrm{T}$ respectively.
+While the synthesis operator on a general scalar field $f(\theta, \phi)$
+can be defined through an exact summation as
+$$ f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi).$$
+The analysis operator is defined through an integral operator as
+$$ a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi.$$
+Though, in the real case wherein maps are pixelized, the latter ends
+up being approximated through a summation over the pixels.
+Here is where the adjoint of the synthesis operator, $\mathrm{Y}^{\mathrm{T}}$,
+comes into play. It is defined through:
+$$ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$$
+which is an exact operation. Note that the latter does not give directly the
+$a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
+where $\mathrm{W}$ is a diagonal matrix whose non-zero elements are approximately
+constant and equal to $4 \pi / N_{\mathrm{pix}}$, depending on the map pixelization.
+The latter realtion is also useful to obtain the adjoint of the analysis operator:
+$$(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}.$$
+
 
 Here is an example:
 
@@ -76,6 +100,8 @@ map2alm!
 map2alm
 alm2map!
 alm2map
+adjoint_alm2map!
+adjoint_map2alm!
 ```
 
 ## From harmonic coefficients to the power spectrum
