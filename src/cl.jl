@@ -118,7 +118,11 @@ end
 Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into the `Alm` object passed in input.
 
+<<<<<<< HEAD
 # Arguments:
+=======
+# ARGUMENTS
+>>>>>>> 873b35eff1611e0a5f8921640a037354a4f82bb7
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{\\ell m}``
@@ -160,7 +164,11 @@ synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Rea
 Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into a new `Alm` object of given lmax.
 
+<<<<<<< HEAD
 # Arguments:
+=======
+# ARGUMENTS
+>>>>>>> 873b35eff1611e0a5f8921640a037354a4f82bb7
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
@@ -202,7 +210,11 @@ synalm(cl::Vector{T}) where {T <: Real} =
 Generate a map from a given power spectra ``C_{\\ell}``. The result is saved into
 the `HealpixMap` passed in input.
 
+<<<<<<< HEAD
 # Arguments:
+=======
+# ARGUMENTS
+>>>>>>> 873b35eff1611e0a5f8921640a037354a4f82bb7
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
 - `map::HealpixMap{T, RingOrder}`: the map that will contain the result.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
@@ -236,10 +248,17 @@ synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real} =
 
 Generate a `HealpixMap` with given Nside, from a given power spectra ``C_{\\ell}``.
 
+<<<<<<< HEAD
 # Arguments:
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
 - `nside::Integer`: nside of the map that will contain the result.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)`-1 if not specified.
+=======
+# ARGUMENTS
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
+- `nside::Integer`: nside of the map that will contain the result.
+- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
+>>>>>>> 873b35eff1611e0a5f8921640a037354a4f82bb7
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
 """
@@ -267,11 +286,19 @@ synfast(cl::Vector{T}, nside::Integer) where {T <: Real} =
 Computes the power spectrum of a Healpix map, or the cross-spectrum between two maps if `map2` is given.
 No removal of monopole or dipole is performed. The input maps must be in ring-ordering.
 
+<<<<<<< HEAD
 # Arguments:
 - `map₁::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the first field
 - `map₂::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the second field
 
 # Returns:
+=======
+# Arguments
+- `map₁::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the first field
+- `map₂::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the second field
+
+# Returns
+>>>>>>> 873b35eff1611e0a5f8921640a037354a4f82bb7
 - `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
 """
 function anafast(map::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
