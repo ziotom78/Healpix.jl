@@ -51,21 +51,16 @@ Healpix.jl also implements the two adjoint functions
 [`adjoint_alm2map!`](@ref) and [`adjoint_map2alm!`](@ref), represented by
 $\mathrm{Y}^{\mathrm{T}}$ and $(\mathrm{Y}^{-1})^\mathrm{T}$ respectively.
 While the synthesis operator on a general scalar field $f(\theta, \phi)$
-can be defined through an exact summation as
-$$ f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi).$$
-The analysis operator is defined through an integral operator as
-$$ a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi.$$
+can be defined through an exact summation as $f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi)$.
+The analysis operator is defined through an integral operator as $a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi$.
 Though, in the real case wherein maps are pixelized, the latter ends
 up being approximated through a summation over the pixels.
 Here is where the adjoint of the synthesis operator, $\mathrm{Y}^{\mathrm{T}}$,
-comes into play. It is defined through:
-$$ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$$
-which is an exact operation. Note that the latter does not give directly the
-$a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
+comes into play. It is defined through: $ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$
+which is an exact operation. Note that the latter does not give directly the $a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
 where $\mathrm{W}$ is a diagonal matrix whose non-zero elements are approximately
 constant and equal to $4 \pi / N_{\mathrm{pix}}$, depending on the map pixelization.
-The latter realtion is also useful to obtain the adjoint of the analysis operator:
-$$(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}.$$
+The latter realtion is also useful to obtain the adjoint of the analysis operator: $(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}$.
 
 
 Here is an example:
@@ -128,7 +123,6 @@ almxfl
 almxfl!
 ```
 
-
 ## Loading and saving harmonic coefficients
 
 ```@docs
@@ -136,10 +130,46 @@ readAlmFromFITS
 writeAlmToFITS
 ```
 
-## Explicit indexing
+## Alm Indexing
+
+You can use [`almExplicitIndex`](@ref) to compute the so-called explicit indexing.
+It is exploited for instance in [`readAlmFromFITS`](@ref) and [`writeAlmToFITS`](@ref).
 
 ```@docs
 almExplicitIndex
+```
+
+The following functions can be used, in an analogous way as [`eachindex`](@ref),
+in the case of arrays, to obtain sets of indexes or values of $\ell$ and $m$.
+
+On the same line as `eachindex`, these can be very useful when implementing for-cycles
+over `Alm` objects.
+Here is an example of how to exploit [`each_ell_m`](@ref) to print explicitly
+the major-m ordering of a set of complex-stored `Alm`:
+
+```@example each_ell_m
+
+using Healpix # hide
+using Random
+
+# Initialize a random set of alm
+alm = Alm(4,4, randn(ComplexF64, numberOfAlms(4,4)))
+
+# Print it's values along with each corresponding l and m values
+i=1
+for (l,m) in each_ell_m(alm)
+    a_lm = alm.alm[i]
+    print("ℓ = $l, |m| = $m: a_ℓm = $a_lm \n")
+    i+=1
+end
+```
+
+```@docs
+each_ell
+each_ell_idx
+each_m
+each_m_idx
+each_ell_m
 ```
 
 ## Full Pixel Weights

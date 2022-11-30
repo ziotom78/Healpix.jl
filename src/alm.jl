@@ -112,6 +112,7 @@ end
 end
 
 ###############################################################
+#INDEXING
 
 """
     almExplicitIndex(lmax) -> Vector{Int}
@@ -154,6 +155,86 @@ almExplicitIndex(lmax) = almExplicitIndex(lmax, lmax)
 
 almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 
+
+""" each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
+    each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+
+    Returns an array of all the allowed ℓ values in `alm` for the given `m`.
+"""
+function each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
+    (m <= alm.mmax) || throw(DomainError(m, "`m` is greater than mmax"))
+    [l for l in m:alm.lmax]
+end
+
+function each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+    reduce(vcat, [each_ell(alm, m) for m in ms])
+end
+
+""" each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
+    each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+
+    Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
+    to all the ℓ values for the given m value(s).
+"""
+function each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
+    (m <= alm.mmax) || throw(DomainError(m, "`m` is greater than mmax"))
+    [i for i in almIndex(alm, m, m):almIndex(alm, alm.lmax, m)]
+end
+
+function each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+    reduce(vcat, [each_ell_idx(alm, m) for m in ms])
+end
+
+""" each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
+    each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+
+    Returns an array containing all the allowed m values in `alm` for the given ℓ value(s).
+"""
+function each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
+    (l <= alm.lmax) || throw(DomainError(l, "`l` is greater than lmax"))
+    if l <= alm.mmax
+        maxm = l
+    else
+        maxm = alm.mmax
+    end
+    [m for m in 0:maxm]
+end
+
+function each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+    reduce(vcat, [each_m(alm, l) for l in ls])
+end
+
+""" each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
+    each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+
+    Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
+    to all the allowed m values for the given ℓ value(s).
+"""
+function each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
+    (l <= alm.lmax) || throw(DomainError(l, "`l` is greater than lmax"))
+    [almIndex(alm, l, m) for m in each_m(alm, l)]
+end
+
+function each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+    reduce(vcat, [each_m_idx(alm, l) for l in ls])
+end
+
+""" each_ell_m(alm::Alm{Complex{T}}) where {T <: Number} -> Vector{Int}
+
+    Returns an array of tuples `(l, m)` of all the ℓ and m values of `alm` in
+    m-major order (the same order as how the harmonic coefficients are stored in `Alm` objects).
+"""
+function each_ell_m(alm::Alm{Complex{T}}) where {T <: Number}
+    ell_m = Vector(undef, numberOfAlms(alm.lmax, alm.mmax))
+    i = 1
+    for m in 0:alm.mmax
+        for l in each_ell(alm, m)
+            ell_m[i] = (l,m)
+            i += 1
+        end
+    end
+    ell_m
+end
 
 ############################################################################
 
@@ -268,6 +349,7 @@ function gaussbeam(fwhm::T, lmax::Int; pol=false) where T
 end
 
 ###########################################################################
+#ALM ALGEBRA
 
 """
     almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
@@ -323,4 +405,206 @@ function almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
     alm_new = deepcopy(alm)
     almxfl!(alm_new, fl)
     alm_new
+end
+
+
+import Base: +, -, *, /, \
+import LinearAlgebra: dot
+
+""" +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+    Perform the element-wise sum in a_ℓm space.
+    A new `Alm` object is returned.
+"""
+function +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
+    (alm₁.lmax == alm₂.lmax) || throw(DomainError("lmax's not matching"))
+    (alm₁.mmax == alm₂.mmax) || throw(DomainError("mmax's not matching"))
+
+    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+
+     @inbounds for i in eachindex(alm₁.lmax)
+        res_alm.alm[i] = alm₁.alm[i] + alm₂.alm[i]
+    end
+    res_alm
+end
+
+""" -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+    Perform the element-wise subtraction in a_ℓm space.
+    A new `Alm` object is returned.
+"""
+function -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
+    (alm₁.lmax == alm₂.lmax) || throw(DomainError("lmax's not matching"))
+    (alm₁.mmax == alm₂.mmax) || throw(DomainError("mmax's not matching"))
+
+    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+
+     @inbounds for i in eachindex(alm₁.lmax)
+        res_alm.alm[i] = alm₁.alm[i] - alm₂.alm[i]
+    end
+    res_alm
+end
+
+""" *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+    Perform the element-wise product in a_ℓm space.
+    A new `Alm` object is returned.
+"""
+function *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
+    (alm₁.lmax == alm₂.lmax) || throw(DomainError("lmax's not matching"))
+    (alm₁.mmax == alm₂.mmax) || throw(DomainError("mmax's not matching"))
+    lmax = alm₁.lmax
+
+    #first part of the alm arrays, where for m=0 whe have alm^R_l,0 = alm^C_l,0,
+    #and thus only real values are interesting (imag. should be 0)
+    res_alm = Alm(lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+    @inbounds for i in 1:lmax+1
+        res_alm.alm[i] = real(alm₁.alm[i]) * real(alm₂.alm[i])
+    end
+    #we then compute the rest, where alm^R_l,m = √2 Re{alm^C_l,m}, alm^R_l,-m = √2Im{alm^C_l,m}
+    @inbounds for i in lmax+2:length(alm₁.alm)
+        res_alm.alm[i] = real(alm₁.alm[i]) * real(alm₂.alm[i]) + im * imag(alm₁.alm[i]) * imag(alm₂.alm[i])
+    end
+    res_alm
+end
+
+""" *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
+    Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
+    Note the order of the arguments: this consists in a shortcut of [`almxfl`](@ref),
+    therefore a new `Alm` object is returned. Swap the arguments for an in-place
+    version.
+"""
+function *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl(alm₁, fl)
+end
+
+""" *(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number}
+
+    Perform the in-place product of an `Alm` object by a function of ℓ in a_ℓm space.
+    Note the order of the arguments: this consists in a shortcut of [`almxfl!`](@ref),
+    therefore the multiplication is performed IN PLACE.
+"""
+function *(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number}
+    almxfl!(alm₁, fl)
+    alm₁
+end
+
+""" *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
+    Perform the element-wise product of an `Alm` object by a constant in a_ℓm space.
+    Note the order of the arguments: in this case a new `Alm` object is returned.
+    Swap the arguments for an in-place version.
+"""
+function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
+    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+
+    @inbounds for i in eachindex(alm₁.lmax)
+        res_alm.alm[i] = alm₁.alm[i] * c
+    end
+    res_alm
+end
+
+""" *(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
+
+    Perform the in-place element-wise product of an `Alm` object by a constant in a_ℓm space.
+    Note the order of the arguments: in this case the product is performed IN PLACE.
+"""
+function *(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
+    @inbounds for i in eachindex(alm₁.lmax)
+        alm₁.alm[i] = alm₁.alm[i] * c
+    end
+    alm₁
+end
+
+""" /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+    Perform an element-wise division in a_ℓm space between two `Alm`s.
+    A new `Alm` object is returned.
+"""
+function /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
+    (alm₁.lmax == alm₂.lmax) || throw(DomainError("lmax's not matching"))
+    (alm₁.mmax == alm₂.mmax) || throw(DomainError("mmax's not matching"))
+    lmax = alm₁.lmax
+
+    #first part of the alm arrays, where for m=0 whe have alm^R_l,0 = alm^C_l,0,
+    #and thus only real values are interesting (imag. should be 0)
+    res_alm = Alm(lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+    @inbounds for i in 1:lmax+1
+        res_alm.alm[i] = real(alm₁.alm[i]) / real(alm₂.alm[i])
+    end
+    #we then compute the rest, where alm^R_l,m = √2 Re{alm^C_l,m}, alm^R_l,-m = √2Im{alm^C_l,m}
+    @inbounds for i in lmax+2:length(alm₁.alm)
+        res_alm.alm[i] = real(alm₁.alm[i]) / real(alm₂.alm[i]) + im * imag(alm₁.alm[i]) / imag(alm₂.alm[i])
+    end
+    res_alm
+end
+
+""" /(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+
+    Perform an element-wise division by a function of ℓ in a_ℓm space.
+    A new `Alm` object is returned.
+"""
+/(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number} = almxfl(alm₁, 1. ./ fl)
+
+""" /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
+
+    Perform an element-wise division by a constant in a_ℓm space.
+    A new `Alm` object is returned.
+"""
+function /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
+    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+
+    @inbounds for i in eachindex(alm₁.lmax)
+        res_alm.alm[i] = alm₁.alm[i] / c
+    end
+    res_alm
+end
+
+"""
+    Perform an IN-PLACE element-wise division by a function of ℓ in a_ℓm space.
+"""
+\(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number} = almxfl!(alm₁, 1. ./ fl)
+
+"""
+    Perform an IN-PLACE element-wise division by a constant in a_ℓm space.
+"""
+function \(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
+    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
+
+    @inbounds for i in eachindex(alm₁.lmax)
+        res_alm.alm[i] = alm₁.alm[i] / c
+    end
+    res_alm
+end
+
+""" dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+
+    Implements the dot product in a_ℓm space.
+    The two imput alms must have matching size, lmax and mmax.
+    A new `Alm` object is returned.
+"""
+function dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+    (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
+    (alm₁.lmax == alm₂.lmax) || throw(DomainError("lmax's not matching"))
+    (alm₁.mmax == alm₂.mmax) || throw(DomainError("mmax's not matching"))
+    lmax = alm₁.lmax
+    res = 0.0
+
+    #we first compute the l≠0, where alm^R_l,m = √2 Re{alm^C_l,m}, alm^R_l,-m = √2Im{alm^C_l,m}
+    @inbounds for i in lmax+2:length(alm₁.alm)
+        res += real(alm₁.alm[i]) * real(alm₂.alm[i]) + imag(alm₁.alm[i]) * imag(alm₂.alm[i])
+    end
+    res *= sqrt(2)
+
+    #then the first part of the alm arrays, where for m=0 whe have alm^R_l,0 = alm^C_l,0,
+    #and thus only real values are interesting (imag. should be 0)
+    @inbounds for i in 1:lmax+1
+        res += real(alm₁.alm[i]) * real(alm₂.alm[i])
+    end
+    res
 end
