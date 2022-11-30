@@ -114,3 +114,41 @@ idx_test_2 = Healpix.almExplicitIndex(alm.lmax, alm.mmax)
 
 @test idx == idx_test_1
 @test idx == idx_test_2
+
+## test each_ell
+
+alm = Healpix.Alm(5,5)
+ell = Healpix.each_ell(alm, [0,1,2])
+test_ell = [0, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 2, 3, 4, 5]
+
+@test ell == test_ell
+
+## test each_ell_idx
+
+idx = Healpix.each_ell_idx(alm, [0,2])
+test_idx = [1, 2, 3, 4, 5, 6, 12, 13, 14, 15]
+
+@test idx == test_idx
+
+## test each_m
+
+ms = Healpix.each_m(alm, [2, 1, 0])
+test_ms = [0, 1, 2, 0, 1, 0]
+
+@test ms == test_ms
+
+## test each_m_idx
+
+idx = Healpix.each_m_idx(alm, [0, 3])
+test_idx = [1, 4, 9, 13, 16]
+
+@test idx == test_idx
+
+## test each_ell_m
+
+ellm = Healpix.each_ell_m(alm)
+test_ellm = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (1, 1), (2, 1),
+            (3, 1), (4, 1), (5, 1), (2, 2), (3, 2), (4, 2), (5, 2), (3, 3),
+            (4, 3), (5, 3), (4, 4), (5, 4), (5, 5)]
+
+@test ellm == test_ellm
