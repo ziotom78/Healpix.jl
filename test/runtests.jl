@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import Healpix
+import LinearAlgebra
 using Test
 
 const eps = 1e-12

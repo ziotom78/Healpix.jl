@@ -220,4 +220,4 @@ c\alm3
 
 #dot
 test_res = 33.45584412271572
-@test isapprox(test_res, LinearAlgebra.dot(alm1, alm2))
+@test isapprox(test_res, LinearAlgebra.:dot(alm1, alm2))
