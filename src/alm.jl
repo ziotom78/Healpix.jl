@@ -370,7 +370,7 @@ Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent func
 - `fl::AbstractVector{T}`: The array giving the factor f_ℓ by which to multiply a_ℓm
 
 """
-function almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+function almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
 
     lmax = alm.lmax
     mmax = alm.mmax
@@ -408,7 +408,7 @@ the a_ℓm passed in input.
 #RETURNS
 - `Alm{Complex{T}}`: The result of a_ℓm * f_ℓ.
 """
-function almxfl(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
     lmax = alm.lmax
     mmax = alm.mmax
     alm_new = deepcopy(alm)
@@ -487,7 +487,7 @@ end
     therefore a new `Alm` object is returned. Swap the arguments for an in-place
     version.
 """
-function *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+function Base.:*(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
     almxfl(alm₁, fl)
 end
 
@@ -497,7 +497,7 @@ end
     Note the order of the arguments: this consists in a shortcut of [`almxfl!`](@ref),
     therefore the multiplication is performed IN PLACE.
 """
-function *(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number}
+function *(fl::AA, alm₁::Alm{Complex{T}}) where {T <: Number,AA <: AbstractArray{T,1}}
     almxfl!(alm₁, fl)
     alm₁
 end
@@ -558,7 +558,7 @@ end
     Perform an element-wise division by a function of ℓ in a_ℓm space.
     A new `Alm` object is returned.
 """
-/(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number} = almxfl(alm₁, 1. ./ fl)
+/(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}} = almxfl(alm₁, 1. ./ fl)
 
 """ /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
 
@@ -577,7 +577,7 @@ end
 """
     Perform an IN-PLACE element-wise division by a function of ℓ in a_ℓm space.
 """
-\(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number} = almxfl!(alm₁, 1. ./ fl)
+\(fl::AA, alm₁::Alm{Complex{T}}) where {T <: Number,AA <: AbstractArray{T,1}} = almxfl!(alm₁, 1. ./ fl)
 
 """
     Perform an IN-PLACE element-wise division by a constant in a_ℓm space.
