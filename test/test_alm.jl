@@ -152,3 +152,23 @@ test_ellm = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (1, 1), (2, 1),
             (4, 3), (5, 3), (4, 4), (5, 4), (5, 5)]
 
 @test ellm == test_ellm
+
+## test alm algebra
+#using Test #FIXME: then remove!!!
+
+alm1 = Healpix.Alm(3,3, ones(ComplexF64, numberOfAlms(3)) .+ 1.00im)
+alm2 = Healpix.Alm(3,3, 2*ones(ComplexF64, numberOfAlms(3)) .+ 1.00im)
+
+test_alm = [3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
+            3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
+            3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
+            3.0 + 2.0im]
+
+@test test_alm == (alm1 + alm2).alm
+
+test_alm = [1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
+            1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
+            1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
+            1.0 + 0.0im]
+
+@test test_alm == (alm2 - alm1).alm

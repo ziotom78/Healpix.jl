@@ -423,7 +423,7 @@ function +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-     @inbounds for i in eachindex(alm₁.lmax)
+     @inbounds for i in eachindex(alm₁.alm)
         res_alm.alm[i] = alm₁.alm[i] + alm₂.alm[i]
     end
     res_alm
@@ -441,7 +441,7 @@ function -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-     @inbounds for i in eachindex(alm₁.lmax)
+     @inbounds for i in eachindex(alm₁.alm)
         res_alm.alm[i] = alm₁.alm[i] - alm₂.alm[i]
     end
     res_alm
