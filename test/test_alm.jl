@@ -78,7 +78,7 @@ almread = Healpix.readAlmFromFITS(file_name, ComplexF64)
 
 @test almread.alm == testalm.alm
 
-## test almxfl & almxfl!
+## test almxfl & almxfl through '*'
 
 alm = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = ℓ + m
@@ -97,7 +97,7 @@ for ℓ in 0:3
 end
 
 C_l = Vector{Float64}(0:5)
-almnew = Healpix.almxfl(alm, C_l)
+almnew = alm*C_l
 @test alm_test.alm == almnew.alm
 @test alm_test.alm != alm.alm
 
@@ -154,11 +154,11 @@ test_ellm = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (1, 1), (2, 1),
 @test ellm == test_ellm
 
 ## test alm algebra
-#using Test #FIXME: then remove!!!
 
 alm1 = Healpix.Alm(3,3, ones(ComplexF64, Healpix.numberOfAlms(3)) .+ 1.00im)
 alm2 = Healpix.Alm(3,3, 2*ones(ComplexF64, Healpix.numberOfAlms(3)) .+ 1.00im)
 
+#+
 test_alm = [3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
             3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
             3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
@@ -166,9 +166,58 @@ test_alm = [3.0 + 2.0im, 3.0 + 2.0im, 3.0 + 2.0im,
 
 @test isapprox(test_alm, (alm1 + alm2).alm)
 
+#-
 test_alm = [1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
             1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
             1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
             1.0 + 0.0im]
 
 @test isapprox(test_alm, (alm2 - alm1).alm)
+
+#alm*alm
+test_alm = [2.0 + 0.0im, 2.0 + 0.0im, 2.0 + 0.0im,
+            2.0 + 0.0im, 2.0 + 1.0im, 2.0 + 1.0im,
+            2.0 + 1.0im, 2.0 + 1.0im, 2.0 + 1.0im,
+            2.0 + 1.0im]
+
+@test isapprox(test_alm, (alm1 * alm2).alm)
+
+#alm*c
+c = 2.0
+
+test_alm = [2.0 + 2.0im, 2.0 + 2.0im, 2.0 + 2.0im,
+            2.0 + 2.0im, 2.0 + 2.0im, 2.0 + 2.0im,
+            2.0 + 2.0im, 2.0 + 2.0im, 2.0 + 2.0im,
+            2.0 + 2.0im]
+
+@test isapprox(test_alm, (alm1 * c).alm)
+
+#c*alm
+alm3 = deepcopy(alm1)
+c*alm3
+@test isapprox(test_alm, alm3.alm)
+
+#alm/alm
+test_alm = [0.5 + 0.0im, 0.5 + 0.0im, 0.5 + 0.0im,
+            0.5 + 0.0im, 0.5 + 1.0im, 0.5 + 1.0im,
+            0.5 + 1.0im, 0.5 + 1.0im, 0.5 + 1.0im,
+            0.5 + 1.0im]
+
+@test isapprox(test_alm, (alm1/alm2).alm)
+
+#alm/c
+test_alm = [0.5 + 0.5im, 0.5 + 0.5im, 0.5 + 0.5im,
+            0.5 + 0.5im, 0.5 + 0.5im, 0.5 + 0.5im,
+            0.5 + 0.5im, 0.5 + 0.5im, 0.5 + 0.5im,
+            0.5 + 0.5im]
+
+@test isapprox(test_alm, (alm1/c).alm)
+
+#c/alm
+alm3 = deepcopy(alm1)
+c\alm3
+@test isapprox(test_alm, alm3.alm)
+
+#dot
+test_res = 33.45584412271572
+@test isapprox(test_res, dot(alm1, alm2))

@@ -236,6 +236,15 @@ function each_ell_m(alm::Alm{Complex{T}}) where {T <: Number}
     ell_m
 end
 
+import Base: eachindex
+
+""" eachindex(alm::Alm{Complex{T}}) where {T <: Number}
+
+    Works as `eachindex(alm.alm)`.
+"""
+function eachindex(alm::Alm{Complex{T}}) where {T <: Number}
+    eachindex(alm.alm)
+end
 ############################################################################
 
 """
@@ -423,7 +432,7 @@ function +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-     @inbounds for i in eachindex(alm₁.alm)
+     @inbounds for i in eachindex(alm₁)
         res_alm.alm[i] = alm₁.alm[i] + alm₂.alm[i]
     end
     res_alm
@@ -441,7 +450,7 @@ function -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-     @inbounds for i in eachindex(alm₁.alm)
+     @inbounds for i in eachindex(alm₁)
         res_alm.alm[i] = alm₁.alm[i] - alm₂.alm[i]
     end
     res_alm
@@ -502,7 +511,7 @@ end
 function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-    @inbounds for i in eachindex(alm₁.lmax)
+    @inbounds for i in eachindex(alm₁)
         res_alm.alm[i] = alm₁.alm[i] * c
     end
     res_alm
@@ -514,8 +523,8 @@ end
     Note the order of the arguments: in this case the product is performed IN PLACE.
 """
 function *(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
-    @inbounds for i in eachindex(alm₁.lmax)
-        alm₁.alm[i] = alm₁.alm[i] * c
+    @inbounds for i in eachindex(alm₁)
+        alm₁.alm[i] *= c
     end
     alm₁
 end
@@ -559,7 +568,7 @@ end
 function /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-    @inbounds for i in eachindex(alm₁.lmax)
+    @inbounds for i in eachindex(alm₁)
         res_alm.alm[i] = alm₁.alm[i] / c
     end
     res_alm
@@ -574,12 +583,11 @@ end
     Perform an IN-PLACE element-wise division by a constant in a_ℓm space.
 """
 function \(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
-    res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
 
-    @inbounds for i in eachindex(alm₁.lmax)
-        res_alm.alm[i] = alm₁.alm[i] / c
+    @inbounds for i in eachindex(alm₁)
+        alm₁.alm[i] /= c
     end
-    res_alm
+    alm₁
 end
 
 """ dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
