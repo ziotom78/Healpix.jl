@@ -607,7 +607,7 @@ function dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Numbe
     @inbounds for i in lmax+2:length(alm₁.alm)
         res += real(alm₁.alm[i]) * real(alm₂.alm[i]) + imag(alm₁.alm[i]) * imag(alm₂.alm[i])
     end
-    res *= sqrt(2)
+    res *= 2
 
     #then the first part of the alm arrays, where for m=0 whe have alm^R_l,0 = alm^C_l,0,
     #and thus only real values are interesting (imag. should be 0)

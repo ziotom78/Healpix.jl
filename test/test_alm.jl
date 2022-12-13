@@ -154,7 +154,7 @@ test_ellm = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (1, 1), (2, 1),
 @test ellm == test_ellm
 
 ## test alm algebra
-
+using Test
 alm1 = Healpix.Alm(3,3, ones(ComplexF64, Healpix.numberOfAlms(3)) .+ 1.00im)
 alm2 = Healpix.Alm(3,3, 2*ones(ComplexF64, Healpix.numberOfAlms(3)) .+ 1.00im)
 
@@ -219,5 +219,5 @@ c\alm3
 @test isapprox(test_alm, alm3.alm)
 
 #dot
-test_res = 33.45584412271572
+test_res = 44.0
 @test isapprox(test_res, LinearAlgebra.:dot(alm1, alm2))
