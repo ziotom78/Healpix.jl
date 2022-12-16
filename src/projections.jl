@@ -110,8 +110,8 @@ on the projection plane (both are in the range [−1, 1]).
 function equiproj(lat, lon)
     # We use `rem2pi` because we need angles in the range [-π, +π]
     x, y = (
-        (rem2pi(lon + π, RoundNearest) - π) / π,
-        2 * (rem2pi(lat + π, RoundNearest) - π) / π,
+        rem2pi(lon, RoundNearest) / π,
+        2lat / π,
     )
     (true, x, y)
 end
@@ -131,6 +131,17 @@ function equiprojinv(x, y)
     (true, π / 2 * y, π * x)
 end
 
+function find_mollweide_theta(ϕ; threshold = 1e-7)
+    abs(abs(ϕ) - π/2) < threshold && return ϕ
+    
+    θ = ϕ
+    while true
+        new_θ = θ - (2θ + sin(2θ) - π * sin(ϕ)) / (2 + 2cos(2θ))
+        (abs(new_θ - θ) < threshold) && return θ
+        θ = new_θ
+    end
+end
+
 """
     mollweideproj(lat, lon)
 
@@ -141,8 +152,9 @@ or not (false), and the two numbers are the x and y coordinates of the point
 on the projection plane (both are in the range [−1, 1]).
 """
 function mollweideproj(lat, lon)
-    sinlat, coslat = sincos(lat)
-    (true, sinlat, 2 / π * lon * coslat)
+    θ = find_mollweide_theta(lat)
+
+    (true, -1 / π * lon * cos(θ), sin(θ))
 end
 
 """
