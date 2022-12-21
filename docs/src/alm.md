@@ -114,7 +114,7 @@ gaussbeam
 
 ## Algebraic operations in harmonic space
 
-Healpix.jl provides overloads of the `Base` functions `+`, `-`, `*`, `/` and `\` (inverse division),
+Healpix.jl provides overloads of the `Base` functions `+`, `-`, `*`, `/`,
 as well as `LinearAlgebra.dot`, allowing to carry out these fundamental operations
 element-wise in harmonic space directly.
 
@@ -132,11 +132,12 @@ alm_sum = myalm1 + myalm2 #each element will be = 2 + 0im
 
 #### Multiplying or dividing a set of Alm by a generic function of $\ell$ or a constant
 
-The operators `*` and `/` (or `\`) can be used to multiply or divide an `Alm` by an $\ell$-dependent
+The operators `*` and `/` can be used to multiply or divide an `Alm` by an $\ell$-dependent
 generic function $f_\ell$ (or just a constant, of type `Number`).
 
-Depending on which order the arguments are placed, the result will be overwritten
-in place or returned as a new instance of `Alm` type:
+In this case a new instance of `Alm` type will be returned. To perform a more
+efficient in-place operation refer to [`almxfl!`](@ref), as shown in this brief
+example:
 
 ```julia
 using Healpix
@@ -150,11 +151,11 @@ myalm*myf_l
 myalm/myf_l
 
 #will overwrite myalm:
-myf_l*myalm
-myf_l\myalm #here the inverse division must be used
+almxfl!(myalm, myf_l)
+almxfl!(myalm, 1.0 ./ myf_l) #division
 ```
 
-In either case the call to such operator consists in a shortcut to the function [`almxfl`](@ref) (or [`almxfl!`](@ref), if in place).
+In either case the call to such operator consists in a shortcut to the function [`almxfl`](@ref).
 
 ```@docs
 almxfl
@@ -163,7 +164,6 @@ Base.:+
 Base.:-
 Base.:*
 Base.:/
-Base.:\
 ```
 
 #### Dot product
