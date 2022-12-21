@@ -361,7 +361,7 @@ end
 #ALM ALGEBRA
 
 """
-    almxfl!(alm::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+    almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
 
 Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent function.
 
@@ -417,7 +417,7 @@ function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractA
 end
 
 
-import Base: +, -, *, /, \
+import Base: +, -, *, /
 import LinearAlgebra: dot
 
 """ +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
@@ -475,31 +475,20 @@ function *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     end
     #we then compute the rest, where alm^R_l,m = √2 Re{alm^C_l,m}, alm^R_l,-m = √2Im{alm^C_l,m}
     @inbounds for i in lmax+2:length(alm₁.alm)
-        res_alm.alm[i] = real(alm₁.alm[i]) * real(alm₂.alm[i]) + im * imag(alm₁.alm[i]) * imag(alm₂.alm[i])
+        res_alm.alm[i] = alm₁.alm[i] * alm₂.alm[i]
     end
     res_alm
 end
 
-""" *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+""" *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
 
     Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
     Note the order of the arguments: this consists in a shortcut of [`almxfl`](@ref),
     therefore a new `Alm` object is returned. Swap the arguments for an in-place
     version.
 """
-function Base.:*(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+function *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
     almxfl(alm₁, fl)
-end
-
-""" *(fl::AbstractVector{T}, alm₁::Alm{Complex{T}}) where {T <: Number}
-
-    Perform the in-place product of an `Alm` object by a function of ℓ in a_ℓm space.
-    Note the order of the arguments: this consists in a shortcut of [`almxfl!`](@ref),
-    therefore the multiplication is performed IN PLACE.
-"""
-function *(fl::AA, alm₁::Alm{Complex{T}}) where {T <: Number,AA <: AbstractArray{T,1}}
-    almxfl!(alm₁, fl)
-    alm₁
 end
 
 """ *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
@@ -515,18 +504,6 @@ function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
         res_alm.alm[i] = alm₁.alm[i] * c
     end
     res_alm
-end
-
-""" *(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
-
-    Perform the in-place element-wise product of an `Alm` object by a constant in a_ℓm space.
-    Note the order of the arguments: in this case the product is performed IN PLACE.
-"""
-function *(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
-    @inbounds for i in eachindex(alm₁)
-        alm₁.alm[i] *= c
-    end
-    alm₁
 end
 
 """ /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
@@ -548,17 +525,17 @@ function /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     end
     #we then compute the rest, where alm^R_l,m = √2 Re{alm^C_l,m}, alm^R_l,-m = √2Im{alm^C_l,m}
     @inbounds for i in lmax+2:length(alm₁.alm)
-        res_alm.alm[i] = real(alm₁.alm[i]) / real(alm₂.alm[i]) + im * imag(alm₁.alm[i]) / imag(alm₂.alm[i])
+        res_alm.alm[i] = alm₁.alm[i] / alm₂.alm[i]
     end
     res_alm
 end
 
-""" /(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+""" /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
 
     Perform an element-wise division by a function of ℓ in a_ℓm space.
     A new `Alm` object is returned.
 """
-/(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}} = almxfl(alm₁, 1. ./ fl)
+/(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, 1. ./ fl)
 
 """ /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
 
@@ -574,21 +551,6 @@ function /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm
 end
 
-"""
-    Perform an IN-PLACE element-wise division by a function of ℓ in a_ℓm space.
-"""
-\(fl::AA, alm₁::Alm{Complex{T}}) where {T <: Number,AA <: AbstractArray{T,1}} = almxfl!(alm₁, 1. ./ fl)
-
-"""
-    Perform an IN-PLACE element-wise division by a constant in a_ℓm space.
-"""
-function \(c::Number, alm₁::Alm{Complex{T}}) where {T <: Number}
-
-    @inbounds for i in eachindex(alm₁)
-        alm₁.alm[i] /= c
-    end
-    alm₁
-end
 
 """ dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 

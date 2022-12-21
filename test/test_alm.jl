@@ -78,7 +78,7 @@ almread = Healpix.readAlmFromFITS(file_name, ComplexF64)
 
 @test almread.alm == testalm.alm
 
-## test almxfl & almxfl through '*'
+## test almxfl & almxfl! through '*'
 
 alm = Healpix.Alm(3,3)
 #let's fill the alms as a_ℓm = ℓ + m
@@ -176,9 +176,9 @@ test_alm = [1.0 + 0.0im, 1.0 + 0.0im, 1.0 + 0.0im,
 
 #alm*alm
 test_alm = [2.0 + 0.0im, 2.0 + 0.0im, 2.0 + 0.0im,
-            2.0 + 0.0im, 2.0 + 1.0im, 2.0 + 1.0im,
-            2.0 + 1.0im, 2.0 + 1.0im, 2.0 + 1.0im,
-            2.0 + 1.0im]
+            2.0 + 0.0im, 1.0 + 3.0im, 1.0 + 3.0im,
+            1.0 + 3.0im, 1.0 + 3.0im, 1.0 + 3.0im,
+            1.0 + 3.0im]
 
 @test isapprox(test_alm, (alm1 * alm2).alm)
 
@@ -192,16 +192,12 @@ test_alm = [2.0 + 2.0im, 2.0 + 2.0im, 2.0 + 2.0im,
 
 @test isapprox(test_alm, (alm1 * c).alm)
 
-#c*alm
-alm3 = deepcopy(alm1)
-c*alm3
-@test isapprox(test_alm, alm3.alm)
 
 #alm/alm
 test_alm = [0.5 + 0.0im, 0.5 + 0.0im, 0.5 + 0.0im,
-            0.5 + 0.0im, 0.5 + 1.0im, 0.5 + 1.0im,
-            0.5 + 1.0im, 0.5 + 1.0im, 0.5 + 1.0im,
-            0.5 + 1.0im]
+            0.5 + 0.0im, 0.6 + 0.2im, 0.6 + 0.2im,
+            0.6 + 0.2im, 0.6 + 0.2im, 0.6 + 0.2im,
+            0.6 + 0.2im]
 
 @test isapprox(test_alm, (alm1/alm2).alm)
 
@@ -212,11 +208,6 @@ test_alm = [0.5 + 0.5im, 0.5 + 0.5im, 0.5 + 0.5im,
             0.5 + 0.5im]
 
 @test isapprox(test_alm, (alm1/c).alm)
-
-#c/alm
-alm3 = deepcopy(alm1)
-c\alm3
-@test isapprox(test_alm, alm3.alm)
 
 #dot
 test_res = 44.0
