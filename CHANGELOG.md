@@ -6,6 +6,8 @@
 
 -   Fix a bug in `mollweideproj` and `equiproj` [#97](https://github.com/ziotom78/Healpix.jl/issues/97)
 
+-   Re-enable support for Julia 1.9 [#104](https://github.com/ziotom78/Healpix.jl/pull/104)
+
 # Version 4.1.2
 
 -   Use double precision in `ang2pixRing` and `zphi2pixRing` [#94](https://github.com/ziotom78/Healpix.jl/pull/94)
