@@ -409,8 +409,6 @@ the a_ℓm passed in input.
 - `Alm{Complex{T}}`: The result of a_ℓm * f_ℓ.
 """
 function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
-    lmax = alm.lmax
-    mmax = alm.mmax
     alm_new = deepcopy(alm)
     almxfl!(alm_new, fl)
     alm_new
@@ -483,19 +481,14 @@ end
 """ *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
 
     Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
-    Note the order of the arguments: this consists in a shortcut of [`almxfl`](@ref),
-    therefore a new `Alm` object is returned. Swap the arguments for an in-place
-    version.
+    Note: this consists in a shortcut of [`almxfl`](@ref),
+    therefore a new `Alm` object is returned.
 """
-function *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
-    almxfl(alm₁, fl)
-end
+*(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, fl)
 
 """ *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
     Perform the element-wise product of an `Alm` object by a constant in a_ℓm space.
-    Note the order of the arguments: in this case a new `Alm` object is returned.
-    Swap the arguments for an in-place version.
 """
 function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
