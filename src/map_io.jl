@@ -104,7 +104,9 @@ function readPolarizedMapFromFITS(
     end
 
     f = CFITSIO.fits_open_table(fileName)
-    i, q, u = (readMapFromFITS(f, colidx, t) for colidx in (column_i, column_q, column_u))
+    i = readMapFromFITS(f, column_i, t)
+    q = readMapFromFITS(f, column_q, t)
+    u = readMapFromFITS(f, column_u, t)
     CFITSIO.fits_close_file(f)
 
     PolarizedHealpixMap(i, q, u)
