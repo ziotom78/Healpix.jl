@@ -151,7 +151,7 @@ pixel indexes are 1-based (this is Julia)!
 function ang2pixNest(resol::Resolution, theta, phi)
 
     (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
-    
+
     nside = resol.nside
     local ix, iy, face_num
 
@@ -287,7 +287,7 @@ indexes are 1-based (this is Julia)!
 function ang2pixRing(resol::Resolution, theta, phi)
 
     (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
-    
+
     z = cos(theta)
     z_abs = abs(z)
 
@@ -619,3 +619,15 @@ function boundariesRing(resol::Resolution, pix, step, T::Type{<:Real})
     boundariesRing!(resol, pix, step, buf)
     buf
 end
+
+#################################################################
+"""
+    getEquatorIdx(nside::Integer)
+    getEquatorIdx(res::Resolution)
+
+    Computes the ring index of the equator in a map of `Resolution` `res` or
+    NSIDE parameter given by `nside`.
+    
+"""
+getEquatorIdx(nside::Integer) = 2*nside
+getEquatorIdx(res::Resolution) = getEquatorIdx(res.nside)
