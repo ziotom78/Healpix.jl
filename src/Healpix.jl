@@ -18,7 +18,7 @@ export readClFromFITS, writeClToFITS, cl2dl, dl2cl, synalm!, synalm, synfast!, s
 export map2alm, alm2map, map2alm!, alm2map!, adjoint_map2alm!, adjoint_alm2map!, alm2cl, pixwin, gaussbeam, almxfl, almxfl!
 export getringinfo!, getringinfo, getinterpolRing
 export pix2xyfRing, xyf2pixRing, pix2xyfNest, xyf2pixNest, xyf2loc
-export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad, ring2theta, getEquatorIdx
+export pix2zphiNest, pix2zphiRing, ringAbove, max_pixrad, ring2theta, getEquatorIdx, getRingPixels
 export interpolate
 export ring2nest, nest2ring, ring2nest!, nest2ring!, udgrade
 export queryDiscRing, queryStripRing
