@@ -2950,3 +2950,12 @@ thetas_ref = [0.20448019896853478, 0.4111378623223477, 0.6223684885550207,
 @test isapprox(Healpix.ring2theta(1, res), 0.20448019896853478)
 @test isapprox(Healpix.ring2theta(6, res), 1.2309594173407747)
 @test isapprox(Healpix.ring2theta(15, res), 2.9371124546212584)
+
+################################################################################
+#test getRingPixels
+test_map = Healpix.HealpixMap{Float64, Healpix.RingOrder}([Float64(i) for i in 1:Healpix.nside2npix(2)])
+
+@test Healpix.getRingPixels(test_map, 1) == Vector{Float64}(1:4)
+@test Healpix.getRingPixels(test_map, 2) == Vector{Float64}(5:12)
+@test Healpix.getRingPixels(test_map, 5) == Vector{Float64}(29:36)
+@test Healpix.getRingPixels(test_map, 7) == Vector{Float64}(45:48)

@@ -1,5 +1,7 @@
 # HEAD
 
+-   Add overloads of `Base`'s algebraic operators `+`, `-`, `*`, `/` and `LinearAlgebra`'s `dot` product in Alm space; add Alm indexing functions: `each_ell`, `each_ell_idx`, `each_m`, `each_m_idx`, `each_ell_m`; improve `almxfl!`'s performance; add functions `getEquatorIdx`, `ring2theta`, `getRingPixels` [#98](https://github.com/ziotom78/Healpix.jl/pull/98), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
+
 -   Add `synalm`, `synfast`, `anafast`, `adjoint_alm2map`, `adjoint_map2alm` [#96](https://github.com/ziotom78/Healpix.jl/pull/96), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
 
 -   Add functions `readClFromFITS`, `writeClToFITS`, `cl2dl`, `dl2cl`, `almxfl`, `almxfl!`, `almExplicitIndex` [#91](https://github.com/ziotom78/Healpix.jl/pull/91), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
@@ -54,7 +56,7 @@
 -   **Breaking change**: rename `Map` → `HealpixMap`, `PolarizedMap` → `HealpixPolarizedMap`, `GenericMap` → `AbstractHealpixMap` ([PR#53](https://github.com/ziotom78/Healpix.jl/pull/53))
 
 -   **Breaking change**: `Alm.alm` is now enforced to be a one-dimensional array. This fixes type instability ([PR#25](https://github.com/ziotom78/Healpix.jl/pull/25))
-    
+
 -   **Breaking change**: Generalize the definition of `HealpixMap` and `Alm` ([PR#26](https://github.com/ziotom78/Healpix.jl/pull/26)) so that other array types than plain `Array` can be used for these objects.
 
 -   Add support for maps whose base type is `Union{Nothing, T}` [PR#63](https://github.com/ziotom78/Healpix.jl/pull/63)
@@ -86,7 +88,7 @@
 -   README has been updated ([PR#39](https://github.com/ziotom78/Healpix.jl/pull/39))
 
 -   Documentation for new spherical harmonics functions has been added ([PR#35](https://github.com/ziotom78/Healpix.jl/pull/35)).
-    
+
 -   Add dependency on [Libsharp.jl](https://github.com/ziotom78/libsharp.jl) and implement `map2alm`, `alm2map`, and `alm2cl` ([#21](https://github.com/ziotom78/Healpix.jl/pull/21), [#23](https://github.com/ziotom78/Healpix.jl/pull/23)). **Caution**: this change drops support for Julia 1.0, 1.1, and 1.2, as Libsharp.jl requires [Julia's artifacts](https://julialang.org/blog/2019/11/artifacts/), which were implemented in Julia 1.3.
 
 -   Fix incompatibility with FITSIO 1.0 ([#32](https://github.com/ziotom78/Healpix.jl/pull/32))
