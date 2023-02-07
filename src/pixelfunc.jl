@@ -151,7 +151,7 @@ pixel indexes are 1-based (this is Julia)!
 function ang2pixNest(resol::Resolution, theta, phi)
 
     (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
-    
+
     nside = resol.nside
     local ix, iy, face_num
 
@@ -287,7 +287,7 @@ indexes are 1-based (this is Julia)!
 function ang2pixRing(resol::Resolution, theta, phi)
 
     (0 ≤ theta ≤ π) || throw(DomainError(theta, "Invalid value of theta"))
-    
+
     z = cos(theta)
     z_abs = abs(z)
 
@@ -619,3 +619,37 @@ function boundariesRing(resol::Resolution, pix, step, T::Type{<:Real})
     boundariesRing!(resol, pix, step, buf)
     buf
 end
+
+#################################################################
+"""
+    getEquatorIdx(nside::Integer)
+    getEquatorIdx(res::Resolution)
+
+    Computes the ring index of the equator in a map of `Resolution` `res` or
+    NSIDE parameter given by `nside`.
+
+"""
+getEquatorIdx(nside::Integer) = 2*nside
+getEquatorIdx(res::Resolution) = getEquatorIdx(res.nside)
+
+######################################################
+
+"""
+    Create an array of the colatitude in radians (theta) of each ring index in `rings` for a map with resolution `res`.
+
+    If no `rings` array is passed, the computation is performed on all the rings deducted from `res`.
+
+    If an integer `ring` is passed, a single Float value of the colatitude is returned.
+"""
+function ring2theta(rings::Vector{I}, res::Resolution) where {I<:Integer}
+    theta = Vector{Float64}(undef, length(rings))
+    ringinfo = RingInfo(0, 0, 0, 0, 0)
+    @inbounds for i in 1:length(rings)
+        getringinfo!(res, rings[i], ringinfo; full=true)
+        theta[i] = ringinfo.colatitude_rad
+    end
+    theta
+end
+ring2theta(res::Resolution) = ring2theta(Vector{Int}(1:res.nsideTimesFour-1), res)
+#single ring passed as int:
+ring2theta(ring::Integer, res::Resolution) = getringinfo(res, ring; full=true).colatitude_rad

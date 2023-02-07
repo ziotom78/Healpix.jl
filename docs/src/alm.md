@@ -51,22 +51,16 @@ Healpix.jl also implements the two adjoint functions
 [`adjoint_alm2map!`](@ref) and [`adjoint_map2alm!`](@ref), represented by
 $\mathrm{Y}^{\mathrm{T}}$ and $(\mathrm{Y}^{-1})^\mathrm{T}$ respectively.
 While the synthesis operator on a general scalar field $f(\theta, \phi)$
-can be defined through an exact summation as
-$$ f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi).$$
-The analysis operator is defined through an integral operator as
-$$ a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi.$$
+can be defined through an exact summation as $f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi)$.
+The analysis operator is defined through an integral operator as $a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi$.
 Though, in the real case wherein maps are pixelized, the latter ends
 up being approximated through a summation over the pixels.
 Here is where the adjoint of the synthesis operator, $\mathrm{Y}^{\mathrm{T}}$,
-comes into play. It is defined through:
-$$ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$$
-which is an exact operation. Note that the latter does not give directly the
-$a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
+comes into play. It is defined through: $ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$
+which is an exact operation. Note that the latter does not give directly the $a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
 where $\mathrm{W}$ is a diagonal matrix whose non-zero elements are approximately
 constant and equal to $4 \pi / N_{\mathrm{pix}}$, depending on the map pixelization.
-The latter realtion is also useful to obtain the adjoint of the analysis operator:
-$$(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}.$$
-
+The latter realtion is also useful to obtain the adjoint of the analysis operator: $(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}$.
 
 Here is an example:
 
@@ -118,16 +112,75 @@ pixwin
 gaussbeam
 ```
 
-## Multiplying a set of Alm by a generic function of $\ell$
+## Algebraic operations in harmonic space
 
-You can use the function [`almxfl`](@ref) (or [`almxfl!`](@ref)) to multiply (in-place)
- a set of $a_{\ell m}$ coefficients by an $\ell$-dependent generic function $f_\ell$.
+Healpix.jl provides overloads of the `Base` functions `+`, `-`, `*`, `/`,
+as well as `LinearAlgebra.dot`, allowing to carry out these fundamental operations
+element-wise in harmonic space directly.
+
+For example, an element-wise sum between two `Alm` objects can be performed as follows:
+
+```julia
+using Healpix
+
+#just two constant Alm objects
+myalm1 = Healpix.Alm(5,5, ones(ComplexF64, Healpix.numberOfAlms(5)))
+myalm1 = Healpix.Alm(5,5, ones(ComplexF64, Healpix.numberOfAlms(5)))
+
+alm_sum = myalm1 + myalm2 #each element will be = 2 + 0im
+```
+
+#### Multiplying or dividing a set of Alm by a generic function of $\ell$ or a constant
+
+The operators `*` and `/` can be used to multiply or divide an `Alm` by an $\ell$-dependent
+generic function $f_\ell$ (or just a constant, of type `Number`).
+
+In this case a new instance of `Alm` type will be returned. To perform a more
+efficient in-place operation refer to [`almxfl!`](@ref), as shown in this brief
+example:
+
+```julia
+using Healpix
+
+#just two constant Alm objects
+myalm = Healpix.Alm(5,5, ones(ComplexF64, Healpix.numberOfAlms(5)))
+myf_l = ones(Healpix.numberOfAlms(5)) .* 2
+
+#will return a new object:
+myalm*myf_l
+myalm/myf_l
+
+#will overwrite myalm:
+almxfl!(myalm, myf_l)
+almxfl!(myalm, 1.0 ./ myf_l) #division
+```
+
+In either case the call to such operator consists in a shortcut to the function [`almxfl`](@ref).
 
 ```@docs
 almxfl
 almxfl!
+Base.:+
+Base.:-
+Base.:*
+Base.:/
 ```
 
+#### Dot product
+
+Healpix.jl implements an overload of the operator `LinearAlgebra.dot`
+(along with its shortcut `⋅`) to perform a dot product directly in harmonic space.
+
+```julia
+using Healpix
+myalm = Healpix.Alm(5,5, ones(ComplexF64, Healpix.numberOfAlms(5)))
+
+dot_res = myalm ⋅ myalm #equivalent to dot(myalm, myalm)
+```
+
+```@docs
+LinearAlgebra.dot
+```
 
 ## Loading and saving harmonic coefficients
 
@@ -136,10 +189,50 @@ readAlmFromFITS
 writeAlmToFITS
 ```
 
-## Explicit indexing
+## Alm Indexing
+
+You can use [`almExplicitIndex`](@ref) to compute the so-called explicit indexing.
+It is exploited for instance in [`readAlmFromFITS`](@ref) and [`writeAlmToFITS`](@ref).
 
 ```@docs
 almExplicitIndex
+```
+
+The following functions can be used, in an analogous way as [`eachindex`](@ref),
+in the case of arrays, to obtain sets of indexes or values of $\ell$ and $m$.
+
+On the same line as `eachindex`, these can be very useful when implementing for-cycles
+over `Alm` objects.
+Here is an example of how to exploit [`each_ell_m`](@ref) to print explicitly
+the major-m ordering of a set of complex-stored `Alm`:
+
+```@example each_ell_m
+
+using Healpix # hide
+using Random
+
+# Initialize a random set of alm
+alm = Alm(4,4, randn(ComplexF64, numberOfAlms(4,4)))
+
+#print a_lm values knowing each corresponding l and m values
+function print_alm(alm)
+    i=1
+    for (l,m) in each_ell_m(alm)
+        a_lm = alm.alm[i]
+        print("ℓ = $l, |m| = $m: a_ℓm = $a_lm \n")
+        i+=1
+    end
+end
+
+print_alm(alm)
+```
+
+```@docs
+each_ell
+each_ell_idx
+each_m
+each_m_idx
+each_ell_m
 ```
 
 ## Full Pixel Weights

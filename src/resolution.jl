@@ -73,7 +73,9 @@ end
 
 @doc raw"""
     numOfRings(resol::Resolution)
+    numOfRings(nside::Integer)
 
 Return the number of horizontal rings in a Healpix map.
 """
 numOfRings(resol::Resolution) = resol.nsideTimesFour - 1
+numOfRings(nside::Integer) = 4*nside - 1

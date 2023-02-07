@@ -64,11 +64,11 @@ Convert a set of ``D_{\\ell}`` to ``C_{\\ell}`` power spectrum, where
 ``C_{\\ell} = 2\\pi D_{\\ell} / \\ell (\\ell + 1)``. The first components are
 set to zero if not present. The monopole component is set to zero in any case to avoid Inf values.
 
-#ARGUMENTS:
+# Arguments:
 - `dl::AbstractVector{T}` : Array of D_ℓ components
 - `lmin::Integer` : minimum l in the representation of the Dℓ power spectrum
 
-#RETURNS:
+# Returns:
 - `Vector{T}` : Array of C_ℓ power spectrum components
 """
 function dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
@@ -91,11 +91,11 @@ Convert a set of ``C_{\\ell}`` to ``D_{\\ell}`` power spectrum, where
 ``D_{\\ell} = \\ell (\\ell + 1) C_{\\ell} / 2\\pi``.
 The first components are set to zero if not present.
 
-#ARGUMENTS:
+# Arguments:
 - `cl::AbstractVector{T}` : Array of C_ℓ components
 - `lmin::Integer` : minimum l in the representation of the C_ℓ power spectrum
 
-#RETURNS:
+# Returns:
 - `Vector{T}` : Array of D_ℓ power spectrum components
 """
 function cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
@@ -118,7 +118,7 @@ end
 Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into the `Alm` object passed in input.
 
-# ARGUMENTS
+# Arguments:
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{\\ell m}``
@@ -160,7 +160,7 @@ synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Rea
 Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
 The output is written into a new `Alm` object of given lmax.
 
-# ARGUMENTS
+# Arguments:
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
 starting from `` \\ell = 0 ``.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
@@ -202,7 +202,7 @@ synalm(cl::Vector{T}) where {T <: Real} =
 Generate a map from a given power spectra ``C_{\\ell}``. The result is saved into
 the `HealpixMap` passed in input.
 
-# ARGUMENTS
+# Arguments:
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
 - `map::HealpixMap{T, RingOrder}`: the map that will contain the result.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
@@ -236,10 +236,10 @@ synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real} =
 
 Generate a `HealpixMap` with given Nside, from a given power spectra ``C_{\\ell}``.
 
-# ARGUMENTS
+# Arguments:
 - `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
 - `nside::Integer`: nside of the map that will contain the result.
-- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
+- `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)`-1 if not specified.
 - `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
 """
@@ -267,11 +267,11 @@ synfast(cl::Vector{T}, nside::Integer) where {T <: Real} =
 Computes the power spectrum of a Healpix map, or the cross-spectrum between two maps if `map2` is given.
 No removal of monopole or dipole is performed. The input maps must be in ring-ordering.
 
-# Arguments
+# Arguments:
 - `map₁::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the first field
 - `map₂::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the second field
 
-# Returns
+# Returns:
 - `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
 """
 function anafast(map::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
