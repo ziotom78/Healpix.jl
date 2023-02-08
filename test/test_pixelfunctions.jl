@@ -2932,3 +2932,30 @@ let res = Healpix.Resolution(1)
     @test Healpix.ang2pixRing(res, 2.529, -1.74f-7) == 12
     @test Healpix.ang2pixRing(res, 2.529, -1.74e-7) == 12
 end
+
+################################################################################
+#test getEquatorIdx
+@test Healpix.getEquatorIdx(Healpix.Resolution(8)) == 16
+@test Healpix.getEquatorIdx(Healpix.Resolution(64)) == 128
+
+################################################################################
+#test ring2theta
+res = Healpix.Resolution(4)
+thetas = Healpix.ring2theta(res)
+thetas_ref = [0.20448019896853478, 0.4111378623223477, 0.6223684885550207,
+            0.8410686705679303, 1.0471975511965979, 1.2309594173407747, 1.4033482475752073,
+            1.5707963267948966, 1.7382444060145859, 1.9106332362490184, 2.0943951023931953,
+            2.3005239830218627, 2.5192241650347724, 2.7304547912674453, 2.9371124546212584]
+@test isapprox(thetas, thetas_ref)
+@test isapprox(Healpix.ring2theta(1, res), 0.20448019896853478)
+@test isapprox(Healpix.ring2theta(6, res), 1.2309594173407747)
+@test isapprox(Healpix.ring2theta(15, res), 2.9371124546212584)
+
+################################################################################
+#test getRingPixels
+test_map = Healpix.HealpixMap{Float64, Healpix.RingOrder}([Float64(i) for i in 1:Healpix.nside2npix(2)])
+
+@test Healpix.getRingPixels(test_map, 1) == Vector{Float64}(1:4)
+@test Healpix.getRingPixels(test_map, 2) == Vector{Float64}(5:12)
+@test Healpix.getRingPixels(test_map, 5) == Vector{Float64}(29:36)
+@test Healpix.getRingPixels(test_map, 7) == Vector{Float64}(45:48)

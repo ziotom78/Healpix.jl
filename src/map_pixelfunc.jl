@@ -86,7 +86,7 @@ shows:
 
 ```
 julia> @benchmark interpolate(m, rand(), rand(), pixbuf, weightbuf)
-BenchmarkTools.Trial: 
+BenchmarkTools.Trial:
   memory estimate:  618 bytes
   allocs estimate:  9
   --------------
@@ -99,7 +99,7 @@ BenchmarkTools.Trial:
   evals/sample:     282
 
 julia> @benchmark interpolate(m, rand(), rand())
-BenchmarkTools.Trial: 
+BenchmarkTools.Trial:
   memory estimate:  837 bytes
   allocs estimate:  11
   --------------
@@ -125,7 +125,7 @@ array type as the input.
 # Arguments:
 - `m_nest::HealpixMap{T, NestedOrder, AA}`: map of type `NestedOrder`
 
-# Returns: 
+# Returns:
 - `HealpixMap{T, RingOrder, AA}`: the input map converted to `RingOrder`
 
 # Examples
@@ -147,10 +147,10 @@ end
 
 
 @doc raw"""
-    nest2ring!(m_ring_dst::HealpixMap{T, RingOrder, AAR}, 
+    nest2ring!(m_ring_dst::HealpixMap{T, RingOrder, AAR},
                m_nest_src::HealpixMap{T, NestedOrder, AAN}) where {T, AAN, AAR}
 
-Convert a map from nested to ring order. This version takes a nested map in the 
+Convert a map from nested to ring order. This version takes a nested map in the
 second argument and writes it to the nested map provided in the first argument,
 following the standard Julia `func!(dst, src)` convention.
 
@@ -158,7 +158,7 @@ following the standard Julia `func!(dst, src)` convention.
 - `m_ring_dst::HealpixMap{T, NestedOrder, AA}`: map of type `NestedOrder`
 - `m_nest_src::HealpixMap{T, NestedOrder, AAN}`: map of type `RingOrder`
 
-# Returns: 
+# Returns:
 - `HealpixMap{T, RingOrder, AA}`: the input map converted to `RingOrder`
 
 # Examples
@@ -193,7 +193,7 @@ array type as the input.
 # Arguments:
 - `m_ring::HealpixMap{T, RingOrder, AA}`: map of type `RingOrder`
 
-# Returns: 
+# Returns:
 - `HealpixMap{T, NestedOrder, AA}`: the input map converted to `NestedOrder`
 
 # Examples
@@ -215,10 +215,10 @@ end
 
 
 @doc raw"""
-    ring2nest!(m_nest_dst::HealpixMap{T, NestedOrder, AAN}, 
+    ring2nest!(m_nest_dst::HealpixMap{T, NestedOrder, AAN},
                m_ring_src::HealpixMap{T, RingOrder, AAR}) where {T, AAR, AAN}
 
-Convert a map from ring to nested order. This version takes a nested map in the 
+Convert a map from ring to nested order. This version takes a nested map in the
 second argument and writes it to the nested map provided in the first argument,
 following the standard Julia `func!(dst, src)` convention.
 
@@ -226,7 +226,7 @@ following the standard Julia `func!(dst, src)` convention.
 - `m_nest_dst::HealpixMap{T, NestedOrder, AAN}`: map of type `RingOrder`
 - `m_ring_src::HealpixMap{T, RingOrder, AA}`: map of type `RingOrder`
 
-# Returns: 
+# Returns:
 - `HealpixMap{T, NestedOrder, AA}`: the input map converted to `NestedOrder`
 
 # Examples
@@ -255,8 +255,8 @@ end
 """
     udgrade(input_map::HealpixMap{T,O,AA}, output_nside; kw...) where {T,O,AA} -> HealpixMap{T,O,AA}
 
-Upgrades or downgrades a map to a target nside. Always makes a copy. This is very fast 
-for nested orderings, but slow for ring because one needs to transform to nested ordering 
+Upgrades or downgrades a map to a target nside. Always makes a copy. This is very fast
+for nested orderings, but slow for ring because one needs to transform to nested ordering
 first.
 
 # Arguments:
@@ -265,10 +265,10 @@ first.
 
 # Keywords:
 - `threshold=abs(1e-6UNSEEN)`: absolute tolerance for identifying a bad pixel vs UNSEEN
-- `pess=false`: if false, estimate pixels from remaining good pixels when downgrading. 
+- `pess=false`: if false, estimate pixels from remaining good pixels when downgrading.
     if true, the entire downgraded pixel is set to UNSEEN.
 
-# Returns: 
+# Returns:
 - `HealpixMap{T,O,AA}`: upgraded/downgraded map in the same ordering as the input
 
 # Examples
@@ -286,7 +286,7 @@ julia> Healpix.udgrade(A, 2)
  1.0
 ```
 """
-function udgrade(map_in::HealpixMap{T,O,AA}, nside_out; 
+function udgrade(map_in::HealpixMap{T,O,AA}, nside_out;
                  threshold=abs(1e-6UNSEEN), pess=false) where {T,O<:NestedOrder,AA}
     nside_in = map_in.resolution.nside
     npix_out = nside2npix(nside_out)
@@ -294,14 +294,14 @@ function udgrade(map_in::HealpixMap{T,O,AA}, nside_out;
 
     if nside_in == nside_out
         map_out.pixels .= map_in.pixels
-    elseif nside_out < nside_in  # degrade. loop over input and add them up 
+    elseif nside_out < nside_in  # degrade. loop over input and add them up
         npratio = nside2npix(nside_in) ÷ nside2npix(nside_out)
         for id = 0:(npix_out-1)
             nobs = 0
             total = 0.0
             for ip = 0:(npratio-1)
                 value = map_in[id*npratio + ip + 1]
-                if (abs(value - UNSEEN) > threshold) 
+                if (abs(value - UNSEEN) > threshold)
                     nobs  = nobs  + 1
                     total = total + value
                 end
@@ -328,9 +328,24 @@ function udgrade(map_in::HealpixMap{T,O,AA}, nside_out;
     return map_out
 end
 # just convert to nest and udgrade if we get a ring
-function udgrade(map_in::HealpixMap{T,O,AA}, nside_out; 
+function udgrade(map_in::HealpixMap{T,O,AA}, nside_out;
                  threshold=abs(1e-6UNSEEN), pess=false) where {T,O<:RingOrder,AA}
     map_nest = ring2nest(map_in)
     map_out = udgrade(map_nest, nside_out; threshold=threshold, pess=pess)
     return nest2ring(map_out)
 end
+
+##################################################################
+"""
+    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractArray{T,1}}
+    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractArray{T,1}}
+
+Returns by reference a slice (`view`) of the pixels in `map` corresponding to the given `ring_info` or `ring_idx`.
+"""
+function getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractArray{T,1}}
+    first_pix_idx = ring_info.firstPixIdx
+    @view map[first_pix_idx:(first_pix_idx + ring_info.numOfPixels - 1)]
+end
+#ring index as argument
+getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractArray{T,1}} =
+    getRingPixels(map, getringinfo(map.resolution, ring_idx; full=false))
