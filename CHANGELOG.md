@@ -8,6 +8,8 @@
 
 -   Fix a bug in `mollweideproj` and `equiproj` [#97](https://github.com/ziotom78/Healpix.jl/issues/97)
 
+-   Fix a bug in `queryDiscRing` for directions close to the poles [#105](https://github.com/ziotom78/Healpix.jl/issues/105)
+
 -   Re-enable support for Julia 1.9 [#104](https://github.com/ziotom78/Healpix.jl/pull/104)
 
 # Version 4.1.2

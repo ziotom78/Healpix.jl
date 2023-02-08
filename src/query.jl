@@ -77,7 +77,7 @@ function queryDiscRing(
         value = inclusive ? (radius + max_pixrad(resol)) : radius
         (value, value)
     end
-    
+
     (rsmall >= π) && (return 1:resol.npix)
 
     rbig = min(pi, rbig)
@@ -92,11 +92,13 @@ function queryDiscRing(
     zmax = cos(rlat1)
     irmin = ringAbove(resol, zmax) + 1
 
+
     if (rlat1 <= 0) && (irmin > 1)
+        # The North Pole is within the disk
         ringinfo = getringinfo(resol, irmin - 1)
         append!(
             result,
-            ringinfo.firstPixIdx:(ringinfo.firstPixIdx + ringinfo.numOfPixels - 1),
+            1:(ringinfo.firstPixIdx + ringinfo.numOfPixels - 1),
         )
     end
 
@@ -158,11 +160,11 @@ function queryDiscRing(
                 end
             end
         end
+    end
 
-        if (rlat2 >= π) && (irmax + 1 < resol.nsideTimesFour)
-            ringinfo = getringinfo(resol, irmax + 1)
-            append!(result, ringinfo.firstPixIdx:(ringinfo.firstPixIdx + ringinfo.numOfPixels - 1))
-        end
+    if (rlat2 >= π) && (irmax + 1 < resol.nsideTimesFour)
+        ringinfo = getringinfo(resol, irmax + 1)
+        append!(result, ringinfo.firstPixIdx:resol.numOfPixels)
     end
 
     result
@@ -188,7 +190,7 @@ function queryStripRing(resol::Resolution, theta1, theta2; inclusive=true)
     if theta1 > theta2
         throw(DomainError("Call to queryStripRing with theta1 > theta2 ($theta1 > $theta2)"))
     end
-    
+
     maxring = numOfRings(resol)
     ring1 = max(1, 1 + ringAbove(resol, cos(theta1)))
     ring2 = min(maxring, ringAbove(resol, cos(theta2)))
