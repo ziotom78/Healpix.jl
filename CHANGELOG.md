@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 4.2.0
+
 -   Add overloads of `Base`'s algebraic operators `+`, `-`, `*`, `/` and `LinearAlgebra`'s `dot` product in Alm space; add Alm indexing functions: `each_ell`, `each_ell_idx`, `each_m`, `each_m_idx`, `each_ell_m`; improve `almxfl!`'s performance; add functions `getEquatorIdx`, `ring2theta`, `getRingPixels` [#98](https://github.com/ziotom78/Healpix.jl/pull/98), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
 
 -   Add `synalm`, `synfast`, `anafast`, `adjoint_alm2map`, `adjoint_map2alm` [#96](https://github.com/ziotom78/Healpix.jl/pull/96), thanks to [LeeoBianchi](https://github.com/LeeoBianchi)
