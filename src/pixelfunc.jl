@@ -679,14 +679,18 @@ _swaparray = @SMatrix [[0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3];;   # S
     [3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0]]    # N
 
 """
-    getAllNeighboursRing(pix::Integer, resol::Resolution)
+    getAllNeighbours(pix::Integer, resol::Resolution[; nest::Bool])
 
-Obtain all the neigbouring pixels of `pix`, assuming Ring ordering 
+Obtain all the neigbouring pixels of `pix`.
 """
-function getAllNeighboursRing(pix::Integer, resol::Resolution)
+function getAllNeighbours(pix::Integer, resol::Resolution; nest::Bool=false)
     result = @MVector zeros(Int, 8)
 
-    ix, iy, face_num = pix2xyfRing(resol, pix)
+    if nest
+        ix, iy, face_num = pix2xyfNest(resol, pix)
+    else
+        ix, iy, face_num = pix2xyfRing(resol, pix)
+    end
 
     nside_ = resol.nside
     nsm1 = nside_ - 1
@@ -694,7 +698,11 @@ function getAllNeighboursRing(pix::Integer, resol::Resolution)
 
     if (ix > 0) && (ix < nsm1) && (iy > 0) && (iy < nsm1)
         for m in 1:8
-            result[m] = xyf2pixRing(resol, ix + _xoffset[m], iy + _yoffset[m], face_num)
+            if nest
+                result[m] = xyf2pixNest(resol, ix + _xoffset[m], iy + _yoffset[m], face_num)
+            else
+                result[m] = xyf2pixRing(resol, ix + _xoffset[m], iy + _yoffset[m], face_num)
+            end
         end
     else
         for i in 1:8
@@ -727,7 +735,11 @@ function getAllNeighboursRing(pix::Integer, resol::Resolution)
                 if _swaparray[face_num+1, nbnum+1] & 4 != 0
                     x, y = y, x
                 end
-                result[i] = xyf2pixRing(resol, x, y, f)
+                if nest
+                    result[i] = xyf2pixNest(resol, x, y, f)
+                else
+                    result[i] = xyf2pixRing(resol, x, y, f)
+                end
             else
                 result[i] = -1
             end
@@ -736,16 +748,5 @@ function getAllNeighboursRing(pix::Integer, resol::Resolution)
     return result
 end
 
-"""
-    getAllNeighboursNest(pix::Integer, resol::Resolution)
-
-Obtain all the neigbouring pixels of `pix`, assuming Nest ordering 
-"""
-function getAllNeighboursNest(pix::Integer, resol::Resolution)
-    pix_ring = nest2ring(pix, resol)
-    neighbours_ring = getAllNeighboursRing(pix_ring, resol)
-    neighbours_nest = [ring2nest(nr, resol) for nr in neighbours_ring]
-    return neighbours_nest
-end
 
 
