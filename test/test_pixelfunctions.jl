@@ -2964,10 +2964,10 @@ test_map = Healpix.HealpixMap{Float64, Healpix.RingOrder}([Float64(i) for i in 1
 let
     resol = Healpix.Resolution(1024)
     pix = 42
-    neighbour_pixels_ring = Healpix.getAllNeighbours(42, resol)
+    neighbour_pixels_ring = Healpix.getAllNeighbours(pix, resol)
     @test neighbour_pixels_ring ==  [62,41,25,13,26,43,63,87]
     
-    neighbour_pixels_nest = Healpix.getAllNeighbours(42, resol, nest=true)
+    neighbour_pixels_nest = Healpix.getAllNeighbours(pix, resol, nest=true)
     @test neighbour_pixels_nest ==  [41,43,44,47,45,39,36,35]
 end
 
