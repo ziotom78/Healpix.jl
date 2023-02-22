@@ -655,7 +655,7 @@ ring2theta(res::Resolution) = ring2theta(Vector{Int}(1:res.nsideTimesFour-1), re
 ring2theta(ring::Integer, res::Resolution) = getringinfo(res, ring; full=true).colatitude_rad
     
  
-# auxiliary quantites needed to obtain neughbouring pixels, taken from healpy    
+# auxiliary quantites needed to obtain neughbouring pixels, implementation following  https://healpix.jpl.nasa.gov/html/Healpix_cxx/healpix__base2_8cc-source.html    
 _xoffset = @SVector [-1, -1, 0, 1, 1, 1, 0, -1]
 _yoffset = @SVector [0, 1, 1, 1, 0, -1, -1, -1]
 _facearray = @SMatrix [[8, 9, 10, 11, -1, -1, -1, -1, 10, 11, 8, 9];;   # S
