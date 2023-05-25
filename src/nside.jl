@@ -86,7 +86,8 @@ nside2resol(nside::Integer) = sqrt(nside2pixarea(nside))
 """
     nside2order(nside::Integer)
 
-Return the order (positive integer) associated with a given NSIDE.
+Return the order (positive integer) associated with a given NSIDE. If
+the given nside is not valid, throw a `DomainError` exception.
 
 If you have created a [`Healpix.Resolution`](@ref) object, you can
 access the order through the field `order`.
@@ -101,9 +102,10 @@ end
 
 
 """
-    nside2order(nside::Integer)
+    order2nside(order::Integer)
 
-Return the value of NSIDE for a given order.
+Return the value of NSIDE for a given order. If the given order is
+not valid, throw a `DomainError` exception.
 
 If you have created a [`Healpix.Resolution`](@ref) object, you can
 access the value of NSIDE through the field `nside`.
