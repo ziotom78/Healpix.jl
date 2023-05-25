@@ -1,5 +1,7 @@
 # HEAD
 
+-   Fix docstrings for `nside2order` and `order2nside` (thanks to @robertkleffner) [#110](https://github.com/ziotom78/Healpix.jl/pull/110)
+
 # Version 4.2.1
 
 -   Fix bug [#118](https://github.com/ziotom78/Healpix.jl/issues/108) in `pix2ringpos` [#109](https://github.com/ziotom78/Healpix.jl/pull/109)
