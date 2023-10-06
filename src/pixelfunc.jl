@@ -646,3 +646,100 @@ end
 ring2theta(res::Resolution) = ring2theta(Vector{Int}(1:res.nsideTimesFour-1), res)
 #single ring passed as int:
 ring2theta(ring::Integer, res::Resolution) = getringinfo(res, ring; full=true).colatitude_rad
+    
+ 
+# auxiliary quantites needed to obtain neughbouring pixels, implementation following  https://healpix.jpl.nasa.gov/html/Healpix_cxx/healpix__base2_8cc-source.html    
+_xoffset = @SVector [-1, -1, 0, 1, 1, 1, 0, -1]
+_yoffset = @SVector [0, 1, 1, 1, 0, -1, -1, -1]
+_facearray = @SMatrix [[8, 9, 10, 11, -1, -1, -1, -1, 10, 11, 8, 9];;   # S
+    [5, 6, 7, 4, 8, 9, 10, 11, 9, 10, 11, 8];;   # SE
+    [-1, -1, -1, -1, 5, 6, 7, 4, -1, -1, -1, -1];;   # E
+    [4, 5, 6, 7, 11, 8, 9, 10, 11, 8, 9, 10];;   # SW
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];;   # center
+    [1, 2, 3, 0, 0, 1, 2, 3, 5, 6, 7, 4];;   # NE
+    [-1, -1, -1, -1, 7, 4, 5, 6, -1, -1, -1, -1];;   # W
+    [3, 0, 1, 2, 3, 0, 1, 2, 4, 5, 6, 7];;   # NW
+    [2, 3, 0, 1, -1, -1, -1, -1, 0, 1, 2, 3]]    # N
+
+_swaparray = @SMatrix [[0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3];;   # S
+    [0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6];;   # SE
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];;   # E
+    [0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5];;   # SW
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];;   # center
+    [5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0];;   # NE
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];;   # W
+    [6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0];;   # NW
+    [3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0]]    # N
+
+"""
+    getAllNeighbours(pix::Integer, resol::Resolution[; nest::Bool])
+
+Obtain all the neigbouring pixels of `pix`.
+"""
+function getAllNeighbours(pix::Integer, resol::Resolution; nest::Bool=false)
+    result = @MVector zeros(Int, 8)
+
+    if nest
+        ix, iy, face_num = pix2xyfNest(resol, pix)
+    else
+        ix, iy, face_num = pix2xyfRing(resol, pix)
+    end
+
+    nside_ = resol.nside
+    nsm1 = nside_ - 1
+
+
+    if (ix > 0) && (ix < nsm1) && (iy > 0) && (iy < nsm1)
+        for m in 1:8
+            if nest
+                result[m] = xyf2pixNest(resol, ix + _xoffset[m], iy + _yoffset[m], face_num)
+            else
+                result[m] = xyf2pixRing(resol, ix + _xoffset[m], iy + _yoffset[m], face_num)
+            end
+        end
+    else
+        for i in 1:8
+            x = ix + _xoffset[i]
+            y = iy + _yoffset[i]
+            nbnum = 4
+            if x < 0
+                x += nside_
+                nbnum -= 1
+            elseif x >= nside_
+                x -= nside_
+                nbnum += 1
+            end
+            if y < 0
+                y += nside_
+                nbnum -= 3
+            elseif y >= nside_
+                y -= nside_
+                nbnum += 3
+            end
+
+            f = _facearray[face_num+1, nbnum+1]
+            if f >= 0
+                if _swaparray[face_num+1, nbnum+1] & 1 != 0
+                    x = nside_ - x - 1
+                end
+                if _swaparray[face_num+1, nbnum+1] & 2 != 0
+                    y = nside_ - y - 1
+                end
+                if _swaparray[face_num+1, nbnum+1] & 4 != 0
+                    x, y = y, x
+                end
+                if nest
+                    result[i] = xyf2pixNest(resol, x, y, f)
+                else
+                    result[i] = xyf2pixRing(resol, x, y, f)
+                end
+            else
+                result[i] = -1
+            end
+        end
+    end
+    return result
+end
+
+
+
