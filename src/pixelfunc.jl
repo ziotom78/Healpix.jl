@@ -337,34 +337,27 @@ order, return a pair of numbers (n, i, j) whose meaning is the following:
 - `j` is the pixel-in-ring index
 """
 function pix2ringpos(resol::Resolution, pixel)
-    # Any reference to equations in this routine refers to Gorski et al. (2005)
-    if pixel ≤ resol.ncap
+    pixel0 = pixel - 1
+    if pixel0 < resol.ncap
         # North polar cap
 
-        p_h = pixel / 2 # Defined in Gorsky et al. (2005) before Eq. (2)
-        floor_p_h = floor(p_h)
-        # Eq. (2)
-        i = floor(Int, sqrt(p_h - sqrt(floor_p_h))) + 1
-        # Eq. (3)
+        i = (1 + trunc(Int, isqrt(1 + 2pixel0))) >> 1
         j = pixel - 2i * (i - 1)
 
         (:northcap, i, j)
-    elseif pixel ≤ resol.nsideTimesTwo * (5resol.nside + 1)
-        ip = pixel - resol.ncap - 1
-        # Eq. (6) - ring counts from the North pole; resol.nside is
-        # the number of pixels in the North Polar ring
-        i = floor(Int, ip / resol.nsideTimesFour) + resol.nside
-        # Eq. (7) - zero-based index of the pixel within this ring
+    elseif pixel0 < resol.numOfPixels - resol.ncap
+        ip = pixel0 - resol.ncap
+        i = trunc(Int, (pixel0 - resol.ncap) / (4 * resol.nside) + resol.nside)
         j = Int(mod(ip, resol.nsideTimesFour)) + 1
         (:equator, i, j)
     else
         # South polar cap
 
-        ip = resol.numOfPixels - pixel + 1
-        p_h = ip / 2
-        floor_p_h = floor(p_h)
-        i = floor(Int, sqrt(p_h - sqrt(floor_p_h))) + 1 # counted from S. pole
-        j = Int(4 * i + 1 - (ip - 2i * (i - 1)))
+        i = 4 * resol.nside - ((1 + trunc(Int, isqrt(2 * (resol.numOfPixels - pixel0) - 1))) >> 1)
+
+        iring = numOfRings(resol) - i + 1  # Counted from South Pole
+        ip = resol.numOfPixels - pixel0
+        j = Int(4 * iring + 1 - (ip - 2iring * (iring - 1)))
 
         (:southcap, i, j)
     end
