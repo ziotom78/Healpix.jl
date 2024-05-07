@@ -1,7 +1,7 @@
 name = "Healpix"
 uuid = "9f4e344d-96bc-545a-84a3-ae6b9e1b672b"
 authors = ["Maurizio Tomasi <maurizio.tomasi@unimi.it>"]
-version = "4.2.1"
+version = "4.2.2"
 
 [deps]
 CFITSIO = "3b1b4be9-1499-4b22-8d78-7db3344d1961"

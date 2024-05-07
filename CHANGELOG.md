@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 4.2.2
+
 -   Fix bug [#112](https://github.com/ziotom78/Healpix.jl/issues/112)
 
 # Version 4.2.1
