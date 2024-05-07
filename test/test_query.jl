@@ -547,3 +547,9 @@ resol = Healpix.Resolution(16)
     2.389732404237873,
     0.8902989182990876,
 ))
+
+################################################################################
+
+resol = Healpix.Resolution(8)
+# Test for issue #112 https://github.com/ziotom78/Healpix.jl/issues/112
+@test Healpix.queryDiscRing(resol, 5, 180, 5) == 1:768
