@@ -78,7 +78,7 @@ function queryDiscRing(
         (value, value)
     end
 
-    (rsmall >= π) && (return 1:resol.npix)
+    (rsmall >= π) && (return 1:resol.numOfPixels)
 
     rbig = min(pi, rbig)
     (cosrsmall, cosrbig) = (cos(rsmall), cos(rbig))
