@@ -6,3 +6,6 @@ PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 
 [compat]
 Documenter = "1"
+
+[sources]
+Healpix = {path = ".."}
