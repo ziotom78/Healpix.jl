@@ -196,6 +196,7 @@ It is exploited for instance in [`readAlmFromFITS`](@ref) and [`writeAlmToFITS`]
 
 ```@docs
 almExplicitIndex
+Base.eachindex
 ```
 
 The following functions can be used, in an analogous way as [`eachindex`](@ref),
@@ -207,7 +208,6 @@ Here is an example of how to exploit [`each_ell_m`](@ref) to print explicitly
 the major-m ordering of a set of complex-stored `Alm`:
 
 ```@example each_ell_m
-
 using Healpix # hide
 using Random
 
