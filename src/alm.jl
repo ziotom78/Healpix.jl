@@ -159,10 +159,11 @@ almExplicitIndex(lmax) = almExplicitIndex(lmax, lmax)
 almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 
 
-""" each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
+"""
+    each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
     each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
 
-    Returns an array of all the allowed ℓ values in `alm` for the given `m`.
+Returns an array of all the allowed ℓ values in `alm` for the given `m`.
 """
 function each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
     (m <= alm.mmax) || throw(DomainError(m, "`m` is greater than mmax"))
@@ -173,11 +174,12 @@ function each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Num
     reduce(vcat, [each_ell(alm, m) for m in ms])
 end
 
-""" each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
+"""
+    each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
     each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
 
-    Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
-    to all the ℓ values for the given m value(s).
+Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
+to all the ℓ values for the given m value(s).
 """
 function each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
     (m <= alm.mmax) || throw(DomainError(m, "`m` is greater than mmax"))
@@ -188,10 +190,11 @@ function each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <:
     reduce(vcat, [each_ell_idx(alm, m) for m in ms])
 end
 
-""" each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
+"""
+    each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
     each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
 
-    Returns an array containing all the allowed m values in `alm` for the given ℓ value(s).
+Returns an array containing all the allowed m values in `alm` for the given ℓ value(s).
 """
 function each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
     (l <= alm.lmax) || throw(DomainError(l, "`l` is greater than lmax"))
@@ -207,11 +210,12 @@ function each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Numbe
     reduce(vcat, [each_m(alm, l) for l in ls])
 end
 
-""" each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
+"""
+    each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
     each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
 
-    Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
-    to all the allowed m values for the given ℓ value(s).
+Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
+to all the allowed m values for the given ℓ value(s).
 """
 function each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
     (l <= alm.lmax) || throw(DomainError(l, "`l` is greater than lmax"))
@@ -222,10 +226,11 @@ function each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: N
     reduce(vcat, [each_m_idx(alm, l) for l in ls])
 end
 
-""" each_ell_m(alm::Alm{Complex{T}}) where {T <: Number} -> Vector{Int}
+"""
+    each_ell_m(alm::Alm{Complex{T}}) where {T <: Number} -> Vector{Int}
 
-    Returns an array of tuples `(l, m)` of all the ℓ and m values of `alm` in
-    m-major order (the same order as how the harmonic coefficients are stored in `Alm` objects).
+Returns an array of tuples `(l, m)` of all the ℓ and m values of `alm` in
+m-major order (the same order as how the harmonic coefficients are stored in `Alm` objects).
 """
 function each_ell_m(alm::Alm{Complex{T}}) where {T <: Number}
     ell_m = Vector(undef, numberOfAlms(alm.lmax, alm.mmax))
@@ -241,13 +246,12 @@ end
 
 import Base: eachindex
 
-""" eachindex(alm::Alm{Complex{T}}) where {T <: Number}
-
-    Works as `eachindex(alm.alm)`.
 """
-function eachindex(alm::Alm{Complex{T}}) where {T <: Number}
-    eachindex(alm.alm)
-end
+    eachindex(alm::Alm{Complex{T}}) where {T <: Number}
+
+Works as `eachindex(alm.alm)`.
+"""
+eachindex(alm::Alm{Complex{T}}) where {T <: Number} = eachindex(alm.alm)
 ############################################################################
 
 """
@@ -414,10 +418,11 @@ end
 import Base: +, -, *, /
 import LinearAlgebra: dot
 
-""" +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+"""
+    +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-    Perform the element-wise sum in a_ℓm space.
-    A new `Alm` object is returned.
+Perform the element-wise sum in a_ℓm space.
+A new `Alm` object is returned.
 """
 function +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
@@ -432,10 +437,11 @@ function +(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     res_alm
 end
 
-""" -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+"""
+    -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-    Perform the element-wise subtraction in a_ℓm space.
-    A new `Alm` object is returned.
+Perform the element-wise subtraction in a_ℓm space.
+A new `Alm` object is returned.
 """
 function -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
@@ -450,10 +456,11 @@ function -(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     res_alm
 end
 
-""" *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+"""
+    *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-    Perform the element-wise product in a_ℓm space.
-    A new `Alm` object is returned.
+Perform the element-wise product in a_ℓm space.
+A new `Alm` object is returned.
 """
 function *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
@@ -474,17 +481,19 @@ function *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     res_alm
 end
 
-""" *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
+"""
+    *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
 
-    Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
-    Note: this consists in a shortcut of [`almxfl`](@ref),
-    therefore a new `Alm` object is returned.
+Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
+Note: this consists in a shortcut of [`almxfl`](@ref),
+therefore a new `Alm` object is returned.
 """
 *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, fl)
 
-""" *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
+"""
+    *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
 
-    Perform the element-wise product of an `Alm` object by a constant in a_ℓm space.
+Perform the element-wise product of an `Alm` object by a constant in a_ℓm space.
 """
 function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
@@ -495,10 +504,11 @@ function *(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm
 end
 
-""" /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+"""
+    /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-    Perform an element-wise division in a_ℓm space between two `Alm`s.
-    A new `Alm` object is returned.
+Perform an element-wise division in a_ℓm space between two `Alm`s.
+A new `Alm` object is returned.
 """
 function /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
@@ -519,17 +529,19 @@ function /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     res_alm
 end
 
-""" /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+"""
+    /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
 
-    Perform an element-wise division by a function of ℓ in a_ℓm space.
-    A new `Alm` object is returned.
+Perform an element-wise division by a function of ℓ in a_ℓm space.
+A new `Alm` object is returned.
 """
 /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, 1. ./ fl)
 
-""" /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
+"""
+    /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
 
-    Perform an element-wise division by a constant in a_ℓm space.
-    A new `Alm` object is returned.
+Perform an element-wise division by a constant in a_ℓm space.
+A new `Alm` object is returned.
 """
 function /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
     res_alm = Alm(alm₁.lmax, alm₁.mmax, Vector{Complex{T}}(undef, length(alm₁.alm)))
@@ -541,11 +553,12 @@ function /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
 end
 
 
-""" dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
+"""
+    LinearAlgebra.dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 
-    Implements the dot product in a_ℓm space.
-    The two imput alms must have matching size, lmax and mmax.
-    A new `Alm` object is returned.
+Implements the dot product in a_ℓm space.
+The two imput alms must have matching size, lmax and mmax.
+A new `Alm` object is returned.
 """
 function dot(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (length(alm₁.alm) == length(alm₂.alm)) || throw(DomainError("Alms sizes not matching"))
