@@ -1,6 +1,9 @@
 # Definition of the composite type Alm
 
-"""An array of harmonic coefficients (a_ℓm).
+"""
+    Alm{T <: Number, AA <: AbstractVector{T}}
+
+An array of harmonic coefficients (a_ℓm).
 
 The type `T` is used for the value of each harmonic coefficient, and
 it must be a `Number` (one should however only use complex types for
