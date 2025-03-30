@@ -371,7 +371,7 @@ end
 
 Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent function.
 
-# ARGUMENTS
+# Arguments
 - `alms::Alm{Complex{T}}`: The `Alm` object containing the spherical harmonics coefficients
 - `fl::AbstractVector{T}`: The array containing the factors f_ℓ to be multiplied by a_ℓm
 
@@ -400,11 +400,11 @@ end
 Multiply an a_ℓm by a vector b_ℓ representing an ℓ-dependent function, without changing
 the a_ℓm passed in input.
 
-# ARGUMENTS
+# Arguments
 - `alms::Alm{Complex{T}}`: The `Alm` object containing the spherical harmonics coefficients
 - `fl::AbstractVector{T}`: The array containing the factors f_ℓ to be multiplied by a_ℓm
 
-#RETURNS
+# Returns
 - `Alm{Complex{T}}`: The result of a_ℓm * f_ℓ.
 """
 function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractVector{T}}
