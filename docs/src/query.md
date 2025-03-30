@@ -41,6 +41,7 @@ using Plots
 pyplot()  # hide
 plot(m)
 savefig(joinpath("images", "querydisc.png")) # hide
+nothing # hide
 ```
 ![](images/querydisc.png)
 

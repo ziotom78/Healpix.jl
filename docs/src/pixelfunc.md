@@ -13,8 +13,11 @@ First of all, Healpix.jl implements the most basic functions to
 convert between spherical and Cartesian coordinates. Note that Healpix
 uses **co-latitude** instead of **latitude**:
 
+```@setup pixelexample1
+using Healpix
+```
+
 ```@repl pixelexample1
-using Healpix # hide
 ang2vec(0.0, 0.0)
 vec2ang(0.0, 0.0, 1.0)
 ```
@@ -63,8 +66,9 @@ using Healpix # hide
 
 pointsperside = 10
 matr = boundariesRing(Resolution(2), 3, pointsperside, Float32)
-scatter(matr[:, 1], matr[:, 2], matr[:, 3])
+scatter(matr[:, 1], matr[:, 2], matr[:, 3], label="")
 savefig(joinpath("images", "pixelboundaries1.png")) # hide
+nothing # hide
 ```
 ![](images/pixelboundaries1.png)
 
@@ -89,6 +93,7 @@ for pixidx in 1:resol.numOfPixels
     scatter!(matr[:, 1], matr[:, 2], matr[:, 3], label="")
 end
 savefig(joinpath("images", "pixelboundariesall.png")) # hide
+nothing # hide
 ```
 ![](images/pixelboundariesall.png)
 
