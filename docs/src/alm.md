@@ -241,7 +241,7 @@ The default [`map2alm`](@ref) uses iteration to obtain an accurate transform.
 One can instead apply a pixel weight to compute an accurate transform in a single
 pass, like quadrature. The easiest way to the pixel weight files is to run
 
-```
+```sh
 git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 

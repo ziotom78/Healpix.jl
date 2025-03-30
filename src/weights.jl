@@ -27,11 +27,10 @@ Read the set of pixel weights used to compute the generalized Fourier
 transform of a map.
 
 These weights are usually precomputed; you can download the ones
-available in the [Healpy
-repository](https://github.com/healpy/healpy-data) using the following
-command:
+available in the [Healpy repository](https://github.com/healpy/healpy-data)
+using the following command:
 
-```
+```sh
 git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 
