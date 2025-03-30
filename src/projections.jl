@@ -119,10 +119,10 @@ end
 """
     equiprojinv(x, y)
 
-Inverse equirectangular projection. Given a point (x, y)
-on the plane [-1, 1] × [-1, 1], return a tuple (Bool, Number, Number)
+Inverse equirectangular projection. Given a point `(x, y)`
+on the plane `[-1, 1] × [-1, 1]`, return a tuple `(Bool, Number, Number)`
 where the first Boolean is a flag telling if the point falls
-within the projection (true) or not (false), and the two numbers
+within the projection (`true`) or not (`false`), and the two numbers
 are the latitude and longitude in radians.
 """
 function equiprojinv(x, y)
@@ -146,10 +146,10 @@ end
     mollweideproj(lat, lon)
 
 Mollweide projection. Given the latitude `lat` (in radians) and the
-longitude (in radians), return a tuple (Bool, Number, Number) where the
-first Boolean is a flag telling if the point falls within the projection (true)
-or not (false), and the two numbers are the x and y coordinates of the point
-on the projection plane (both are in the range [−1, 1]).
+longitude (in radians), return a tuple `(Bool, Number, Number)` where the
+first Boolean is a flag telling if the point falls within the projection (`true`)
+or not (`false`), and the two numbers are the x and y coordinates of the point
+on the projection plane (both are in the range [`−1, 1]`).
 """
 function mollweideproj(lat, lon)
     θ = find_mollweide_theta(lat)
@@ -160,10 +160,10 @@ end
 """
     mollweideprojinv(x, y)
 
-Inverse Mollweide projection. Given a point (x, y) on the plane,
-with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type
-(Bool, Number, Number). The boolean specifies if (x, y) falls within
-the map (true) or not (false), the second and third arguments are
+Inverse Mollweide projection. Given a point `(x, y)` on the plane,
+with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return a 3-tuple of type
+`(Bool, Number, Number)`. The boolean specifies if `(x, y)` falls within
+the map (`true`) or not (`false`), the second and third arguments are
 the latitude and longitude in radians.
 """
 function mollweideprojinv(x, y)
@@ -188,10 +188,10 @@ end
 """
     orthoinv(x, y, ϕ1, λ0)
 
-Inverse orthographic projection centered on (ϕ1, λ0). Given a
-point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
-a 3-tuple of type (Bool, Number, Number). The boolean specifies
-if (x, y) falls within the map (true) or not (false), the second
+Inverse orthographic projection centered on `(ϕ1, λ0).` Given a
+point `(x, y)` on the plane, with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return
+a 3-tuple of type `(Bool, Number, Number)`. The boolean specifies
+if `(x, y)` falls within the map (`true`) or not (`false`), the second
 and third arguments are the latitude and longitude in radians.
 """
 function orthoinv(x, y, ϕ1, λ0)
@@ -230,10 +230,10 @@ end
 """
     ortho2inv(x, y, ϕ1, λ0)
 
-Inverse stereo orthographic projection centered on (ϕ1, λ0). Given
-a point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
-a 3-tuple of type (Bool, Number, Number). The boolean specifies
-if (x, y) falls within the map (true) or not (false), the second
+Inverse stereo orthographic projection centered on `(ϕ1, λ0)`. Given
+a point `(x, y)` on the plane, with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return
+a 3-tuple of type `(Bool, Number, Number)`. The boolean specifies
+if `(x, y)` falls within the map (`true`) or not (`false`), the second
 and third arguments are the latitude and longitude in radians.
 """
 function ortho2inv(x, y, ϕ1, λ0)
@@ -244,11 +244,11 @@ end
 """
     gnominv(x, y, ϕ1, λ0, fov_rad)
 
-Gnomonic projection centered on (ϕ1, λ0), with a field of view
-equal to `fov_rad` (in radians).  Given a point (x, y) on the plane,
-with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type (Bool,
-Number, Number). The boolean specifies if (x, y) falls within
-the map (true) or not (false), the second and third arguments
+Gnomonic projection centered on `(ϕ1, λ0)`, with a field of view
+equal to `fov_rad` (in radians).  Given a point `(x, y)` on the plane,
+with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return a 3-tuple of type `(Bool,
+Number, Number)`. The boolean specifies if `(x, y)` falls within
+the map (`true`) or not (`false`), the second and third arguments
 are the latitude and longitude in radians.
 """
 function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad)
