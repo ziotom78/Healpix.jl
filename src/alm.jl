@@ -17,9 +17,9 @@ A `Alm` type contains the following fields:
 - `mmax`: the maximum value for ``m``
 - `tval`: maximum number of ``m`` coefficients for the maximum ``ℓ``
 
-The ``a_{\\ell m}`` are stored by ``m``: if ``\\ell_{max}`` is 16, the first 16 elements
-are ``m=0``, ``\\ell=0-16``, then the following 15 elements are ``m=1``, ``\\ell=1-16``,
-then ``m=2``, ``\\ell=2-16`` and so on until the last element, the 153th, is ``m=16``, ``\\ell=16``.
+The ``a_{ℓm}`` are stored by ``m``: if ``ℓ_{max}`` is 16, the first 16 elements
+are ``m=0``, ``ℓ=0-16``, then the following 15 elements are ``m=1``, ``ℓ=1-16``,
+then ``m=2``, ``ℓ=2-16`` and so on until the last element, the 153th, is ``m=16``, ``ℓ=16``.
 """
 mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
     alm::AA
@@ -122,7 +122,7 @@ end
     almExplicitIndex(lmax, mmax) -> Vector{Int}
     almExplicitIndex(alm::Alm{T}) where {T} -> Vector{Int}
 
-Compute the explicit index scheme, i.e. ``\\mathrm{index} = \\ell^2 + \\ell + m + 1``
+Compute the explicit index scheme, i.e. ``\\mathrm{index} = ℓ^2 + ℓ + m + 1``
 up to a certain ``ℓ`` and ``m`` if specified, or taken from the `Alm` passed.
 If not passed, `mmax` is defaulted to `lmax`. If `lmax` and `mmax` are inconsistent
 or negative, a `DomainError` exception is thrown.
@@ -262,7 +262,7 @@ Write a set of a_ℓm coefficients into a FITS file. If the code fails,
 CFITSIO will raise an exception. (Refer to the CFITSIO library for more
 information.)
 In the fits file the alms are written with explicit index scheme,
-``\\mathrm{index} = \\ell^2 + \\ell + m + 1``, possibly out of order (check `almExplicitIndex`).
+``\\mathrm{index} = ℓ^2 + ℓ + m + 1``, possibly out of order (check `almExplicitIndex`).
 """
 function writeAlmToFITS(f::CFITSIO.FITSFile, alm::Alm{Complex{T}}) where {T <: Number}
 
@@ -296,15 +296,14 @@ end
     alm2cl(alm::Alm{Complex{T}}) where {T <: Number} -> Vector{T}
     alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number} -> Vector{T}
 
-Compute ``C_{\\ell}`` from the spherical harmonic coefficients of one
-or two fields.
+Compute ``C_ℓ`` from the spherical harmonic coefficients of one or two fields.
 
 # Arguments
 - `alm₁::Alm{Complex{T}}`: the spherical harmonic coefficients of the first field
 - `alm₂::Alm{Complex{T}}`: the spherical harmonic coefficients of the second field
 
 # Returns
-- `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
+- `Array{T}` containing ``C_ℓ``, with the first element referring to ℓ=0.
 """
 function alm2cl(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
     (alm₁.lmax != alm₂.lmax) && throw(ArgumentError("Alm lmax do not match."))
@@ -335,9 +334,9 @@ alm2cl(alm::Alm{Complex{T}}) where {T <: Number} = alm2cl(alm, alm)
 """
     gaussbeam(fwhm::T, lmax::Int; pol=false) where T
 
-Compute the Gaussian beam window function ``B_{\\ell}`` given the FWHM of the beam in radians, where
-``C_{\\ell, \\mathrm{measured}} = B_{\\ell}^2 C_{\\ell}``. This beam is valid in the limit of
-``\\sigma^2 \\ll 0``, which is the case for all high-resolution CMB experiments.
+Compute the Gaussian beam window function ``B_ℓ`` given the FWHM of the beam in radians, where
+``C_{ℓ, \\mathrm{measured}} = B_ℓ^2 C_ℓ``. This beam is valid in the limit of
+``σ^2 \\ll 0``, which is the case for all high-resolution CMB experiments.
 
 # Arguments
 - `fwhm::T`: FWHM of the Gaussian beam in radians

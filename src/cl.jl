@@ -60,8 +60,8 @@ end
 """
     dl2cl(dl::AbstractVector{T}, lmin::Integer) where {T <: Real}
 
-Convert a set of ``D_{\\ell}`` to ``C_{\\ell}`` power spectrum, where
-``C_{\\ell} = 2\\pi D_{\\ell} / \\ell (\\ell + 1)``. The first components are
+Convert a set of ``D_ℓ`` to ``C_ℓ`` power spectrum, where
+``C_ℓ = 2π D_ℓ / ℓ (ℓ + 1)``. The first components are
 set to zero if not present. The monopole component is set to zero in any case to avoid Inf values.
 
 # Arguments:
@@ -87,8 +87,8 @@ end
 """
     cl2dl(cl::AbstractVector{T}, lmin::Integer) where {T <: Real}
 
-Convert a set of ``C_{\\ell}`` to ``D_{\\ell}`` power spectrum, where
-``D_{\\ell} = \\ell (\\ell + 1) C_{\\ell} / 2\\pi``.
+Convert a set of ``C_ℓ`` to ``D_ℓ`` power spectrum, where
+``D_ℓ = ℓ (ℓ + 1) C_ℓ / 2π``.
 The first components are set to zero if not present.
 
 # Arguments:
@@ -115,16 +115,16 @@ end
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
     synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Real}
 
-Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
+Generate a set of ``a_{ℓm}`` from a given power spectra ``C_ℓ``.
 The output is written into the `Alm` object passed in input.
 
 # Arguments:
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
-starting from `` \\ell = 0 ``.
-- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{\\ell m}``
-we want to write the result into.
-- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
-to set the seed beforehand guaranteeing the reproducibility of the process.
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_ℓ``,
+  starting from ``ℓ = 0``.
+- `alm::Alm{Complex{T}}`: The array representing the spherical harmonics coefficients ``a_{ℓm}``
+  we want to write the result into.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{ℓm}``.
+  It allows to set the seed beforehand guaranteeing the reproducibility of the process.
 """
 function synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}, rng::AbstractRNG) where {T <: Real}
     cl_size = length(cl)
@@ -157,16 +157,16 @@ synalm!(cl::Vector{T}, alm::Alm{ComplexF64, Vector{ComplexF64}}) where {T <: Rea
     synalm(cl::Vector{T}, rng::AbstractRNG) where {T <: Real}
     synalm(cl::Vector{T}) where {T <: Real}
 
-Generate a set of ``a_{\\ell m}`` from a given power spectra ``C_{\\ell}``.
+Generate a set of ``a_{ℓm}`` from a given power spectra ``C_ℓ``.
 The output is written into a new `Alm` object of given lmax.
 
 # Arguments:
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``,
-starting from `` \\ell = 0 ``.
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_ℓ``,
+  starting from ``ℓ = 0``.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
 - `mmax::Integer`: the maximum ``m`` coefficient, will default to `lmax` if not specified.
-- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
-to set the seed beforehand guaranteeing the reproducibility of the process.
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{ℓm}``. It allows
+  to set the seed beforehand guaranteeing the reproducibility of the process.
 """
 function synalm(cl::Vector{T}, lmax::Integer, mmax::Integer, rng::AbstractRNG) where {T <: Real}
     cl_size = length(cl)
@@ -199,14 +199,14 @@ synalm(cl::Vector{T}) where {T <: Real} =
     synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, rng::AbstractRNG) where {T <: Real}
     synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real}
 
-Generate a map from a given power spectra ``C_{\\ell}``. The result is saved into
+Generate a map from a given power spectra ``C_ℓ``. The result is saved into
 the `HealpixMap` passed in input.
 
 # Arguments:
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_ℓ``.
 - `map::HealpixMap{T, RingOrder}`: the map that will contain the result.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)-1` if not specified.
-- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{ℓm}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
 """
 function synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}, lmax::Integer, rng::AbstractRNG) where {T <: Real}
@@ -234,13 +234,13 @@ synfast!(cl::Vector{T}, map::HealpixMap{T, RingOrder}) where {T <: Real} =
     synfast(cl::Vector{T}, nside::Integer, rng::AbstractRNG) where {T <: Real}
     synfast(cl::Vector{T}, nside::Integer) where {T <: Real}
 
-Generate a `HealpixMap` with given Nside, from a given power spectra ``C_{\\ell}``.
+Generate a `HealpixMap` with given Nside, from a given power spectra ``C_ℓ``.
 
 # Arguments:
-- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_{\\ell}``.
+- `cl::AbstractVector{T}`: The array representing the power spectrum components ``C_ℓ``.
 - `nside::Integer`: nside of the map that will contain the result.
 - `lmax::Integer`: the maximum ``ℓ`` coefficient, will default to `length(cl)`-1 if not specified.
-- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{\\ell m}``. It allows
+- `rng::AbstractRNG` : (optional) the RNG to be used for generating the ``a_{ℓm}``. It allows
 to set the seed beforehand guaranteeing the reproducibility of the process.
 """
 function synfast(cl::Vector{T}, nside::Integer, lmax::Integer, rng::AbstractRNG) where {T <: Real}
@@ -272,7 +272,7 @@ No removal of monopole or dipole is performed. The input maps must be in ring-or
 - `map₂::HealpixMap{Float64, RingOrder, AA}`: the spherical harmonic coefficients of the second field
 
 # Returns:
-- `Array{T}` containing ``C_{\\ell}``, with the first element referring to ℓ=0.
+- `Array{T}` containing ``C_ℓ``, with the first element referring to ℓ=0.
 """
 function anafast(map::HealpixMap{Float64, RingOrder, AA}; lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractArray{T,1}}
     alm2cl(map2alm(map; lmax = lmax, mmax = mmax, niter=niter))
