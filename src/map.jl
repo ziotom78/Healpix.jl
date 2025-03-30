@@ -19,15 +19,16 @@ ordering. (See also `RingOrder`.)
 abstract type NestedOrder <: Order end
 
 """
-    AbstractHealpixMap{T} <: AbstractArray{T, 1}
+    abstract type AbstractHealpixMap{T} <: AbstractVector{T}
 
 An abstract type representing an Healpix map without a specified
 ordering. This can be used to implement multiple dispatch when you
-don't care about the ordering of a map."""
-abstract type AbstractHealpixMap{T} <: AbstractArray{T,1} end
+don't care about the ordering of a map.
+"""
+abstract type AbstractHealpixMap{T} <: AbstractVector{T} end
 
 """
-    struct HealpixMap{T, O <: Order, AA <: AbstractArray{T, 1}} <: AbstractHealpixMap{T}
+    HealpixMap{T, O <: Order, AA <: AbstractVector{T}} <: AbstractHealpixMap{T}
 
 A Healpix map. The type `T` is used for the value of the pixels in a
 map, and it can be anything (even a string!). The type `O` is used to
@@ -45,8 +46,8 @@ You can construct a map using one of the following forms:
 - `HealpixMap{T, O, AA}(arr)` and `HealpixMap{T, O, AA}(nside::Number)` will use
   `AA` as basetype
 
-- `HealpixMap{T, O}(arr)` and `HealpixMap{T, O}(nside::Number)` will use `Array{T,
-  1}` as basetype
+- `HealpixMap{T, O}(arr)` and `HealpixMap{T, O}(nside::Number)` will use `Vector{T}`
+  as basetype
 
 # Examples
 
@@ -73,7 +74,7 @@ Finally, the following examples show how to use `SharedArray`:
     pixels = SharedArray{Int64, 1}(1:12 |> collect)
     mymap = Healpix.HealpixMap{Int64, Healpix.RingOrder, SharedArray{Int64, 1}}(m)
 """
-mutable struct HealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixMap{T}
+mutable struct HealpixMap{T,O<:Order,AA<:AbstractVector{T}} <: AbstractHealpixMap{T}
     pixels::AA
     resolution::Resolution
     
@@ -83,7 +84,7 @@ mutable struct HealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixM
     Create an empty map with the specified NSIDE. All the pixels in the map
     are set to `nothing`.
     """
-    function HealpixMap{Union{T, Nothing},O,AA}(nside::Number) where {T, O <: Order, AA <: AbstractArray{Union{T, Nothing},1}}
+    function HealpixMap{Union{T, Nothing},O,AA}(nside::Number) where {T, O <: Order, AA <: AbstractVector{Union{T, Nothing}}}
         new(Union{T, Nothing}[nothing for i in 1:nside2npix(nside)], Resolution(nside))
     end
 
@@ -93,31 +94,37 @@ mutable struct HealpixMap{T,O<:Order,AA<:AbstractArray{T,1}} <: AbstractHealpixM
     Create an empty map with the specified NSIDE. All the pixels in the map
     are set to zero.
     """
-    function HealpixMap{T,O,AA}(nside::Number) where {T,O<:Order,AA<:AbstractArray{T,1}}
+    function HealpixMap{T,O,AA}(nside::Number) where {T,O<:Order,AA<:AbstractVector{T}}
         new(zeros(T, nside2npix(nside)), Resolution(nside))
     end
 
     """
     Initialize a map from a generic array
     """
-    function HealpixMap{T,O,AA}(arr::AA) where {T,O<:Order,AA<:AbstractArray{T,1}}
+    function HealpixMap{T,O,AA}(arr::AA) where {T,O<:Order,AA<:AbstractVector{T}}
         nside = npix2nside(length(arr))
         new(arr, Resolution(nside))
     end
 end
 
-"""Convenience function that uses `Array{T, 1}` as the type used to
+"""
+    HealpixMap{T,O}(nside::Number) where {T,O<:Order}
+
+Convenience function that uses `Vector{T}` as the type used to
 hold the vector of pixels.
 """
 function HealpixMap{T,O}(nside::Number) where {T,O<:Order}
-    HealpixMap{T,O,Array{T,1}}(nside)
+    HealpixMap{T,O,Vector{T}}(nside)
 end
 
-"""Convenience function that uses `Array{T, 1}` as the type used to
+"""
+    HealpixMap{T,O}(arr) where {T,O<:Order}
+
+Convenience function that uses `Vector{T}` as the type used to
 hold the vector of pixels.
 """
 function HealpixMap{T,O}(arr) where {T,O<:Order}
-    HealpixMap{T,O,Array{T,1}}(collect(arr))
+    HealpixMap{T,O,Vector{T}}(collect(arr))
 end
 
 import Base: +, -, *, /

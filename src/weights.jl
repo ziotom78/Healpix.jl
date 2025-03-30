@@ -7,7 +7,7 @@ end
 function readWeightRing(fileName, nside)
     f = CFITSIO.fits_open_table(fileName)
     try
-        weights = Array{Float64,1}(undef, 2 * nside)
+        weights = Vector{Float64}(undef, 2 * nside)
         CFITSIO.fits_read_col(f, 1, 1, 1, weights)
 
         return weights

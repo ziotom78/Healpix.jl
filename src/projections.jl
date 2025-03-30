@@ -53,7 +53,7 @@ function project(
     unseen = get(projparams, :unseen, UNSEEN)
     desttype = get(projparams, :desttype, Float32)
 
-    img = Array{desttype}(undef, bmpheight, bmpwidth)
+    img = Matrix{desttype}(undef, bmpheight, bmpwidth)
     masked = zeros(Bool, bmpheight, bmpwidth)
 
     anymasked = false

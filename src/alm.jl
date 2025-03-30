@@ -21,25 +21,25 @@ The ``a_{ℓm}`` are stored by ``m``: if ``ℓ_{max}`` is 16, the first 16 eleme
 are ``m=0``, ``ℓ=0-16``, then the following 15 elements are ``m=1``, ``ℓ=1-16``,
 then ``m=2``, ``ℓ=2-16`` and so on until the last element, the 153th, is ``m=16``, ``ℓ=16``.
 """
-mutable struct Alm{T <: Number,AA <: AbstractArray{T,1}}
+mutable struct Alm{T <: Number,AA <: AbstractVector{T}}
     alm::AA
     lmax::Int
     mmax::Int
     tval::Int
 
-    Alm{T,AA}(lmax, mmax) where {T <: Number,AA <: AbstractArray{T,1}} =
+    Alm{T,AA}(lmax, mmax) where {T <: Number,AA <: AbstractVector{T}} =
         new{T,AA}(zeros(T, numberOfAlms(lmax, mmax)), lmax, mmax, 2lmax + 1)
 
-    function Alm{T,AA}(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+    function Alm{T,AA}(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractVector{T}}
         (numberOfAlms(lmax, mmax) == length(arr)) || throw(DomainError())
 
         new{T,AA}(arr, lmax, mmax, 2lmax + 1)
     end
 end
 
-Alm{T}(lmax, mmax) where {T <: Number} = Alm{T,Array{T,1}}(lmax, mmax)
+Alm{T}(lmax, mmax) where {T <: Number} = Alm{T,Vector{T}}(lmax, mmax)
 Alm(lmax, mmax) = Alm{ComplexF64}(lmax, mmax)
-Alm(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractArray{T,1}} =
+Alm(lmax, mmax, arr::AA) where {T <: Number,AA <: AbstractVector{T}} =
     Alm{T,AA}(lmax, mmax, arr)
 
 ################################################################################
@@ -84,9 +84,9 @@ information.)
 function readAlmFromFITS(f::CFITSIO.FITSFile, t::Type{T}) where {T <: Complex}
     numOfRows = CFITSIO.fits_get_num_rows(f)
 
-    idx = Array{Int64}(undef, numOfRows)
-    almReal = Array{Float64}(undef, numOfRows)
-    almImag = Array{Float64}(undef, numOfRows)
+    idx = Vector{Int64}(undef, numOfRows)
+    almReal = Vector{Float64}(undef, numOfRows)
+    almImag = Vector{Float64}(undef, numOfRows)
 
     CFITSIO.fits_read_col(f, 1, 1, 1, idx)
     CFITSIO.fits_read_col(f, 2, 1, 1, almReal)
@@ -161,7 +161,7 @@ almExplicitIndex(alm::Alm{T}) where {T} = almExplicitIndex(alm.lmax, alm.mmax)
 
 """
     each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
-    each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+    each_ell(alm::Alm{Complex{T}}, ms::AbstractVector{I}) where {T <: Number, I <: Integer} -> Vector{Int}
 
 Returns an array of all the allowed ℓ values in `alm` for the given `m`.
 """
@@ -170,13 +170,13 @@ function each_ell(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
     [l for l in m:alm.lmax]
 end
 
-function each_ell(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+function each_ell(alm::Alm{Complex{T}}, ms::AbstractVector{I}) where {T <: Number, I <: Integer}
     reduce(vcat, [each_ell(alm, m) for m in ms])
 end
 
 """
     each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number} -> Vector{Int}
-    each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+    each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractVector{I}) where {T <: Number, I <: Integer} -> Vector{Int}
 
 Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
 to all the ℓ values for the given m value(s).
@@ -186,13 +186,13 @@ function each_ell_idx(alm::Alm{Complex{T}}, m::Integer) where {T <: Number}
     [i for i in almIndex(alm, m, m):almIndex(alm, alm.lmax, m)]
 end
 
-function each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+function each_ell_idx(alm::Alm{Complex{T}}, ms::AbstractVector{I}) where {T <: Number, I <: Integer}
     reduce(vcat, [each_ell_idx(alm, m) for m in ms])
 end
 
 """
     each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
-    each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+    each_m(alm::Alm{Complex{T}}, ls::AbstractVector{I}) where {T <: Number, I <: Integer} -> Vector{Int}
 
 Returns an array containing all the allowed m values in `alm` for the given ℓ value(s).
 """
@@ -206,13 +206,13 @@ function each_m(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
     [m for m in 0:maxm]
 end
 
-function each_m(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+function each_m(alm::Alm{Complex{T}}, ls::AbstractVector{I}) where {T <: Number, I <: Integer}
     reduce(vcat, [each_m(alm, l) for l in ls])
 end
 
 """
     each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number} -> Vector{Int}
-    each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer} -> Vector{Int}
+    each_m_idx(alm::Alm{Complex{T}}, ls::AbstractVector{I}) where {T <: Number, I <: Integer} -> Vector{Int}
 
 Returns an array of the indexes of the harmonic coefficients in `alm` corresponding
 to all the allowed m values for the given ℓ value(s).
@@ -222,7 +222,7 @@ function each_m_idx(alm::Alm{Complex{T}}, l::Integer) where {T <: Number}
     [almIndex(alm, l, m) for m in each_m(alm, l)]
 end
 
-function each_m_idx(alm::Alm{Complex{T}}, ls::AbstractArray{I, 1}) where {T <: Number, I <: Integer}
+function each_m_idx(alm::Alm{Complex{T}}, ls::AbstractVector{I}) where {T <: Number, I <: Integer}
     reduce(vcat, [each_m_idx(alm, l) for l in ls])
 end
 
@@ -344,10 +344,10 @@ Compute the Gaussian beam window function ``B_ℓ`` given the FWHM of the beam i
 - `pol=false`: if false, returns the spin-0 beam for i.e. intensity. if true, returns the spin-2 beam
 
 # Returns
-- `Array{T,1}` containing ``B_{\\ell}``, with the first element referring to ℓ=0.
+- `Vector{T}` containing ``B_ℓ``, with the first element referring to ℓ=0.
 """
 function gaussbeam(fwhm::T, lmax::Int; pol=false) where T
-    Bl = Array{T,1}(undef, lmax+1)
+    Bl = Vector{T}(undef, lmax+1)
     fwhm²_to_σ² = 1 / (8log(T(2)))  # constant
     σ² = fwhm²_to_σ² * fwhm^2
 
@@ -367,7 +367,7 @@ end
 #ALM ALGEBRA
 
 """
-    almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+    almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractVector{T}}
 
 Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent function.
 
@@ -376,7 +376,7 @@ Multiply IN-PLACE an a_ℓm by a vector b_ℓ representing an ℓ-dependent func
 - `fl::AbstractVector{T}`: The array containing the factors f_ℓ to be multiplied by a_ℓm
 
 """
-function almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+function almxfl!(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractVector{T}}
 
     lmax = alm.lmax
     mmax = alm.mmax
@@ -407,7 +407,7 @@ the a_ℓm passed in input.
 #RETURNS
 - `Alm{Complex{T}}`: The result of a_ℓm * f_ℓ.
 """
-function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+function almxfl(alm::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractVector{T}}
     alm_new = deepcopy(alm)
     almxfl!(alm_new, fl)
     alm_new
@@ -481,13 +481,13 @@ function *(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 end
 
 """
-    *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}}
+    *(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractVector{T}}
 
 Perform the product of an `Alm` object by a function of ℓ in a_ℓm space.
 Note: this consists in a shortcut of [`almxfl`](@ref),
 therefore a new `Alm` object is returned.
 """
-*(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, fl)
+*(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractVector{T}} = almxfl(alm₁, fl)
 
 """
     *(alm₁::Alm{Complex{T}}, fl::AbstractVector{T}) where {T <: Number}
@@ -529,12 +529,12 @@ function /(alm₁::Alm{Complex{T}}, alm₂::Alm{Complex{T}}) where {T <: Number}
 end
 
 """
-    /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractArray{T,1}}
+    /(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number,AA <: AbstractVector{T}}
 
 Perform an element-wise division by a function of ℓ in a_ℓm space.
 A new `Alm` object is returned.
 """
-/(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractArray{T,1}} = almxfl(alm₁, 1. ./ fl)
+/(alm₁::Alm{Complex{T}}, fl::AA) where {T <: Number, AA <: AbstractVector{T}} = almxfl(alm₁, 1. ./ fl)
 
 """
     /(alm₁::Alm{Complex{T}}, c::Number) where {T <: Number}
