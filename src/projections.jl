@@ -133,7 +133,7 @@ end
 
 function find_mollweide_theta(ϕ; threshold = 1e-7)
     abs(abs(ϕ) - π/2) < threshold && return ϕ
-    
+
     θ = ϕ
     while true
         new_θ = θ - (2θ + sin(2θ) - π * sin(ϕ)) / (2 + 2cos(2θ))

@@ -11,7 +11,7 @@ reused many times without further memory allocations.
 
 The list of fields defined in this structure is the following:
 
-- `ring`: an integer index, running from 
+- `ring`: an integer index, running from
 
 - `firstPixIdx`: index of the first pixel (using the `RING` scheme)
   belonging to this ring

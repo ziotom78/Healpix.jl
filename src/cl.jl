@@ -1,6 +1,7 @@
 """
     readClFromFITS{T <: Real}(f::CFITSIO.FITSFile, t::Type{T}; col_num = 2) -> Vector{T}
     readClFromFITS{T <: Real}(fileName::String, t::Type{T}; col_num = 2) -> Vector{T}
+
 Read a set of C_ℓ coefficients from a FITS file.
 """
 function readClFromFITS(f::CFITSIO.FITSFile, t::Type{T}; col_num = 2) where {T <: Real}
@@ -29,6 +30,7 @@ end
 """
     writeClToFITS(f::CFITSIO.FITSFile, Cl::Vector{T}) where {T <: Real}
     writeClToFITS(fileName, Cl::Vector{T}; overwrite = true) where {T <: Real}
+
 Write a set of C_ℓ coefficients to a FITS file.
 """
 function writeClToFITS(f::CFITSIO.FITSFile, Cl::Vector{T}) where {T <: Real}

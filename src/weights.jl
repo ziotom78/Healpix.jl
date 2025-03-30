@@ -50,11 +50,11 @@ end
 """
     applyFullWeights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
-Apply a pixel weighting to a map for more accurate SHTs. Note that 
-this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
+Apply a pixel weighting to a map for more accurate SHTs. Note that
+this only helps for `lmax<=1.5*Nside`. If this is not the case, the
 pixel weights may do more harm than good.
 
-Pixel weights are automatically downloaded if not specified. 
+Pixel weights are automatically downloaded if not specified.
 
 # Arguments:
 - `m::HealpixMap{T, RingOrder}`: map to modify
@@ -88,7 +88,7 @@ end
 
 function applyFullWeights!(m::HealpixMap{T,RingOrder}) where T
     nside = m.resolution.nside
-    
+
     if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
         path = artifact"fullpixelweights_32_2048"
     elseif nside == 4096
