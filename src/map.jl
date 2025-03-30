@@ -62,31 +62,36 @@ You can construct a map using one of the following forms:
 
 The following example creates a map with `NSIDE=32` in `RING` order,
 containing integer values starting from 1:
-
-    mymap = Healpix.HealpixMap{Int64, Healpix.RingOrder}(1:Healpix.nside2npix(32))
+```julia
+mymap = Healpix.HealpixMap{Int64, Healpix.RingOrder}(1:Healpix.nside2npix(32))
+```
 
 The call to `collect` is required to convert the range in an array.
 
 This example creates a map in `NESTED` order, with `NSIDE=64`, filled
 with zeroes:
 
-    mymap = Healpix.HealpixMap{Float64, Healpix.NestedOrder}(64)
+```julia
+mymap = Healpix.HealpixMap{Float64, Healpix.NestedOrder}(64)
+```
 
 Finally, the following examples show how to use `SharedArray`:
 
-    using SharedArrays
-    
-    # Create a map with all pixels set to zero
-    mymap = Healpix.HealpixMap{Float64, Healpix.NestedOrder, SharedArray{Float64, 1}}(64)
+```julia
+using SharedArrays
 
-    # Create a map and initialize pixel values with a SharedArray
-    pixels = SharedArray{Int64, 1}(1:12 |> collect)
-    mymap = Healpix.HealpixMap{Int64, Healpix.RingOrder, SharedArray{Int64, 1}}(m)
+# Create a map with all pixels set to zero
+mymap = Healpix.HealpixMap{Float64, Healpix.NestedOrder, SharedVector{Float64}}(64)
+
+# Create a map and initialize pixel values with a SharedArray
+pixels = SharedVector{Int64}(1:12 |> collect)
+mymap = Healpix.HealpixMap{Int64, Healpix.RingOrder, SharedVector{Int64}}(m)
+```
 """
 mutable struct HealpixMap{T,O<:Order,AA<:AbstractVector{T}} <: AbstractHealpixMap{T}
     pixels::AA
     resolution::Resolution
-    
+
     """
         HealpixMap{Union{T, Nothing}, O <: Order}(nside) -> HealpixMap{Union{T, Nothing}, O}
 

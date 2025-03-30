@@ -84,7 +84,7 @@ end
 Passing `pixbuf` and `weightbuf` saves some time, as this simple benchmark
 shows:
 
-```
+```julia-repl
 julia> @benchmark interpolate(m, rand(), rand(), pixbuf, weightbuf)
 BenchmarkTools.Trial:
   memory estimate:  618 bytes
