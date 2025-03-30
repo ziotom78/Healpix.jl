@@ -1,18 +1,27 @@
 ################################################################################
 # Implementation of the Order and *HealpixMap types
 
-"""Abstract type representing the ordering of pixels in a Healpix map.
+"""
+    abstract type Order
+
+Abstract type representing the ordering of pixels in a Healpix map.
 See also `RingOrder` and `NestedOrder`.
 """
 abstract type Order end
 
-"""The `RingOrder` type should be used when creating `HealpixMap` types in
+"""
+    abstract type RingOrder <: Order
+
+The `RingOrder` type should be used when creating `HealpixMap` types in
 order to specify that the pixels in the map are sorted in ring
 ordering. (See also `NestedOrder`.)
 """
 abstract type RingOrder <: Order end
 
-"""The `NestedOrder` type should be used when creating `HealpixMap` types in
+"""
+    abstract type NestedOrder <: Order
+
+The `NestedOrder` type should be used when creating `HealpixMap` types in
 order to specify that the pixels in the map are sorted in ring
 ordering. (See also `RingOrder`.)
 """
@@ -99,6 +108,8 @@ mutable struct HealpixMap{T,O<:Order,AA<:AbstractVector{T}} <: AbstractHealpixMa
     end
 
     """
+        HealpixMap(arr::AbstractVector)
+
     Initialize a map from a generic array
     """
     function HealpixMap{T,O,AA}(arr::AA) where {T,O<:Order,AA<:AbstractVector{T}}

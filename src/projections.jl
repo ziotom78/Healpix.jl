@@ -88,8 +88,8 @@ lat2colat(x) = π / 2 - x
 colat2lat(x) = π / 2 - x
 
 @doc raw"""
-   lat2colat(x)
-   colat2lat(x)
+    lat2colat(x)
+    colat2lat(x)
 
 Convert colatitude into latitude and vice versa. Both `x` and the
 result are expressed in radians.
@@ -228,7 +228,7 @@ function orthoinv(x, y, ϕ1, λ0)
 end
 
 """
-    function ortho2inv(x, y, ϕ1, λ0)
+    ortho2inv(x, y, ϕ1, λ0)
 
 Inverse stereo orthographic projection centered on (ϕ1, λ0). Given
 a point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
@@ -242,7 +242,7 @@ function ortho2inv(x, y, ϕ1, λ0)
 end
 
 """
-    function gnominv(x, y, ϕ1, λ0, fov_rad)
+    gnominv(x, y, ϕ1, λ0, fov_rad)
 
 Gnomonic projection centered on (ϕ1, λ0), with a field of view
 equal to `fov_rad` (in radians).  Given a point (x, y) on the plane,
