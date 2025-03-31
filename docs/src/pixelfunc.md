@@ -61,7 +61,7 @@ Here is a visual example:
 
 ```@example
 using Plots
-pyplot() # hide
+gr() # hide
 using Healpix # hide
 
 pointsperside = 10
@@ -80,7 +80,7 @@ the `for` loop:
 
 ```@example
 using Plots
-pyplot() # hide
+gr() # hide
 using Healpix # hide
 
 pointsperside = 10

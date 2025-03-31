@@ -10,7 +10,7 @@ and PyPlot.
 ```@example plotting
 using Healpix
 using Plots
-pyplot()  # hide
+gr()  # hide
 
 nside = 8
 m = HealpixMap{Float64, RingOrder}(nside)
