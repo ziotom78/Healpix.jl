@@ -22,4 +22,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/ziotom78/Healpix.jl.git",
+    push_preview = true,
 )
