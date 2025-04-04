@@ -280,7 +280,9 @@ No removal of monopole or dipole is performed. The input maps must be in ring-or
 """
 function anafast(map::HealpixMap{Float64, RingOrder, AA};
                  lmax=nothing, mmax=nothing, niter::Integer = 3) where {T <: Real,AA <: AbstractVector{T}}
-    alm2cl(map2alm(map; lmax, mmax, niter))
+    # using variable name as keyword not supported in older julia,
+    # keep `f(...; lmax = lmax, ...)` instead of `f(...; lmax, ...)`
+    alm2cl(map2alm(map; lmax = lmax, mmax = mmax, niter = niter))
 end
 
 function anafast(
@@ -291,5 +293,6 @@ function anafast(
         niter::Integer = 3
     ) where {T <: Real,AA <: AbstractVector{T}}
 
-    alm2cl(map2alm(map₁; lmax, mmax, niter), map2alm(map₂; lmax, mmax, niter))
+    alm2cl(map2alm(map₁; lmax = lmax, mmax = mmax, niter = niter),
+           map2alm(map₂; lmax = lmax, mmax = mmax, niter = niter))
 end
