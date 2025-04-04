@@ -7,7 +7,7 @@ end
 function readPixelWindowT(fileName, nside)
     f = CFITSIO.fits_open_table(fileName)
     try
-        pixwin = Array(Float64, CFITSIO.fits_get_num_rows(f))
+        pixwin = Vector(Float64, CFITSIO.fits_get_num_rows(f))
         CFITSIO.fits_read_col(f, 1, 1, 1, pixwin)
 
         return pixwin
@@ -22,8 +22,8 @@ function readPixelWindowP(fileName, nside)
 
     f = CFITSIO.fits_open_table(fileName)
     try
-        pixwinT = Array(Float64, CFITSIO.fits_get_num_rows(f))
-        pixwinP = Array(Float64, CFITSIO.fits_get_num_rows(f))
+        pixwinT = Vector(Float64, CFITSIO.fits_get_num_rows(f))
+        pixwinP = Vector(Float64, CFITSIO.fits_get_num_rows(f))
         CFITSIO.fits_read_col(f, 1, 1, 1, pixwinT)
         CFITSIO.fits_read_col(f, 2, 1, 1, pixwinP)
 

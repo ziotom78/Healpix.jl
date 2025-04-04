@@ -7,7 +7,7 @@ end
 function readWeightRing(fileName, nside)
     f = CFITSIO.fits_open_table(fileName)
     try
-        weights = Array{Float64,1}(undef, 2 * nside)
+        weights = Vector{Float64}(undef, 2 * nside)
         CFITSIO.fits_read_col(f, 1, 1, 1, weights)
 
         return weights
@@ -27,11 +27,10 @@ Read the set of pixel weights used to compute the generalized Fourier
 transform of a map.
 
 These weights are usually precomputed; you can download the ones
-available in the [Healpy
-repository](https://github.com/healpy/healpy-data) using the following
-command:
+available in the [Healpy repository](https://github.com/healpy/healpy-data)
+using the following command:
 
-```
+```sh
 git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 
@@ -51,11 +50,11 @@ end
 """
     applyFullWeights!(m::HealpixMap{T, RingOrder}, [wgt::Vector{T}]) where T
 
-Apply a pixel weighting to a map for more accurate SHTs. Note that 
-this only helps for `lmax<=1.5*Nside`. If this is not the case, the 
+Apply a pixel weighting to a map for more accurate SHTs. Note that
+this only helps for `lmax<=1.5*Nside`. If this is not the case, the
 pixel weights may do more harm than good.
 
-Pixel weights are automatically downloaded if not specified. 
+Pixel weights are automatically downloaded if not specified.
 
 # Arguments:
 - `m::HealpixMap{T, RingOrder}`: map to modify
@@ -89,7 +88,7 @@ end
 
 function applyFullWeights!(m::HealpixMap{T,RingOrder}) where T
     nside = m.resolution.nside
-    
+
     if nside ∈ (32, 64, 128, 256, 512, 1024, 2048)
         path = artifact"fullpixelweights_32_2048"
     elseif nside == 4096

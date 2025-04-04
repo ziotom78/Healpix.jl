@@ -50,16 +50,16 @@ with $\mathrm{Y}^{-1}$.
 Healpix.jl also implements the two adjoint functions
 [`adjoint_alm2map!`](@ref) and [`adjoint_map2alm!`](@ref), represented by
 $\mathrm{Y}^{\mathrm{T}}$ and $(\mathrm{Y}^{-1})^\mathrm{T}$ respectively.
-While the synthesis operator on a general scalar field $f(\theta, \phi)$
-can be defined through an exact summation as $f(\theta, \phi) = \mathrm{Y} \, a_{\ell m} \quad \text{where} \quad f(\theta, \phi) = \sum_{\ell=0}^{\infty} \sum_{m=-\ell}^{\ell} a_{\ell m} Y_{\ell m} (\theta, \phi)$.
-The analysis operator is defined through an integral operator as $a_{\ell m} = \mathrm{Y}^{-1} f(\theta, \phi) \quad \text{where} \quad a_{\ell m} = \int_0^{2\pi} \int_0^\pi Y^*_{\ell m}(\theta, \phi)\, f(\theta, \phi) \sin\theta \, d\theta \,d\phi$.
+While the synthesis operator on a general scalar field $f(θ, φ)$
+can be defined through an exact summation as $f(θ, φ) = \mathrm{Y} \, a_{ℓm}$ where $f(θ, φ) = \sum_{ℓ=0}^∞ \sum_{m=-ℓ}^ℓ a_{ℓm} Y_{ℓm}(θ, φ)$.
+The analysis operator is defined through an integral operator as $a_{ℓm} = \mathrm{Y}^{-1} f(θ, φ)$ where $a_{ℓm} = \int_0^{2π} \int_0^π Y_{ℓm}^*(θ, φ)\, f(θ, φ) \sin θ \, dθ \, dφ$.
 Though, in the real case wherein maps are pixelized, the latter ends
 up being approximated through a summation over the pixels.
 Here is where the adjoint of the synthesis operator, $\mathrm{Y}^{\mathrm{T}}$,
-comes into play. It is defined through: $ \mathrm{Y}^{\mathrm{T}} f(\theta, \phi) \equiv \sum_{i = 1}^{N_{\mathrm{pix}}} Y^*_{\ell m,\, i} \, f_i,$
+comes into play. It is defined through: $\mathrm{Y}^{\mathrm{T}} f(θ, φ) \equiv \sum_{i=1}^{N_{\mathrm{pix}}} Y_{ℓm,\,i}^* \, f_i,$
 which is an exact operation. Note that the latter does not give directly the $a_{\ell m}$ coefficients, since $\mathrm{Y}^{-1} \simeq \mathrm{W}\, \mathrm{Y}^{\mathrm{T}}$,
 where $\mathrm{W}$ is a diagonal matrix whose non-zero elements are approximately
-constant and equal to $4 \pi / N_{\mathrm{pix}}$, depending on the map pixelization.
+constant and equal to $4π / N_{\mathrm{pix}}$, depending on the map pixelization.
 The latter realtion is also useful to obtain the adjoint of the analysis operator: $(\mathrm{Y}^{-1})^\mathrm{T} = \mathrm{W}^{\mathrm{T}}\,\mathrm{Y} =  \mathrm{W}\,\mathrm{Y}$.
 
 Here is an example:
@@ -130,9 +130,9 @@ myalm1 = Healpix.Alm(5,5, ones(ComplexF64, Healpix.numberOfAlms(5)))
 alm_sum = myalm1 + myalm2 #each element will be = 2 + 0im
 ```
 
-#### Multiplying or dividing a set of Alm by a generic function of $\ell$ or a constant
+#### Multiplying or dividing a set of Alm by a generic function of ℓ or a constant
 
-The operators `*` and `/` can be used to multiply or divide an `Alm` by an $\ell$-dependent
+The operators `*` and `/` can be used to multiply or divide an `Alm` by an $ℓ$-dependent
 generic function $f_\ell$ (or just a constant, of type `Number`).
 
 In this case a new instance of `Alm` type will be returned. To perform a more
@@ -196,6 +196,7 @@ It is exploited for instance in [`readAlmFromFITS`](@ref) and [`writeAlmToFITS`]
 
 ```@docs
 almExplicitIndex
+Base.eachindex
 ```
 
 The following functions can be used, in an analogous way as [`eachindex`](@ref),
@@ -207,7 +208,6 @@ Here is an example of how to exploit [`each_ell_m`](@ref) to print explicitly
 the major-m ordering of a set of complex-stored `Alm`:
 
 ```@example each_ell_m
-
 using Healpix # hide
 using Random
 
@@ -241,7 +241,7 @@ The default [`map2alm`](@ref) uses iteration to obtain an accurate transform.
 One can instead apply a pixel weight to compute an accurate transform in a single
 pass, like quadrature. The easiest way to the pixel weight files is to run
 
-```
+```sh
 git clone --depth 1 https://github.com/healpy/healpy-data
 ```
 

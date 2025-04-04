@@ -38,9 +38,10 @@ m[pixidx] .= 1;
 m[ang2pix(m, theta, phi)] = 2  # Highlight the pixel at the center
 
 using Plots
-pyplot()  # hide
+gr()  # hide
 plot(m)
 savefig(joinpath("images", "querydisc.png")) # hide
+nothing # hide
 ```
 ![](images/querydisc.png)
 

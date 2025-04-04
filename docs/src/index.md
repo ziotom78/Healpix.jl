@@ -11,15 +11,6 @@ This is the documentation of the [Healpix.jl](https://github.com/ziotom78/Healpi
 This package has the main purpose of providing a Julia-only solution, so that it can easily be used on platforms not supported by the Healpix C++ library (e.g., Windows).
 This library implements algorithms for converting directions into pixel indices and vice versa. It supports both `RING` and `NESTED` schemes, and it employs Julia's powerful type system to avoid mistaking one scheme in place of the other.
 
-## Documentation
-
-The documentation was built using [Documenter.jl](https://github.com/JuliaDocs).
-
-```@example
-using Dates # hide
-println("Documentation built on $(now()) using Julia $(VERSION).") # hide
-```
-
 ## Index
 
 ```@index
