@@ -17,7 +17,6 @@ makedocs(
         "Visualization" => "visualization.md",
         "Miscellanea" => "misc.md",
     ],
-    warnonly = [:missing_docs],
 )
 
 deploydocs(
