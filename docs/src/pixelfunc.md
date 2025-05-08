@@ -119,8 +119,11 @@ xyf2loc
 pix2zphiRing(res::Resolution, pix)
 pix2zphiNest(res::Resolution, pix)
 ringAbove
+ring2theta
 ring2z
+getRingPixels
 numOfRings
+getEquatorIdx
 max_pixrad
 boundariesRing
 boundariesRing!
