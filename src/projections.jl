@@ -403,7 +403,7 @@ end
 
 ################################################################################
 
-RecipesBase.@recipe function plot(
+RecipesBase.@recipe function RecipesBase.plot(
     m::HealpixMap{T,O,AA},
     projection = mollweide,
     projparams = Dict(),
@@ -480,4 +480,4 @@ See also [`equirectangular`](@ref), [`mollweide`](@ref),
 [`orthographic`](@ref), [`orthographic2`](@ref), and
 [`gnomonic`](@ref).
 """
-plot
+RecipesBase.plot
