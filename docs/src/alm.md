@@ -96,6 +96,7 @@ alm2map!
 alm2map
 adjoint_alm2map!
 adjoint_map2alm!
+iterate_map2alm!
 ```
 
 ## From harmonic coefficients to the power spectrum
