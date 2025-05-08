@@ -53,7 +53,7 @@ function project(
     unseen = get(projparams, :unseen, UNSEEN)
     desttype = get(projparams, :desttype, Float32)
 
-    img = Array{desttype}(undef, bmpheight, bmpwidth)
+    img = Matrix{desttype}(undef, bmpheight, bmpwidth)
     masked = zeros(Bool, bmpheight, bmpwidth)
 
     anymasked = false
@@ -88,8 +88,8 @@ lat2colat(x) = π / 2 - x
 colat2lat(x) = π / 2 - x
 
 @doc raw"""
-   lat2colat(x)
-   colat2lat(x)
+    lat2colat(x)
+    colat2lat(x)
 
 Convert colatitude into latitude and vice versa. Both `x` and the
 result are expressed in radians.
@@ -119,10 +119,10 @@ end
 """
     equiprojinv(x, y)
 
-Inverse equirectangular projection. Given a point (x, y)
-on the plane [-1, 1] × [-1, 1], return a tuple (Bool, Number, Number)
+Inverse equirectangular projection. Given a point `(x, y)`
+on the plane `[-1, 1] × [-1, 1]`, return a tuple `(Bool, Number, Number)`
 where the first Boolean is a flag telling if the point falls
-within the projection (true) or not (false), and the two numbers
+within the projection (`true`) or not (`false`), and the two numbers
 are the latitude and longitude in radians.
 """
 function equiprojinv(x, y)
@@ -133,7 +133,7 @@ end
 
 function find_mollweide_theta(ϕ; threshold = 1e-7)
     abs(abs(ϕ) - π/2) < threshold && return ϕ
-    
+
     θ = ϕ
     while true
         new_θ = θ - (2θ + sin(2θ) - π * sin(ϕ)) / (2 + 2cos(2θ))
@@ -146,10 +146,10 @@ end
     mollweideproj(lat, lon)
 
 Mollweide projection. Given the latitude `lat` (in radians) and the
-longitude (in radians), return a tuple (Bool, Number, Number) where the
-first Boolean is a flag telling if the point falls within the projection (true)
-or not (false), and the two numbers are the x and y coordinates of the point
-on the projection plane (both are in the range [−1, 1]).
+longitude (in radians), return a tuple `(Bool, Number, Number)` where the
+first Boolean is a flag telling if the point falls within the projection (`true`)
+or not (`false`), and the two numbers are the x and y coordinates of the point
+on the projection plane (both are in the range [`−1, 1]`).
 """
 function mollweideproj(lat, lon)
     θ = find_mollweide_theta(lat)
@@ -160,10 +160,10 @@ end
 """
     mollweideprojinv(x, y)
 
-Inverse Mollweide projection. Given a point (x, y) on the plane,
-with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type
-(Bool, Number, Number). The boolean specifies if (x, y) falls within
-the map (true) or not (false), the second and third arguments are
+Inverse Mollweide projection. Given a point `(x, y)` on the plane,
+with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return a 3-tuple of type
+`(Bool, Number, Number)`. The boolean specifies if `(x, y)` falls within
+the map (`true`) or not (`false`), the second and third arguments are
 the latitude and longitude in radians.
 """
 function mollweideprojinv(x, y)
@@ -188,10 +188,10 @@ end
 """
     orthoinv(x, y, ϕ1, λ0)
 
-Inverse orthographic projection centered on (ϕ1, λ0). Given a
-point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
-a 3-tuple of type (Bool, Number, Number). The boolean specifies
-if (x, y) falls within the map (true) or not (false), the second
+Inverse orthographic projection centered on `(ϕ1, λ0).` Given a
+point `(x, y)` on the plane, with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return
+a 3-tuple of type `(Bool, Number, Number)`. The boolean specifies
+if `(x, y)` falls within the map (`true`) or not (`false`), the second
 and third arguments are the latitude and longitude in radians.
 """
 function orthoinv(x, y, ϕ1, λ0)
@@ -228,12 +228,12 @@ function orthoinv(x, y, ϕ1, λ0)
 end
 
 """
-    function ortho2inv(x, y, ϕ1, λ0)
+    ortho2inv(x, y, ϕ1, λ0)
 
-Inverse stereo orthographic projection centered on (ϕ1, λ0). Given
-a point (x, y) on the plane, with x ∈ [-1, 1], y ∈ [-1, 1], return
-a 3-tuple of type (Bool, Number, Number). The boolean specifies
-if (x, y) falls within the map (true) or not (false), the second
+Inverse stereo orthographic projection centered on `(ϕ1, λ0)`. Given
+a point `(x, y)` on the plane, with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return
+a 3-tuple of type `(Bool, Number, Number)`. The boolean specifies
+if `(x, y)` falls within the map (`true`) or not (`false`), the second
 and third arguments are the latitude and longitude in radians.
 """
 function ortho2inv(x, y, ϕ1, λ0)
@@ -242,13 +242,13 @@ function ortho2inv(x, y, ϕ1, λ0)
 end
 
 """
-    function gnominv(x, y, ϕ1, λ0, fov_rad)
+    gnominv(x, y, ϕ1, λ0, fov_rad)
 
-Gnomonic projection centered on (ϕ1, λ0), with a field of view
-equal to `fov_rad` (in radians).  Given a point (x, y) on the plane,
-with x ∈ [-1, 1], y ∈ [-1, 1], return a 3-tuple of type (Bool,
-Number, Number). The boolean specifies if (x, y) falls within
-the map (true) or not (false), the second and third arguments
+Gnomonic projection centered on `(ϕ1, λ0)`, with a field of view
+equal to `fov_rad` (in radians).  Given a point `(x, y)` on the plane,
+with `x ∈ [-1, 1]`, `y ∈ [-1, 1]`, return a 3-tuple of type `(Bool,
+Number, Number)`. The boolean specifies if `(x, y)` falls within
+the map (`true`) or not (`false`), the second and third arguments
 are the latitude and longitude in radians.
 """
 function gnominv(x, y, ϕ1, λ0, ψ0, fov_rad)
@@ -403,7 +403,7 @@ end
 
 ################################################################################
 
-RecipesBase.@recipe function plot(
+RecipesBase.@recipe function RecipesBase.plot(
     m::HealpixMap{T,O,AA},
     projection = mollweide,
     projparams = Dict(),
@@ -480,4 +480,4 @@ See also [`equirectangular`](@ref), [`mollweide`](@ref),
 [`orthographic`](@ref), [`orthographic2`](@ref), and
 [`gnomonic`](@ref).
 """
-plot
+RecipesBase.plot

@@ -7,7 +7,7 @@ end
 # Power Spectrum
 Power spectrum components $C_{\ell}$ are encoded as Vector{T}.
 Healpix.jl implements functions to perform sht operations on power spectra,
-e.g. to obtain a map or a set of ['Alm'](@ref), as well as writing/reading a
+e.g. to obtain a map or a set of [`Alm`](@ref), as well as writing/reading a
 power spectrum from a FITS file.
 
 The functions ending with `!` are *mutating* functions, which means that they
@@ -46,8 +46,8 @@ synalm
 ```
 
 ## Generating a map from power spectrum
-Synthesize a set of [`Alm`](@ref) through ['synalm'](@ref) and generates a map
-from it through ['alm2map'](@ref).
+Synthesize a set of [`Alm`](@ref) through [`synalm`](@ref) and generates a map
+from it through [`alm2map`](@ref).
 
 ```@docs
 synfast!
@@ -55,7 +55,7 @@ synfast
 ```
 
 ## Computing the power spectrum from a map
-Compute the (cross-) power spectrum of one (or two) ['HealpixMap'](@ref).
+Compute the (cross-) power spectrum of one (or two) [`HealpixMap`](@ref).
 
 ```@docs
 anafast

@@ -71,7 +71,7 @@ function Resolution(nside)
 
 end
 
-@doc raw"""
+"""
     numOfRings(resol::Resolution)
     numOfRings(nside::Integer)
 
