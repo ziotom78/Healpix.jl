@@ -1,5 +1,7 @@
 # HEAD
 
+-   Fix a type stability bug [#125](https://github.com/ziotom78/Healpix.jl/pull/125) [thanks to @hsgg]
+
 # Version 4.2.2
 
 -   Fix bug [#112](https://github.com/ziotom78/Healpix.jl/issues/112)
