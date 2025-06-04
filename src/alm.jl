@@ -225,7 +225,7 @@ end
     m-major order (the same order as how the harmonic coefficients are stored in `Alm` objects).
 """
 function each_ell_m(alm::Alm{Complex{T}}) where {T <: Number}
-    ell_m = Vector(undef, numberOfAlms(alm.lmax, alm.mmax))
+    ell_m = Vector{Tuple{Int,Int}}(undef, numberOfAlms(alm.lmax, alm.mmax))
     i = 1
     for m in 0:alm.mmax
         for l in each_ell(alm, m)
