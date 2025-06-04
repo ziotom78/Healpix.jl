@@ -10,13 +10,14 @@ and PyPlot.
 ```@example plotting
 using Healpix
 using Plots
-pyplot()  # hide
+gr()  # hide
 
 nside = 8
 m = HealpixMap{Float64, RingOrder}(nside)
 m.pixels[:] = 1:length(m.pixels)
 plot(m)
 savefig(joinpath("images", "mollweide.png")) # hide
+nothing # hide
 ```
 ![](images/mollweide.png)
 
@@ -25,13 +26,14 @@ A call to `plot` can provide two additional arguments:
 1. A carthographic projection (see below).
 2. A dictionary containing parameters to be used by the carthographic
    projection.
-   
+
 The following example displays the same map in orthographic
 coordinates:
 
 ```@example plotting
 plot(m, orthographic)
 savefig(joinpath("images", "orthographic.png")) # hide
+nothing # hide
 ```
 ![](images/orthographic.png)
 
@@ -55,7 +57,7 @@ returns three values:
 - A 2-D bitmap of `Bool` values, telling which pixels in the map are
   masked, i.e., they are marked as `UNSEEN`, `NaN` or `missing` in the
   Healpix map;
-  
+
 - A `Bool` flag telling if there is any masked value in the mask (2nd
   return value, see above). This parameter is returned to optimize
   calls to `plot`, but it is obviously redundant.

@@ -1,6 +1,6 @@
 export tod2map, combinemaps!
 
-@doc raw"""
+"""
     tod2map{T,O}(pixidx, tod::Array{T}; nside=128) :: (map, hits)
 
 Create a binned map for a TOD and return a tuple containing the map
@@ -28,8 +28,9 @@ function tod2map(pixidx, tod::Array{T}; nside = 128, ordering = Healpix.RingOrde
     (binnedmap, hitmap)
 end
 
-@doc raw"""
-    combinemaps{T, O, H}(destmap::HealpixMap{T, O}, desthitmap::HealpixMap{H, O}, othermap::HealpixMap{T, O}, otherhitmap::HealpixMap{H, O})
+"""
+    combinemaps{T, O, H}(destmap::HealpixMap{T, O}, desthitmap::HealpixMap{H, O},
+                         othermap::HealpixMap{T, O}, otherhitmap::HealpixMap{H, O})
 
 Sum "othermap" to "destmap", assuming that both maps have been
 produced by binning TODs. The parameters `desthitmap` and

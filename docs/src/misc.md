@@ -1,4 +1,5 @@
 ```@meta
+CurrentModule = Healpix
 DocTestSetup = quote
     using Healpix
 end
@@ -12,5 +13,6 @@ doing calculations on the sphere.
 ```@docs
 lat2colat
 colat2lat
+RecipesBase.plot
 ```
 

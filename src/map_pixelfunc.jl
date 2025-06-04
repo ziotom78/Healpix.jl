@@ -53,8 +53,8 @@ function interpolate(m::HealpixMap{T,RingOrder,AA}, θ, ϕ, pixbuf, weightbuf) w
 end
 
 function interpolate(m::HealpixMap{T,RingOrder,AA}, θ, ϕ) where {T,AA}
-    pixbuf = Array{Int}(undef, 4)
-    weightbuf = Array{Float64}(undef, 4)
+    pixbuf = Vector{Int}(undef, 4)
+    weightbuf = Vector{Float64}(undef, 4)
 
     interpolate(m, θ, ϕ, pixbuf, weightbuf)
 end
@@ -71,9 +71,9 @@ respectively. They can be reused across multiple calls of
 `interpolate`, to save heap allocations, and they do not need to be
 initialized, as they are used internally:
 
-```
-pixbuf = Array{Int}(undef, 4)
-weightbuf = Array{Float64}(undef, 4)
+```julia
+pixbuf = Vector{Int}(undef, 4)
+weightbuf = Vector{Float64}(undef, 4)
 
 m = HealpixMap{Float64, RingOrder}(1)
 for (θ, ϕ) in [(0., 0.), (π/2, π/2)]
@@ -84,7 +84,7 @@ end
 Passing `pixbuf` and `weightbuf` saves some time, as this simple benchmark
 shows:
 
-```
+```julia-repl
 julia> @benchmark interpolate(m, rand(), rand(), pixbuf, weightbuf)
 BenchmarkTools.Trial:
   memory estimate:  618 bytes
@@ -337,15 +337,15 @@ end
 
 ##################################################################
 """
-    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractArray{T,1}}
-    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractArray{T,1}}
+    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractVector{T}}
+    getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractVector{T}}
 
 Returns by reference a slice (`view`) of the pixels in `map` corresponding to the given `ring_info` or `ring_idx`.
 """
-function getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractArray{T,1}}
+function getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_info::RingInfo) where {T <: Real, AA <: AbstractVector{T}}
     first_pix_idx = ring_info.firstPixIdx
     @view map[first_pix_idx:(first_pix_idx + ring_info.numOfPixels - 1)]
 end
 #ring index as argument
-getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractArray{T,1}} =
+getRingPixels(map::HealpixMap{T,RingOrder,AA}, ring_idx::Integer) where {T <: Real, AA <: AbstractVector{T}} =
     getRingPixels(map, getringinfo(map.resolution, ring_idx; full=false))

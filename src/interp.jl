@@ -11,7 +11,7 @@ reused many times without further memory allocations.
 
 The list of fields defined in this structure is the following:
 
-- `ring`: an integer index, running from 
+- `ring`: an integer index, running from
 
 - `firstPixIdx`: index of the first pixel (using the `RING` scheme)
   belonging to this ring
@@ -176,17 +176,17 @@ function getinterpolRing(resol::Resolution, θ, ϕ, pix, weights)
 end
 
 function getinterpolRing(resol::Resolution, θ, ϕ)
-    pix = Array{Int}(undef, 4)
-    wgt = Array{Float64}(undef, 4)
+    pix = Vector{Int}(undef, 4)
+    wgt = Vector{Float64}(undef, 4)
 
     getinterpolRing(resol, θ, ϕ, pix, wgt)
 
     (pix, wgt)
 end
 
-@doc raw"""
-    getinterpolRing(resol::Resolution, θ, ϕ) -> (Array{Int,1}, Array{Float64, 1})
-    getinterpolRing!(resol::Resolution, θ, ϕ, pix, weights) -> (Array{Int,1}, Array{Float64, 1})
+"""
+    getinterpolRing(resol::Resolution, θ, ϕ) -> (Vector{Int}, Vector{Float64})
+    getinterpolRing!(resol::Resolution, θ, ϕ, pix, weights) -> (Vector{Int}, Vector{Float64})
 
 Return the indices and the weights of the four neighbour pixels for
 the given direction (θ, ϕ) in a map with the specified resolution.
@@ -195,6 +195,5 @@ If provided, the parameters `pix` and `weights` should point to two
 4-element arrays of integers and floating-points, respectively. They
 can be reused in multiple calls to avoid heap allocations and speed up
 the code.
-
 """
 getinterpolRing

@@ -1,4 +1,6 @@
-using Documenter, Healpix
+using Documenter
+using Healpix
+using LinearAlgebra
 
 makedocs(
     modules = [Healpix],
@@ -19,4 +21,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/ziotom78/Healpix.jl.git",
+    push_preview = true,
 )
