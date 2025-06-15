@@ -17,6 +17,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 CFITSIO = "1"
+LazyArtifacts = "1"
 Libsharp = "0.2"
 RecipesBase = "1"
 StaticArrays = "1"
