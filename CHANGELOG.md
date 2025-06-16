@@ -1,5 +1,7 @@
 # HEAD
 
+# Version 4.2.4
+
 -   Add dependency on LazyArtifacts [18fde42](https://github.com/ziotom78/Healpix.jl/commit/18fde420dba069277dfb328076c99a995bc5c275)
 
 # Version 4.2.3
