@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Map functions · Healpix.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>Healpix.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Introduction</a></li><li><a class="toctext" href="../resolutions/">Working with resolutions</a></li><li><a class="toctext" href="../pixelfunc/">Pixel functions</a></li><li class="current"><a class="toctext" href>Map functions</a><ul class="internal"><li><a class="toctext" href="#Encoding-the-order-1">Encoding the order</a></li><li><a class="toctext" href="#Pixel-functions-1">Pixel functions</a></li><li><a class="toctext" href="#Loading-and-saving-maps-1">Loading and saving maps</a></li><li><a class="toctext" href="#Testing-for-conformability-1">Testing for conformability</a></li><li><a class="toctext" href="#Map-making-1">Map-making</a></li></ul></li><li><a class="toctext" href="../alm/">Spherical harmonics</a></li><li><a class="toctext" href="../visualization/">Visualization</a></li><li><a class="toctext" href="../misc/">Miscellanea</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Map functions</a></li></ul><a class="edit-page" href="https://github.com/ziotom78/Healpix.jl/blob/master/docs/src/mapfunc.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Map functions</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Map-functions-1" href="#Map-functions-1">Map functions</a></h1><p>Functions like <a href="../pixelfunc/#Healpix.pix2angNest-Tuple{Resolution,Any}"><code>pix2angNest</code></a> and <a href="../pixelfunc/#Healpix.ang2pixNest-Tuple{Resolution,Any,Any}"><code>ang2pixNest</code></a> fully define the Healpix tessellation scheme. They are however extremely impractical in a number of situations. It happens often that a large fraction of pixels in a map need to be processed together. Healpix.jl introduces the <a href="#Healpix.Map"><code>Map{T, O &lt;: Order}</code></a> type, which acts as a collection of all the pixels on the sphere. A <code>Map</code> type holds the value of all the pixels in its <code>pixels</code> field, and it keeps track of the ordering (either <code>RING</code> or <code>NESTED</code>). Here is an example that shows how to create a map and initialize it:</p><pre><code class="language-julia">nside = 32
+m = Map{Float64, RingOrder}(nside)
+m.pixels[:] = 1.0  # Set all pixels to 1</code></pre><p>Healpix.jl defines the basic operations on maps (sum, subtraction, multiplication, division). These operations can either combine two maps or a map and a scalar value:</p><pre><code class="language-julia">mollweide(m * 2.0)
+mollweide(m * m)</code></pre><p>The <a href="#Healpix.Map"><code>Map{T, O &lt;: Order}</code></a> is derived from the abstract type <a href="@ref"><code>GenericMap{T}</code></a>, which does not encode the ordering. It is useful for functions that can either work on ring/nested-ordered maps but cannot be executed on plain generic arrays:</p><pre><code class="language-julia"># Return the number of pixels in the map, regardless of its ordering
+maplength(m::GenericMap{T}) where T = length(m)
+
+# This returns 12
+maplength(Map{Float64, RingOrder}(1))
+
+# This too returns 12
+maplength(Map{Float64, NestedOrder}(1))
+
+# This fails
+maplength(zeros(Float64, 12))</code></pre><p>Healpix.jl implements the <a href="#Healpix.PolarizedMap"><code>PolarizedMap{T, O &lt;: Order}</code></a> type as well. This encodes three maps containing the I/Q/U signal: the intensity (I), and the Q and U Stokes parameters. The three maps must have the same resolution.</p><pre><code class="language-none">GenericMap
+Map
+PolarizedMap</code></pre><h2><a class="nav-anchor" id="Encoding-the-order-1" href="#Encoding-the-order-1">Encoding the order</a></h2><p>Healpix.jl distinguishes between <code>RING</code> and <code>NEST</code> orderings using Julia&#39;s typesystem. The abstract type <code>Order</code> has two descendeants, <code>RingOrder</code> and <code>NestedOrder</code>, which are used to instantiate objects of type <code>Map</code>.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.Order" href="#Healpix.Order"><code>Healpix.Order</code></a> — <span class="docstring-category">Type</span>.</div><div><div><p>Abstract type representing the ordering of pixels in a Healpix map. See also <code>RingOrder</code> and <code>NestedOrder</code>.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map.jl#L4-L7">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.RingOrder" href="#Healpix.RingOrder"><code>Healpix.RingOrder</code></a> — <span class="docstring-category">Type</span>.</div><div><div><p>The <code>RingOrder</code> type should be used when creating <code>Map</code> types in order to specify that the pixels in the map are sorted in ring ordering. (See also <code>NestedOrder</code>.)</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map.jl#L9-L13">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.NestedOrder" href="#Healpix.NestedOrder"><code>Healpix.NestedOrder</code></a> — <span class="docstring-category">Type</span>.</div><div><div><p>The <code>NestedOrder</code> type should be used when creating <code>Map</code> types in order to specify that the pixels in the map are sorted in ring ordering. (See also <code>RingOrder</code>.)</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map.jl#L15-L19">source</a></section><h2><a class="nav-anchor" id="Pixel-functions-1" href="#Pixel-functions-1">Pixel functions</a></h2><p>When working with maps, it is not needed to pick between <a href="../pixelfunc/#Healpix.ang2pixNest-Tuple{Resolution,Any,Any}"><code>ang2pixNest</code></a> and <a href="../pixelfunc/#Healpix.ang2pixRing-Tuple{Resolution,Any,Any}"><code>ang2pixRing</code></a> because a <code>Map</code> type already encodes the ordering. Functions <code>pix2ang</code> and <code>ang2pix</code> always choose the correct ordering, but they require a <code>Map</code> instead of a <a href="../resolutions/#Healpix.Resolution"><code>Resolution</code></a> as their first argument.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.pix2ang" href="#Healpix.pix2ang"><code>Healpix.pix2ang</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">pix2ang{T, O &lt;: Order}(map::Map{T, O}, ipix) -&gt; (Float64, Float64)
+pix2ang{T, O &lt;: Order}(map::PolarizedMap{T, O}, ipix) -&gt; (Float64, Float64)</code></pre><p>Return the pair (<code>theta</code>, <code>phi</code>), where <code>theta</code> is the colatitude and <code>phi</code> the longitude of the direction of the pixel center with index <code>ipix</code>.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map_pixelfunc.jl#L29-L36">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.ang2pix" href="#Healpix.ang2pix"><code>Healpix.ang2pix</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">ang2pix{T, O &lt;: Order}(map::Map{T, O}, theta, phi)
+ang2pix{T, O &lt;: Order}(map::PolarizedMap{T, O}, theta, phi)</code></pre><p>Convert the direction specified by the colatitude <code>theta</code> (∈ [0, π]) and the longitude <code>phi</code> (∈ [0, 2π]) into the index of the pixel in the Healpix map <code>map</code>.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map_pixelfunc.jl#L10-L17">source</a></section><h2><a class="nav-anchor" id="Loading-and-saving-maps-1" href="#Loading-and-saving-maps-1">Loading and saving maps</a></h2><p>Healpix.jl implements a number of functions to save maps in FITS files.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.saveToFITS" href="#Healpix.saveToFITS"><code>Healpix.saveToFITS</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">saveToFITS(map::Map{T, O}, filename::AbstractString, typechar=&quot;D&quot;, unit=&quot;&quot;, extname=&quot;MAP&quot;) where {T &lt;: Number, O &lt;: Order}
+saveToFITS(map::PolarizedMap{T, O}, filename::AbstractString, typechar=&quot;D&quot;, unit=&quot;&quot;, extname=&quot;MAP&quot;) where {T &lt;: Number, O &lt;: Order}</code></pre><p>Save a map into a FITS file. The name of the file is specified in <code>filename</code>; if it begins with <code>!</code>, existing files will be overwritten without warning. The parameter <code>typechar</code> specifies the data type to be used in the FITS file: the default (<code>D</code>) will save 64-bit floating-point values. See the CFITSIO documentation for other values. The keyword <code>unit</code> specifies the measure unit used for the pixels in the map. The keyword <code>extname</code> specifies the name of the HDU where the map pixels will be written.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map_io.jl#L174-L187">source</a></section><p>Function <code>savePixelsToFITS</code> is a low-level function. It knows nothing about the ordering schema used for the pixels, so the caller should manually write the <code>ORDERING</code> keyword in the HDU header by itself.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.savePixelsToFITS" href="#Healpix.savePixelsToFITS"><code>Healpix.savePixelsToFITS</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">savePixelsToFITS(map::Map{T}, f::FITSIO.FITSFile, column) where {T &lt;: Number}</code></pre><p>Save the pixels of <code>map</code> into the column with index/name <code>column</code> in the FITS file, which must have been already opened.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map_io.jl#L74-L79">source</a></section><p>To load a map from a FITS file, you can use <code>readMapFromFITS</code>.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.readMapFromFITS" href="#Healpix.readMapFromFITS"><code>Healpix.readMapFromFITS</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">readMapFromFITS{T &lt;: Number}(f::FITSIO.FITSFILE, column, t::Type{T})
+readMapFromFITS{T &lt;: Number}(fileName::String, column, t::Type{T})</code></pre><p>Read a Healpix map from the specified (1-base indexed) column in a FITS file. The values will be read as numbers of type T. If the code fails, FITSIO will raise an exception. (Refer to the FITSIO library for more information.)</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/map_io.jl#L4-L12">source</a></section><h2><a class="nav-anchor" id="Testing-for-conformability-1" href="#Testing-for-conformability-1">Testing for conformability</a></h2><p>It often happens that two Healpix maps need to be combined together: for instance, pixels on a sky map might need to be masked using a sky mask, or one map might need to be subtracted from another one. «Conformability» means that the operation between the two maps can be done directly on the pixels, without oordering or resolution conversions. The function <code>conformables</code> checks this.</p><pre><code class="language-julia-repl">
+julia&gt; m1 = Map{Float64, RingOrder}(1)
+12-element Map{Float64,RingOrder}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia&gt; m2 = Map{Float64, RingOrder}(1)
+12-element Map{Float64,RingOrder}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia&gt; m3 = Map{Float64, NestedOrder}(1)
+12-element Map{Float64,NestedOrder}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia&gt; m4 = Map{Float64, NestedOrder}(2)
+48-element Map{Float64,NestedOrder}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ ⋮
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+
+julia&gt; conformables(m1, m2)
+true
+
+julia&gt; conformables(m1, m3)
+false
+
+julia&gt; conformables(m1, m4)
+false</code></pre><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.conformables" href="#Healpix.conformables"><code>Healpix.conformables</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">conformables{T, S, O1 &lt;: Order, O2 &lt;: Order}(map1::Map{T, O1},
+                                             map2::Map{S, O2}) -&gt; Bool
+conformables{T, S, O1 &lt;: Order, O2 &lt;: Order}(map1::PolarizedMap{T, O1},
+                                             map2::PolarizedMap{S, O2}) -&gt; Bool</code></pre><p>Determine if two Healpix maps are &quot;conformables&quot;, i.e., if their shape and ordering are the same.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/conformables.jl#L23-L31">source</a></section><h2><a class="nav-anchor" id="Map-making-1" href="#Map-making-1">Map-making</a></h2><p>Map-making is the process of converting a time series of measurements into a sky map. The most basic form of map-making is the so-called &quot;binning&quot;, where samples in the time stream falling within the same sky pixel are averaged. This map-making algorithm is strictly accurate only if the noise in the time stream is white.</p><p>Healpix.jl implements two functions to perform binning, <a href="#Healpix.tod2map"><code>tod2map</code></a> and <a href="#Healpix.combinemaps!"><code>combinemaps!</code></a>.</p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.tod2map" href="#Healpix.tod2map"><code>Healpix.tod2map</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">tod2map{T,O}(pixidx, tod::Array{T}; nside=128) :: (map, hits)</code></pre><p>Create a binned map for a TOD and return a tuple containing the map itself and the hit map.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/mapmaking.jl#L3-L8">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="Healpix.combinemaps!" href="#Healpix.combinemaps!"><code>Healpix.combinemaps!</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">combinemaps{T, O, H}(destmap::Map{T, O}, desthitmap::Map{H, O}, othermap::Map{T, O}, otherhitmap::Map{H, O})</code></pre><p>Sum &quot;othermap&quot; to &quot;destmap&quot;, assuming that both maps have been produced by binning TODs. The parameters <code>desthitmap</code> and <code>otherhitmap</code> are the two hit maps. At the end of the call, <code>destmap</code> and <code>desthitmap</code> are updated.</p></div></div><a class="source-link" target="_blank" href="https://github.com/ziotom78/Healpix.jl/blob/b75b1142af863b65606fb83fbf5ed4153bd847e7/src/mapmaking.jl#L31-L38">source</a></section><footer><hr/><a class="previous" href="../pixelfunc/"><span class="direction">Previous</span><span class="title">Pixel functions</span></a><a class="next" href="../alm/"><span class="direction">Next</span><span class="title">Spherical harmonics</span></a></footer></article></body></html>
